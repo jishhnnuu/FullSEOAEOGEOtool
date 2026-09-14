@@ -8,6 +8,7 @@
  * `/api/v1/demo` is not a route, the fetch fails, and nothing renders.
  */
 
+import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 
 type DemoInfo = {
@@ -22,6 +23,7 @@ type DemoInfo = {
 export function DemoBanner() {
   const [info, setInfo] = useState<DemoInfo | null>(null);
   const [open, setOpen] = useState(false);
+  const pathname = usePathname();
 
   useEffect(() => {
     let live = true;
@@ -38,14 +40,26 @@ export function DemoBanner() {
     year: "numeric", month: "long", day: "numeric",
   });
 
+  // On the sign-in screen the useful sentence is how to get in, not what the
+  // crawl found. Someone who has to open an expander to learn that any
+  // password works is being asked to guess.
+  const onLogin = pathname === "/login";
+
   return (
     <div className="demo-banner">
       <div className="demo-banner-row">
         <span className="demo-chip">Demo</span>
-        <span>
-          Crawled <strong>{info.domain}</strong> on {crawled}: {info.measured.pages} pages,{" "}
-          {info.measured.findings} findings, health {Math.round(info.measured.health ?? 0)}.
-        </span>
+        {onLogin ? (
+          <span>
+            Sign in with <strong>any email and any password</strong>. One shared tenant,
+            loaded with a real crawl of {info.domain}.
+          </span>
+        ) : (
+          <span>
+            Crawled <strong>{info.domain}</strong> on {crawled}: {info.measured.pages} pages,{" "}
+            {info.measured.findings} findings, health {Math.round(info.measured.health ?? 0)}.
+          </span>
+        )}
         <button type="button" className="demo-more" onClick={() => setOpen(!open)}>
           {open ? "Hide detail" : "What is real here?"}
         </button>

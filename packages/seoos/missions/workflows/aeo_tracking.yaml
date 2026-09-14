@@ -1,0 +1,113 @@
+key: aeo_tracking
+name: AI answer visibility tracking
+description: >
+  Runs the prompt set across answer engines, records mention and citation
+  rates, flags anything an engine says about the client that is wrong.
+budget_usd: 8.0
+timeout_minutes: 30
+schedule_hint: "0 7 * * 3"
+concurrency: 3
+tags: [aeo, recurring, measurement]
+
+steps:
+  - id: state
+    type: tool
+    tool: report.site_state
+
+  - id: access
+    type: tool
+    tool: crawl.robots
+    label: Confirm the crawlers can get in
+    needs: [state]
+
+  - id: access_gate
+    type: agent
+    agent: aeo-strategist
+    label: Fix blocked crawlers before measuring
+    needs: [access]
+    when: access.blocked_ai_crawlers not_empty
+    context: [access, state]
+    task: >
+      Retrieval crawlers are blocked in robots.txt. Measuring AI visibility
+      while the door is shut wastes the measurement.
+
+      Report exactly which crawlers are blocked and what each one feeds.
+      Distinguish training crawlers from retrieval crawlers: blocking
+      training while allowing retrieval is a coherent position, blocking both
+      means no citations anywhere.
+
+      Prepare the exact robots.txt change needed and escalate it, since
+      robots.txt always needs a human.
+
+  - id: measure
+    type: agent
+    agent: ai-visibility-analyst
+    label: Run the prompt set
+    needs: [state]
+    context: [state]
+    budget_usd: 4.0
+    task: >
+      Measure this brand's presence in AI answers.
+
+      Use the standing prompt set for this site. If none exists, build one
+      and record it so future cycles are comparable: mostly unbranded
+      discovery prompts, some competitive comparison prompts, a few branded
+      accuracy prompts. Do not measure only branded prompts; that flatters
+      the numbers and hides whether anyone is discovering them at all.
+
+      For each result record: mentioned, cited, position in the order
+      companies are named, which competitors appeared, sentiment in the
+      sentences the brand appears in, and any factual assertion about the
+      brand that needs checking.
+
+      Record mention rate, citation rate and share of voice as KPIs so the
+      trend exists.
+
+  - id: accuracy
+    type: agent
+    agent: compliance-officer
+    label: Check what engines say is true
+    needs: [measure]
+    when: measure.summary.accuracy_issues not_empty
+    context: [measure, state]
+    task: >
+      Answer engines made factual assertions about this client. Check them
+      against the fact ledger and the live site.
+
+      For anything wrong, trace the likely source: an outdated page, an
+      inconsistent directory listing, or a third-party source the model
+      trusts. A wrong price or a claim the business has closed is revenue
+      leaking today, so report it with urgency and with the fix.
+
+  - id: improve
+    type: agent
+    agent: citation-engineer
+    label: Make the near-misses citable
+    needs: [measure]
+    context: [measure, state]
+    budget_usd: 2.0
+    task: >
+      Take the prompts where a competitor was cited and we were not.
+
+      For each one, find our page that should have been the answer and work
+      out why it was not: no direct answer near the top, no specific facts,
+      no named author, poor structure, or simply that we have no page on the
+      topic at all.
+
+      Restructure the pages that are close. For the topics where we have
+      nothing, say so rather than forcing an existing page to fit.
+
+  - id: report
+    type: agent
+    agent: aeo-strategist
+    label: Report
+    needs: [measure, improve, accuracy]
+    context: [measure, improve, accuracy, state]
+    task: >
+      Write the AI visibility section of the client's report.
+
+      Give mention rate, citation rate and share of voice, each compared with
+      last cycle. Name the competitors being cited instead of us and on which
+      prompts. State plainly that this is API sampling rather than a real
+      user's session, so the trend is reliable and the absolute number is an
+      approximation.

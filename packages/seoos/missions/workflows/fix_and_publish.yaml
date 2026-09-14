@@ -1,0 +1,59 @@
+key: fix_and_publish
+name: Apply approved changes
+description: >
+  Executes what the client has approved: publishes content, applies fixes,
+  submits URLs for recrawl and verifies everything went live correctly.
+budget_usd: 4.0
+timeout_minutes: 25
+schedule_hint: "0 */6 * * *"
+concurrency: 2
+tags: [core, recurring, publish]
+
+steps:
+  - id: state
+    type: tool
+    tool: report.site_state
+
+  - id: queue
+    type: tool
+    tool: content.queue
+    needs: [state]
+    args:
+      statuses: [approved, scheduled]
+
+  - id: publish
+    type: agent
+    agent: publisher
+    label: Publish and verify
+    needs: [queue]
+    when: queue.items not_empty
+    context: [queue, state]
+    task: >
+      Publish everything in the queue whose scheduled time has arrived.
+
+      For each: publish, then verify the live page with publish.verify_live.
+      A CMS returning success is not evidence the page rendered, kept its
+      canonical or has content in the HTML. Check all three.
+
+      Then submit the URL for recrawl and close any finding it resolved.
+
+      If a publish fails, read the actual error. A 403 means the credential
+      lost a permission and retrying will not help. Stop after two failures
+      and report it.
+
+  - id: qa
+    type: agent
+    agent: qa-tester
+    label: Post-publish verification
+    needs: [publish]
+    when: publish exists
+    context: [publish]
+    task: >
+      Verify everything that was just published.
+
+      Live URL returns 200, page is indexable, content rendered rather than
+      only saved, canonical points at itself, schema survived the CMS,
+      images loaded with alt text, internal links resolve.
+
+      If anything is wrong, say so clearly. A page that published broken is
+      worse than one that did not publish.

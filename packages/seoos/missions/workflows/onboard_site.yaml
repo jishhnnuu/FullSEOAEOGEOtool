@@ -1,0 +1,166 @@
+key: onboard_site
+name: Onboard a new site
+description: >
+  Takes a new site from signup to a running programme. Produces a real audit
+  before asking the client for anything, then establishes the brand profile,
+  the goals and the schedule.
+budget_usd: 12.0
+timeout_minutes: 45
+applies_to: [onboarding]
+concurrency: 3
+tags: [onboarding, first_run]
+
+steps:
+  - id: state
+    type: tool
+    tool: report.site_state
+    label: Read what we already know
+
+  - id: crawl
+    type: tool
+    tool: crawl.site
+    label: Crawl the site
+    args: {max_pages: 150, max_depth: 5}
+    needs: [state]
+    on_error: resolve
+    budget_usd: 0.5
+
+  - id: robots
+    type: tool
+    tool: crawl.robots
+    label: Check crawler access
+    needs: [state]
+    optional: true
+
+  - id: brand
+    type: agent
+    agent: brand-keeper
+    label: Build the first brand profile
+    needs: [crawl]
+    context: [crawl, state]
+    task: >
+      Build the first brand voice profile for this site from its own pages.
+      You have the crawl results in context. Fetch the three or four pages
+      that best represent how they write: the homepage, a main service or
+      product page, and their best blog post or case study.
+
+      Work out their actual voice from that writing, not from what their
+      About page claims. Capture the mechanical things a writer can
+      reproduce: sentence rhythm, person, the words they use for their own
+      customers and products, how they handle claims, how they ask for the
+      next step. Save two or three real passages as examples.
+
+      Then add every verifiable fact you can source from their own pages to
+      the fact ledger: founding year, locations, services, credentials,
+      named clients, prices where published. Cite the page for each one.
+      Add nothing you cannot point at.
+
+      Save the profile with brand.save_profile and the facts with
+      brand.add_facts.
+
+  - id: risk
+    type: agent
+    agent: risk-officer
+    label: Check for inherited problems
+    needs: [crawl, robots]
+    context: [crawl, robots]
+    task: >
+      This is a new client. Check whether they arrived carrying anything a
+      previous agency left behind: doorway page patterns, hidden text,
+      keyword-stuffed content, an obviously manipulated link profile, review
+      markup for reviews that do not exist, or blocked AI crawlers nobody
+      meant to block.
+
+      Report what you find with the specific evidence. If you find nothing,
+      say so plainly in one line. Do not manufacture concerns.
+
+  - id: competitors
+    type: agent
+    agent: competitor-intel
+    label: Identify the real competitors
+    needs: [crawl]
+    context: [crawl, state]
+    optional: true
+    task: >
+      Work out who actually competes with this site in search. Not the
+      competitors the client would name in a meeting, the domains that
+      appear alongside them for their own queries.
+
+      Sample five or six queries this site should rank for, based on what
+      the crawl shows they sell, and use keywords.competitors. Report the
+      domains, how often each appears, and where each is strongest.
+
+  - id: plan
+    type: agent
+    agent: strategist
+    label: Produce the first plan
+    needs: [crawl, brand, risk, competitors]
+    context: [state, crawl, risk, competitors]
+    expect_json: true
+    budget_usd: 3.0
+    task: >
+      Produce the first 90-day plan for this site from the audit in context.
+
+      Sequence by value over effort. Start with anything actively losing
+      traffic, then the cheapest wins available, then structural fixes, then
+      new content, then authority. Name the agent who owns each item.
+
+      Be explicit about what the current integrations do and do not allow.
+      If Search Console is not connected, say that the keyword work is
+      currently guesswork and what connecting it would change. If no CMS is
+      connected, say that every fix will need manual application.
+
+      Include a "not doing" list with reasons. Give a forecast that can be
+      checked in 90 days.
+
+  - id: report
+    type: agent
+    agent: reporter
+    label: Write the first audit report
+    needs: [plan]
+    context: [state, crawl, plan, risk, competitors]
+    budget_usd: 2.0
+    task: >
+      Write the client's first audit report and save it with report.build
+      as kind 'live_audit'.
+
+      This is an audit, not a pitch. Lead with the honest current state.
+      Include the problems that are the client's own doing and the ones that
+      will take months. Translate every technical finding into what it costs
+      them in business terms.
+
+      Structure: where they stand now, the three things that matter most,
+      what we will do in the first 30 days, what we need from them, and what
+      to expect by when.
+
+  - id: schedule
+    type: tool
+    tool: workflow.schedule_mission
+    label: Start the weekly cycle
+    needs: [report]
+    args:
+      mission_key: weekly_growth_cycle
+      cron: "0 6 * * 1"
+
+  - id: schedule_audit
+    type: tool
+    tool: workflow.schedule_mission
+    label: Schedule the monthly deep audit
+    needs: [report]
+    args:
+      mission_key: monthly_audit
+      cron: "0 5 1 * *"
+
+  - id: notify
+    type: tool
+    tool: report.notify
+    label: Tell the client we are live
+    needs: [schedule]
+    args:
+      title: Your first SEO audit is ready
+      body: >
+        We crawled your site and produced a full audit before asking you for
+        anything. It is in your dashboard now, with the plan for the first 30
+        days. The weekly cycle starts on Monday.
+      severity: info
+      link: /reports

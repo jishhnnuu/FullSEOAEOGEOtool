@@ -1,0 +1,88 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  python:
+    name: Python
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: Install
+        run: pip install -e ".[dev,extract]"
+
+      - name: Lint
+        run: ruff check packages tests
+
+      - name: Validate the roster, missions and tools
+        # This is the check that matters most: a broken agent or a mission
+        # referencing a tool that does not exist must never reach a client's
+        # site, and it is cheap to catch here.
+        run: python -m seoos.cli check
+        env:
+          PYTHONPATH: ${{ github.workspace }}/packages
+
+      - name: Reference documentation is current
+        # The reference is generated from the registries. A new tool, check,
+        # agent or mission that lands without regenerating it fails here.
+        run: |
+          python scripts/generate_reference.py
+          git diff --quiet -- docs/reference || {
+            echo "::error::docs/reference is stale. Run 'make docs' and commit."
+            git diff -- docs/reference | head -60
+            exit 1
+          }
+        env:
+          PYTHONPATH: ${{ github.workspace }}/packages
+
+      - name: Test
+        run: pytest tests/ -q
+        env:
+          PYTHONPATH: ${{ github.workspace }}/packages
+
+  web:
+    name: Web
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: apps/web
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: apps/web/package-lock.json
+
+      - name: Install
+        run: npm ci || npm install
+
+      - name: Typecheck
+        run: npx tsc --noEmit
+
+      - name: Build
+        run: npm run build
+
+  docker:
+    name: Images
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build the API image
+        run: docker build -f deploy/Dockerfile.api -t seoos-api:ci .
+      - name: Build the web image
+        run: docker build -f deploy/Dockerfile.web -t seoos-web:ci .

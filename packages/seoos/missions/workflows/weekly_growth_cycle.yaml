@@ -1,0 +1,186 @@
+key: weekly_growth_cycle
+name: Weekly growth cycle
+description: >
+  The main loop. Checks for regressions, harvests the cheapest available
+  wins, applies safe fixes, moves content through the pipeline, and keeps
+  the client's report current.
+budget_usd: 10.0
+timeout_minutes: 60
+schedule_hint: "0 6 * * 1"
+concurrency: 4
+tags: [core, recurring]
+
+steps:
+  - id: state
+    type: tool
+    tool: report.site_state
+    label: Read the current state
+
+  - id: memory
+    type: tool
+    tool: workflow.check_memory
+    label: Read what we have already learned
+    needs: [state]
+
+  - id: crawl
+    type: tool
+    tool: crawl.site
+    label: Recrawl
+    args: {max_pages: 250, max_depth: 5}
+    needs: [state]
+    on_error: resolve
+    budget_usd: 0.5
+
+  - id: regression_check
+    type: agent
+    agent: migration-guard
+    label: Check nothing broke
+    needs: [crawl]
+    context: [state, crawl]
+    task: >
+      Compare this crawl against the previous one and the last 28 days of
+      Search Console data. Look for anything that got worse: pages that were
+      indexable and now are not, status codes that changed, titles or
+      canonicals that changed unexpectedly, queries that moved sharply, a
+      large change in indexed page count in either direction.
+
+      If you find a regression, establish the cause in order: did we change
+      it, did the client change it, did the SERP change, did everyone move.
+      Report what you find. If nothing regressed, say so in one line.
+
+  - id: crisis
+    type: agent
+    agent: crisis-manager
+    label: Investigate a serious drop
+    needs: [regression_check]
+    when: state.kpis.organic_clicks.change_pct < -25
+    context: [state, crawl, regression_check]
+    budget_usd: 2.0
+    task: >
+      Organic clicks have fallen sharply. Diagnose it properly before anyone
+      changes anything.
+
+      Establish when exactly, what exactly (impressions or clicks), and where
+      exactly (one page, one template, or everything). Then eliminate causes
+      in order of likelihood, starting with our own recent changes.
+
+      Report what you know, what you have ruled out, and what you are
+      checking next. Notify the client within this run.
+
+  - id: opportunities
+    type: tool
+    tool: analytics.striking_distance
+    label: Find the cheapest wins
+    needs: [state]
+    when: state.capabilities contains 'striking_distance'
+    optional: true
+
+  - id: ctr_gaps
+    type: tool
+    tool: analytics.ctr_gaps
+    label: Find pages that rank but are not clicked
+    needs: [state]
+    when: state.capabilities contains 'ctr_optimisation'
+    optional: true
+
+  - id: technical
+    type: agent
+    agent: tech-auditor
+    label: Fix what is safe to fix
+    needs: [crawl, memory]
+    context: [state, crawl, memory]
+    budget_usd: 2.0
+    task: >
+      Work the open technical findings for this site, highest priority first.
+
+      Fix what you are permitted to fix at this site's autonomy level and
+      verify each change on the live page before closing the finding. For
+      anything that needs a human or a developer, write the specific change
+      needed rather than a description of the problem.
+
+      Do not change robots.txt, canonical strategy or anything site-wide.
+      Those go to a person regardless of autonomy level.
+
+  - id: harvest
+    type: agent
+    agent: content-refresher
+    label: Harvest the near-misses
+    needs: [opportunities, ctr_gaps, technical]
+    when: opportunities not_empty or ctr_gaps not_empty
+    context: [opportunities, ctr_gaps, state]
+    budget_usd: 2.5
+    task: >
+      You have the striking-distance queries and the pages underperforming
+      their rank in context. These are the cheapest traffic available.
+
+      Take the top five by opportunity. For each one, diagnose why it is not
+      winning: is the page missing the specific answer, is the title failing
+      to earn the click, or is it a format mismatch with what ranks.
+
+      Where the fix is a title or meta description, rewrite it and apply it.
+      Where the fix is content, update the existing page rather than creating
+      a new one.
+
+  - id: content_pipeline
+    type: agent
+    agent: content-strategist
+    label: Move the content pipeline forward
+    needs: [state, memory]
+    context: [state, memory]
+    budget_usd: 1.5
+    task: >
+      Look at the content pipeline in the site state.
+
+      If anything is stuck, move it: briefs that need writing, drafts that
+      need editing, approved items that need publishing. If the review queue
+      is growing, the client is the bottleneck and the commissioning rate
+      should drop, not rise. Say so rather than adding to the pile.
+
+      Only commission new work if the pipeline is healthy and the harvest
+      opportunities are exhausted.
+
+  - id: publish
+    type: agent
+    agent: publisher
+    label: Publish what was approved
+    needs: [content_pipeline]
+    context: [state]
+    task: >
+      Publish everything at 'approved' or 'scheduled' whose time has come.
+
+      For each one: publish, verify the live page actually rendered and is
+      indexable, submit it for recrawl, and close any finding it resolved.
+      If a publish fails, read the error and report it rather than retrying
+      blindly.
+
+  - id: report
+    type: agent
+    agent: reporter
+    label: Refresh the client's report
+    needs: [publish, harvest, technical, regression_check]
+    context: [state, regression_check, technical, harvest, publish]
+    budget_usd: 1.5
+    task: >
+      Refresh the live audit report with report.build.
+
+      Lead with what changed and what it means in business terms. If traffic
+      fell, that is the first sentence. Translate technical work into
+      outcomes. Do not list activity as though it were results.
+
+      Keep it short. A quiet week deserves a short report.
+
+  - id: learn
+    type: agent
+    agent: knowledge-manager
+    label: Record what this cycle taught us
+    needs: [report]
+    context: [state, regression_check, harvest, publish]
+    optional: true
+    task: >
+      Record anything this cycle established about this specific site that
+      the next cycle should know. What worked, what failed and why, any
+      constraint that turned out to be real.
+
+      Require evidence. One result is an anecdote. Also check whether any
+      active resolution's reversal condition has arrived and close the ones
+      that no longer apply.

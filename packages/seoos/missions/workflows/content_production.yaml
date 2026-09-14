@@ -1,0 +1,124 @@
+key: content_production
+name: Produce one piece of content
+description: >
+  Brief, draft, fact-check, line edit, quality gate, then the client's review
+  queue. The client's only job is the last step.
+budget_usd: 14.0
+timeout_minutes: 45
+concurrency: 2
+tags: [content]
+
+steps:
+  - id: state
+    type: tool
+    tool: report.site_state
+
+  - id: brand
+    type: tool
+    tool: brand.profile
+    needs: [state]
+
+  - id: brief
+    type: agent
+    agent: brief-writer
+    label: Research and brief
+    needs: [state, brand]
+    context: [state, brand, input]
+    budget_usd: 3.0
+    task: >
+      Write the brief for: {{ input.topic }}
+      Target query: {{ input.primary_keyword }}
+
+      Read the SERP. Fetch two or three of the ranking pages and read them
+      properly. Establish what format wins, how deep the ranking pages go,
+      what they all miss, and whether there is a click left after the SERP
+      features take their share.
+
+      Find the internal links this page should have in both directions.
+      Check the fact ledger for what the brand can actually claim.
+
+      The most important line in your brief is the differentiation: why would
+      a search engine rank this above what is already there. "More
+      comprehensive" is not an answer.
+
+      Create the content item and save the brief.
+
+  - id: draft
+    type: agent
+    agent: writer
+    label: Write the draft
+    needs: [brief]
+    context: [brief, brand]
+    budget_usd: 5.0
+    task: >
+      Write the draft from the brief in context.
+
+      Read the brand profile and its example passages first, then the fact
+      ledger. State only what you can source. Open with the answer in the
+      first two or three sentences.
+
+      Vary your sentence length. No em dashes. None of the banned phrases.
+      No closing paragraph that restates the article.
+
+      Save with content.save_draft, including the meta title, the meta
+      description, the internal links and every source you cited.
+
+  - id: facts
+    type: agent
+    agent: fact-checker
+    label: Verify every claim
+    needs: [draft]
+    context: [draft]
+    budget_usd: 2.0
+    task: >
+      Verify every factual claim in this draft.
+
+      Open each cited source and confirm it actually says what the sentence
+      claims, that the figure matches, and that it is current. A plausible
+      URL is not a verification.
+
+      Return a line per claim: the sentence, the verdict, the source you
+      checked, and the rewrite if it needs one. Remove anything that cannot
+      be supported.
+
+  - id: polish
+    type: agent
+    agent: humanizer
+    label: Line edit
+    needs: [facts]
+    context: [draft, facts]
+    budget_usd: 1.5
+    task: >
+      Line edit this draft so it reads like a person wrote it.
+
+      Vary the sentence length. Delete the filler openers. Replace the banned
+      vocabulary with the plain word. Remove every dash used as punctuation.
+      Cut the summary ending.
+
+      Do not change any number, name, claim or citation. Do not remove a
+      source link.
+
+  - id: edit
+    type: agent
+    agent: editor
+    label: Edit and submit
+    needs: [polish]
+    context: [draft, facts, polish, brand]
+    budget_usd: 2.0
+    task: >
+      Final edit. Cut before you add; most drafts are twenty percent too
+      long.
+
+      Then check in order: does it answer the query in the first three
+      sentences, is every claim sourced, does it sound like the client, are
+      the meta title and description right, is it linked in both directions,
+      does it have valid schema.
+
+      Generate the schema, then submit for review. If a gate is failing, fix
+      the draft. Do not work around the gate.
+
+  - id: gate
+    type: gate
+    label: Only proceed if it reached review
+    when: edit exists
+    needs: [edit]

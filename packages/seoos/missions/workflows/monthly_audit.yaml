@@ -1,0 +1,215 @@
+key: monthly_audit
+name: Monthly deep audit
+description: >
+  The full sweep: deeper crawl, every analysis discipline in parallel, and a
+  re-planned quarter. Runs monthly so the weekly cycle can stay light.
+budget_usd: 20.0
+timeout_minutes: 90
+schedule_hint: "0 5 1 * *"
+concurrency: 5
+tags: [core, recurring, audit]
+
+steps:
+  - id: state
+    type: tool
+    tool: report.site_state
+
+  - id: crawl
+    type: tool
+    tool: crawl.site
+    label: Deep crawl
+    args: {max_pages: 1000, max_depth: 8}
+    needs: [state]
+    budget_usd: 1.0
+    on_error: resolve
+
+  - id: technical
+    type: agent
+    agent: tech-auditor
+    label: Technical review
+    needs: [crawl]
+    context: [state, crawl]
+    budget_usd: 2.5
+    task: >
+      Full technical review against this crawl. Work through crawlability,
+      renderability, indexability and whether pages should be indexed at all,
+      in that order.
+
+      Pay particular attention to whether content requires JavaScript to
+      appear. Compare the raw HTML with what the page shows. Content that
+      only exists after hydration frequently never reaches the index, and it
+      is invisible from a dashboard.
+
+      Fix at the template level where the problem is at the template level.
+
+  - id: performance
+    type: agent
+    agent: perf-engineer
+    label: Core Web Vitals
+    needs: [crawl]
+    context: [state, crawl]
+    budget_usd: 1.5
+    task: >
+      Test the main templates: homepage, the primary commercial template, and
+      the main content template. Use real-user field data where it exists and
+      say when you are working from lab data instead.
+
+      For each failing metric, name the specific element or resource at
+      fault. Group by template so one fix covers many pages.
+
+  - id: aeo
+    type: agent
+    agent: aeo-strategist
+    label: AI answer visibility
+    needs: [crawl]
+    context: [state, crawl]
+    budget_usd: 2.5
+    task: >
+      Review this site's readiness to be cited by answer engines.
+
+      Check crawler access first: if the retrieval crawlers are blocked,
+      nothing else matters and it is a one-line fix. Then assess citability
+      on the main content pages: is there a direct answer near the top, are
+      there specific checkable facts, is there a named author, is the entity
+      clearly defined.
+
+      Report the specific pages that are closest to being citable and what
+      each one needs.
+
+  - id: content_quality
+    type: agent
+    agent: content-strategist
+    label: Content portfolio review
+    needs: [crawl]
+    context: [state, crawl]
+    budget_usd: 2.0
+    task: >
+      Review the content portfolio. Find the pages that are decaying, the
+      ones that are thin, the ones that duplicate each other, and the ones
+      that get traffic but no conversions.
+
+      Recommend consolidation where several weak pages cover one topic.
+      Consolidating beats writing more, and it is almost never proposed.
+
+  - id: links
+    type: agent
+    agent: link-architect
+    label: Internal link review
+    needs: [crawl]
+    context: [state, crawl]
+    budget_usd: 1.5
+    task: >
+      Review the internal link graph. Find the commercially important pages
+      that receive little internal authority, the orphans, the pages more
+      than four clicks deep, and the links using generic anchor text.
+
+      Produce specific link suggestions: source page, target, anchor text and
+      the sentence it fits into.
+
+  - id: local
+    type: agent
+    agent: local-manager
+    label: Local review
+    needs: [state]
+    when: state.site.business_type == 'local'
+    context: [state]
+    optional: true
+    budget_usd: 2.0
+    task: >
+      Full local review. Sync and audit the Business Profile, check name,
+      address and phone consistency, review the location pages, and run a
+      geo-grid on the one or two queries that drive revenue.
+
+      Report the visibility radius rather than a single position.
+
+  - id: ecommerce
+    type: agent
+    agent: ecommerce-specialist
+    label: Commerce review
+    needs: [crawl]
+    when: state.site.business_type == 'ecommerce'
+    context: [state, crawl]
+    optional: true
+    budget_usd: 2.0
+    task: >
+      Review the catalogue: category page optimisation, product markup
+      completeness for merchant listings, faceted navigation crawl waste, and
+      how discontinued products are handled.
+
+      Start with category pages. They usually carry more search demand than
+      product pages and usually get less attention.
+
+  - id: offpage
+    type: agent
+    agent: digital-pr
+    label: Authority review
+    needs: [state]
+    context: [state]
+    optional: true
+    budget_usd: 2.0
+    task: >
+      Review the backlink profile: new links, lost links, anchor distribution
+      and anything genuinely toxic. Be sceptical about toxicity; most of what
+      gets flagged is already ignored algorithmically.
+
+      Then find the opportunities worth pursuing this quarter, starting with
+      unlinked mentions and the listings the client already qualifies for.
+
+  - id: compliance
+    type: agent
+    agent: compliance-officer
+    label: Compliance sweep
+    needs: [crawl, content_quality]
+    context: [state, crawl]
+    optional: true
+    task: >
+      Sweep the published content for compliance risk: unsubstantiated
+      claims, missing affiliate or sponsorship disclosures, regulated
+      statements without qualified authorship, and superlatives that need
+      evidence.
+
+      Flag what needs a qualified human rather than guessing.
+
+  - id: replan
+    type: agent
+    agent: strategist
+    label: Re-plan the quarter
+    needs: [technical, performance, aeo, content_quality, links, offpage]
+    context: [state, technical, performance, aeo, content_quality, links, offpage]
+    expect_json: true
+    budget_usd: 3.0
+    task: >
+      Every discipline has reported. Produce the plan for the next quarter.
+
+      Check your last forecast against what actually happened first. If it
+      was wrong, say why. Then sequence the new plan by value over effort,
+      name owners, and include the "not doing" list.
+
+  - id: report
+    type: agent
+    agent: reporter
+    label: Monthly report
+    needs: [replan]
+    context: [state, replan, technical, aeo, content_quality, offpage]
+    budget_usd: 2.0
+    task: >
+      Write the monthly report and refresh the live audit.
+
+      Lead with results, not activity. Compare against last month and the
+      same month last year. Be honest about what did not work. Include the
+      forecast check from the strategist.
+
+  - id: director
+    type: agent
+    agent: account-director
+    label: Decide what reaches the client
+    needs: [report]
+    context: [state, report, replan]
+    budget_usd: 1.5
+    task: >
+      Decide what actually needs the client's attention this month and batch
+      it into a single message.
+
+      Their default experience should be: open the dashboard, see it is
+      working, close the dashboard. Only interrupt them for a decision only
+      they can make, an action only their hands can take, or bad news.

@@ -1,0 +1,65 @@
+# The whole platform, including Postgres. Nothing else is required.
+#
+#   cp .env.example .env && make keygen   # paste the keys into .env
+#   docker compose up --build
+#
+# Then open http://localhost:3000
+
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: seoos
+      POSTGRES_PASSWORD: seoos
+      POSTGRES_DB: seoos
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U seoos"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  api:
+    build:
+      context: .
+      dockerfile: deploy/Dockerfile.api
+    env_file: [.env]
+    environment:
+      SEOOS_DATABASE_URL: postgresql+asyncpg://seoos:seoos@db:5432/seoos
+      SEOOS_LOG_FORMAT: json
+    depends_on:
+      db: { condition: service_healthy }
+    ports: ["8000:8000"]
+    volumes:
+      - storage:/app/var/storage
+
+  worker:
+    build:
+      context: .
+      dockerfile: deploy/Dockerfile.api
+    env_file: [.env]
+    environment:
+      SEOOS_DATABASE_URL: postgresql+asyncpg://seoos:seoos@db:5432/seoos
+      SEOOS_LOG_FORMAT: json
+    depends_on:
+      db: { condition: service_healthy }
+      api: { condition: service_started }
+    # The worker is what makes the platform autonomous. Without it, missions
+    # only run when someone presses a button.
+    command: ["python", "-m", "seoos.cli", "worker"]
+    volumes:
+      - storage:/app/var/storage
+
+  web:
+    build:
+      context: .
+      dockerfile: deploy/Dockerfile.web
+    environment:
+      SEOOS_API_URL: http://api:8000
+    depends_on: [api]
+    ports: ["3000:3000"]
+
+volumes:
+  pgdata:
+  storage:

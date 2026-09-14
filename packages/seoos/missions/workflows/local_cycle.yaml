@@ -1,0 +1,126 @@
+key: local_cycle
+name: Local SEO cycle
+description: >
+  Weekly local work: profile health, review replies, a Business Profile post,
+  citation consistency and map pack measurement.
+budget_usd: 8.0
+timeout_minutes: 40
+schedule_hint: "0 8 * * 2"
+business_types: [local]
+concurrency: 3
+tags: [local, recurring]
+
+steps:
+  - id: state
+    type: tool
+    tool: report.site_state
+
+  - id: sync
+    type: tool
+    tool: local.sync_locations
+    needs: [state]
+    on_error: resolve
+    optional: true
+
+  - id: profile
+    type: agent
+    agent: local-manager
+    label: Audit and improve the profiles
+    needs: [sync]
+    context: [state, sync]
+    budget_usd: 2.0
+    task: >
+      Audit every Business Profile for this client.
+
+      Start with categories: the primary category decides which queries the
+      profile can appear for at all, and most profiles have one where they
+      should have several. Then services with descriptions, then
+      completeness, then whether the website link points at a real location
+      page rather than the homepage.
+
+      Report what needs changing, in priority order, with the specific value
+      to set.
+
+  - id: reviews
+    type: agent
+    agent: review-manager
+    label: Reply to reviews
+    needs: [sync]
+    context: [state, sync]
+    budget_usd: 2.0
+    task: >
+      Sync the reviews and draft a reply to every unanswered one.
+
+      Positive: short, specific, use their name, mention what they mentioned.
+      Negative: acknowledge, apologise for the experience, offer to take it
+      offline, stop. Never dispute in public, never offer compensation
+      publicly.
+
+      Anything alleging harm, a legal threat or a clinical complaint goes to
+      a person before it posts. Do not override that flag.
+
+      Also report the themes across recent reviews. Five reviews mentioning
+      waiting times is an operations finding worth raising.
+
+  - id: post
+    type: agent
+    agent: local-manager
+    label: Draft this week's post
+    needs: [profile]
+    context: [state, profile]
+    task: >
+      Draft this week's Business Profile post for each location.
+
+      Weekly posting keeps a profile active, which is visible to both
+      searchers and the ranking system. Make it specific to the business and
+      this week: an offer, an update, an event, a piece of news. Not generic
+      filler.
+
+      Use the brand voice. Include a call to action that points at a real
+      page.
+
+  - id: citations
+    type: agent
+    agent: citation-manager
+    label: Check details are consistent
+    needs: [sync]
+    context: [state, sync]
+    optional: true
+    task: >
+      Audit name, address and phone consistency across the core directories.
+
+      Establish the canonical format first and write it down. Then report
+      what is missing and what is inconsistent, highest authority first.
+
+      For listings that need a verification code, prepare everything so the
+      client's part takes a minute: the URL, the exact details to enter, and
+      what the code will look like.
+
+  - id: grid
+    type: agent
+    agent: geo-grid-analyst
+    label: Measure map pack visibility
+    needs: [sync]
+    context: [state, sync]
+    optional: true
+    budget_usd: 2.0
+    task: >
+      Run a geo-grid on the one or two queries that drive revenue for this
+      business, centred on each location.
+
+      Use the same grid, queries and centre point as last time so the
+      comparison means something. Report coverage, map pack share, the shape
+      of the visibility area and who wins where it stops.
+
+  - id: report
+    type: agent
+    agent: local-manager
+    label: Report
+    needs: [profile, reviews, post, citations, grid]
+    context: [profile, reviews, citations, grid]
+    task: >
+      Write the local section of the client's report.
+
+      Lead with map pack coverage, because that is what drives calls. Then
+      review volume and rating trend, then profile completeness, then what
+      is queued for their approval.

@@ -1,0 +1,132 @@
+key: link_building
+name: Authority building cycle
+description: >
+  Finds and qualifies opportunities, converts unlinked mentions, and drafts
+  outreach the client can send. Never buys, exchanges or manufactures links.
+budget_usd: 10.0
+timeout_minutes: 45
+schedule_hint: "0 9 * * 4"
+concurrency: 3
+tags: [offpage, recurring]
+
+steps:
+  - id: state
+    type: tool
+    tool: report.site_state
+
+  - id: profile
+    type: tool
+    tool: offpage.backlink_profile
+    needs: [state]
+    when: state.capabilities contains 'backlink_analysis'
+    optional: true
+    budget_usd: 0.5
+
+  - id: audit
+    type: agent
+    agent: link-auditor
+    label: Check the profile is healthy
+    needs: [profile]
+    when: profile exists
+    context: [profile, state]
+    optional: true
+    task: >
+      Review the backlink profile for genuine problems, not for a toxicity
+      score.
+
+      A real problem is a sudden spike of unrelated links, exact-match
+      commercial anchors above roughly twenty percent, or links from actual
+      link networks. A low-authority link from a small relevant blog is not a
+      problem and recommending a disavow for it does harm.
+
+      Also report lost links. A link earned once is much easier to earn back
+      than a new one is to earn.
+
+  - id: mentions
+    type: agent
+    agent: link-prospector
+    label: Find unlinked mentions
+    needs: [state]
+    context: [state]
+    budget_usd: 2.0
+    task: >
+      Find pages that mention this brand without linking to it.
+
+      These convert several times better than anything else, because the
+      hard part, somebody writing about the client, already happened.
+
+      For each one, record the page, the author if there is one, and the
+      exact sentence the mention appears in. That sentence is what the
+      outreach email will reference.
+
+  - id: prospects
+    type: agent
+    agent: link-prospector
+    label: Qualify new opportunities
+    needs: [state]
+    context: [state]
+    budget_usd: 2.0
+    task: >
+      Build a shortlist of realistic opportunities for this cycle.
+
+      Look at supplier and partner listings the client already qualifies for,
+      trade associations and accreditations they hold, sponsorships they
+      already pay for, and resource pages where they would genuinely belong.
+      These are unglamorous and they convert far better than cold pitching.
+
+      Qualify every candidate. Anything that sells guest posts or links is
+      disqualified and does not go on the list. Relevance beats authority.
+
+  - id: outreach
+    type: agent
+    agent: outreach-specialist
+    label: Draft the emails
+    needs: [mentions, prospects]
+    context: [mentions, prospects, state]
+    budget_usd: 2.5
+    task: >
+      Draft outreach for the qualified prospects and unlinked mentions in
+      context, starting with the mentions.
+
+      Read each recipient's page before writing to them. Reference something
+      specific from it in the first sentence. Find a named person; role
+      addresses are refused and deserve to be.
+
+      Under 150 words. No flattery paragraph. Make the ask concrete and give
+      them an easy way to say no.
+
+      Every draft is queued for approval. The client sends them from their
+      own domain.
+
+  - id: assets
+    type: agent
+    agent: digital-pr
+    label: Propose what would earn links
+    needs: [state, prospects]
+    context: [state, prospects]
+    optional: true
+    task: >
+      If there is nothing genuinely worth linking to, outreach will fail
+      regardless of how well it is written.
+
+      Propose one or two linkable assets this client could realistically
+      produce: original data from their own operations, a genuinely useful
+      free tool, or expert commentary from a named person.
+
+      For each, write the headline a journalist would run. If you cannot
+      write that headline, the idea is not ready.
+
+  - id: report
+    type: agent
+    agent: digital-pr
+    label: Report
+    needs: [outreach, audit, assets]
+    context: [outreach, audit, mentions, assets]
+    task: >
+      Report on authority work.
+
+      Links earned, not emails sent. Links lost and why. What is queued for
+      the client to send. What we learned about why prospects declined.
+
+      Be honest about base rates. Cold outreach converts in low single
+      digits and a report that implies otherwise sets up a miss.

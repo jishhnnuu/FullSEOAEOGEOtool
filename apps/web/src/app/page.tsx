@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-import { CtaBand } from "@/components/marketing";
+import { CtaBand, MarketingChrome } from "@/components/marketing";
 import { UrlStart } from "@/components/url-start";
 import { CATALOG_SIZE } from "@/engine/catalog";
 
@@ -91,7 +91,7 @@ const FAQS = [
 
 export default function Home() {
   return (
-    <>
+    <MarketingChrome>
       <section className="section hero" style={{ paddingTop: "4rem" }}>
         <div className="hero-split">
           <div>
@@ -293,7 +293,7 @@ export default function Home() {
       </section>
 
       <CtaBand secondary={{ href: "/pricing", label: "See pricing" }} />
-    </>
+    </MarketingChrome>
   );
 }
 

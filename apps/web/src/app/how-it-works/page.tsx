@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-import { CtaBand } from "@/components/marketing";
+import { CtaBand, MarketingChrome } from "@/components/marketing";
 import { CATEGORY_LABEL, CONNECTORS } from "@/lib/connectors";
 import { AUTONOMY_LEVELS } from "@/lib/store";
 
@@ -17,7 +17,7 @@ export default function HowItWorksPage() {
   }, {});
 
   return (
-    <>
+    <MarketingChrome>
       <section className="section">
         <div className="eyebrow">How it works</div>
         <h1 className="section-title" style={{ fontSize: "clamp(1.9rem, 4vw, 2.6rem)" }}>
@@ -172,6 +172,6 @@ export default function HowItWorksPage() {
       </section>
 
       <CtaBand />
-    </>
+    </MarketingChrome>
   );
 }

@@ -1,4 +1,4 @@
-import { CtaBand } from "@/components/marketing";
+import { CtaBand, MarketingChrome } from "@/components/marketing";
 
 export const metadata = {
   title: "Security, data and independence",
@@ -8,7 +8,7 @@ export const metadata = {
 
 export default function SecurityPage() {
   return (
-    <>
+    <MarketingChrome>
       <section className="section">
         <div className="eyebrow">Trust</div>
         <h1 className="section-title" style={{ fontSize: "clamp(1.9rem, 4vw, 2.6rem)" }}>
@@ -146,6 +146,6 @@ make docker        # the whole stack with Postgres`}</pre>
         title="Run it against a site you own"
         body="Nothing is asked for up front. If you do not like what you see, close the tab and nothing of yours is left behind."
       />
-    </>
+    </MarketingChrome>
   );
 }

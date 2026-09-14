@@ -1,4 +1,4 @@
-import { CtaBand } from "@/components/marketing";
+import { CtaBand, MarketingChrome } from "@/components/marketing";
 import { AI_CRAWLER_LIST } from "@/engine/robots";
 
 export const metadata = {
@@ -37,7 +37,7 @@ const STEPS = [
 
 export default function AiSearchPage() {
   return (
-    <>
+    <MarketingChrome>
       <section className="section">
         <div className="eyebrow">AEO and GEO</div>
         <h1 className="section-title" style={{ fontSize: "clamp(1.9rem, 4vw, 2.6rem)" }}>
@@ -156,6 +156,6 @@ export default function AiSearchPage() {
         title="Find out which engines can currently reach you"
         body="The crawler check runs in the first few seconds of any audit, before the crawl proper starts. No account needed."
       />
-    </>
+    </MarketingChrome>
   );
 }

@@ -1,5 +1,23 @@
 import Link from "next/link";
 
+/**
+ * The public site's chrome.
+ *
+ * A route group would give every marketing page this layout for free, but it
+ * puts parentheses into the built asset paths, and enough CDNs and proxies
+ * mishandle those to make it not worth the saved lines. Each page wraps itself
+ * instead.
+ */
+export function MarketingChrome({ children }: { children: React.ReactNode }) {
+  return (
+    <>
+      <SiteHeader />
+      <main>{children}</main>
+      <SiteFooter />
+    </>
+  );
+}
+
 /** The public site's header. Nothing here is behind a sign-in. */
 export function SiteHeader() {
   return (
@@ -15,7 +33,7 @@ export function SiteHeader() {
           <Link href="/how-it-works" className="hide-sm">How it works</Link>
           <Link href="/vs-agency" className="hide-sm">Vs an agency</Link>
           <Link href="/pricing">Pricing</Link>
-          <Link href="/app/signin" className="hide-sm">Sign in</Link>
+          <Link href="/app/signin">Sign in</Link>
           <Link href="/app/new" className="cta">Audit my site</Link>
         </nav>
       </div>

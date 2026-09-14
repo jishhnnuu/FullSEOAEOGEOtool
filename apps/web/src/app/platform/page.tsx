@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-import { CtaBand } from "@/components/marketing";
+import { CtaBand, MarketingChrome } from "@/components/marketing";
 import { byCategory, CATALOG_SIZE, CATEGORY_LABEL } from "@/engine/catalog";
 
 export const metadata = {
@@ -67,7 +67,7 @@ export default function PlatformPage() {
   const categories = Object.entries(catalogue).sort((a, b) => b[1].length - a[1].length);
 
   return (
-    <>
+    <MarketingChrome>
       <section className="section">
         <div className="eyebrow">The platform</div>
         <h1 className="section-title" style={{ fontSize: "clamp(1.9rem, 4vw, 2.6rem)" }}>
@@ -197,6 +197,6 @@ export default function PlatformPage() {
       </section>
 
       <CtaBand />
-    </>
+    </MarketingChrome>
   );
 }

@@ -16,11 +16,21 @@ function bad(message: string, status = 400) {
   return Response.json({ ok: false, reason: message }, { status });
 }
 
-/** Accept "example.com", "https://example.com/path" and everything between. */
-function normaliseInput(raw: string): string {
+/**
+ * Accept "example.com", "https://example.com/path" and everything between.
+ *
+ * A scheme we do not fetch is rejected here rather than prefixed with https,
+ * because "file:///etc/passwd" would otherwise become a request to a host
+ * called "file" and answer with a confusing error instead of the real reason.
+ */
+function normaliseInput(raw: string): { url: string } | { error: string } {
   const trimmed = raw.trim();
-  if (!trimmed) return "";
-  return /^https?:\/\//i.test(trimmed) ? trimmed : `https://${trimmed}`;
+  if (!trimmed) return { error: "Enter a website address." };
+  const scheme = /^([a-z][a-z0-9+.-]*):/i.exec(trimmed)?.[1]?.toLowerCase();
+  if (scheme && scheme !== "http" && scheme !== "https") {
+    return { error: `Only http and https addresses are fetched, not ${scheme}.` };
+  }
+  return { url: scheme ? trimmed : `https://${trimmed}` };
 }
 
 export async function POST(request: NextRequest) {
@@ -31,10 +41,10 @@ export async function POST(request: NextRequest) {
     return bad("Send a JSON body with a url.");
   }
 
-  const candidate = normaliseInput(body.url ?? "");
-  if (!candidate) return bad("Enter a website address.");
+  const normalised = normaliseInput(body.url ?? "");
+  if ("error" in normalised) return bad(normalised.error);
 
-  const check = validateUrl(candidate);
+  const check = validateUrl(normalised.url);
   if (!check.ok) return bad(check.reason);
 
   const origin = check.url.origin;

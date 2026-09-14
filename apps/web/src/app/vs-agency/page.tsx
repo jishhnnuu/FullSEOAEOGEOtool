@@ -1,4 +1,4 @@
-import { CtaBand } from "@/components/marketing";
+import { CtaBand, MarketingChrome } from "@/components/marketing";
 
 export const metadata = {
   title: "Against an agency, a suite, and an AI writer",
@@ -40,7 +40,7 @@ function cell(value: string) {
 
 export default function VsAgencyPage() {
   return (
-    <>
+    <MarketingChrome>
       <section className="section">
         <div className="eyebrow">Comparison</div>
         <h1 className="section-title" style={{ fontSize: "clamp(1.9rem, 4vw, 2.6rem)" }}>
@@ -171,6 +171,6 @@ export default function VsAgencyPage() {
         title="Judge it on your own site"
         body="Run the audit against something you know well. The findings will either be right or they will not, and you will be able to tell within a minute."
       />
-    </>
+    </MarketingChrome>
   );
 }

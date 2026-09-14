@@ -595,6 +595,10 @@ details.reveal[open] summary { margin-bottom: 0.6rem; }
 .mock-bar i { width: 9px; height: 9px; border-radius: 50%; background: var(--border-strong); display: block; }
 .mock-bar span { font-size: 0.74rem; color: var(--text-faint); margin-left: 0.5rem; font-family: var(--mono); }
 .mock-body { padding: 1.1rem; display: grid; gap: 0.8rem; }
+/* Fixed at two columns: the hero column is too narrow for auto-fit to keep
+   four score cards out of a single stack. */
+.mock-scores { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.7rem; }
+.mock-scores .card { margin-top: 0; }
 
 /* ----------------------------------------------------------- responsive */
 

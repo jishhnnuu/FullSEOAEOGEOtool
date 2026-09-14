@@ -115,7 +115,7 @@ export default function Home() {
                 <span>seo-os / run 01</span>
               </div>
               <div className="mock-body">
-                <div className="grid grid-2">
+                <div className="mock-scores">
                   <ScoreMock label="Search health" value={62} band="bad" />
                   <ScoreMock label="AI readiness" value={41} band="bad" />
                   <ScoreMock label="Authority" value={58} band="bad" />

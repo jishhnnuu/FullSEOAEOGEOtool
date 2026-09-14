@@ -1,0 +1,23 @@
+{
+  "name": "fullseoaeogeotool",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Monorepo root. Exists so a single install at the repository root resolves the dashboard's dependencies and the Cloudflare toolchain.",
+  "workspaces": [
+    "apps/web"
+  ],
+  "scripts": {
+    "dev": "npm run dev --workspace=@seoos/web",
+    "build": "npm run build --workspace=@seoos/web",
+    "typecheck": "npm run typecheck --workspace=@seoos/web",
+    "cf:build": "npm run cf:build --workspace=@seoos/web",
+    "cf:preview": "npm run cf:preview --workspace=@seoos/web",
+    "deploy": "npm run cf:build && wrangler deploy"
+  },
+  "devDependencies": {
+    "wrangler": "4.131.2"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

@@ -11,13 +11,29 @@ type Profile = {
   banned_phrases: string[]; value_props: string[]; differentiators: string[];
   proof_points: string[]; audiences: any[]; person: string | null;
   reading_level: string | null; required_disclaimers: string[];
-  cta_patterns: string[]; example_passages: string[]; approved_at: string | null;
+  cta_patterns: string[]; example_passages: unknown[]; approved_at: string | null;
 };
 
 type Fact = {
   id: string; statement: string; category: string; source: string;
   status: string; expired: boolean; used: number;
 };
+
+/**
+ * The column behind this is JSON typed as list[Any], and the brand-keeper agent
+ * writes it. A passage arriving as an object rather than a string should show
+ * as text, not take the page down with "objects are not valid as a React child".
+ */
+function passageText(passage: unknown): string {
+  if (typeof passage === "string") return passage;
+  if (passage && typeof passage === "object") {
+    const record = passage as Record<string, unknown>;
+    for (const key of ["text", "passage", "quote", "content"]) {
+      if (typeof record[key] === "string") return record[key] as string;
+    }
+  }
+  return String(passage ?? "");
+}
 
 const ASSET_KINDS = [
   "style_guide", "brand_book", "tone_of_voice", "case_study", "product_sheet",
@@ -158,7 +174,7 @@ export default function BrandPage({ params }: { params: Promise<{ siteId: string
                   <blockquote key={i} className="small" style={{
                     borderLeft: "3px solid var(--border-strong)",
                     margin: "0.6rem 0 0", padding: "0 0 0 0.8rem", color: "var(--text-muted)",
-                  }}>{p}</blockquote>
+                  }}>{passageText(p)}</blockquote>
                 ))}
               </details>
             )}

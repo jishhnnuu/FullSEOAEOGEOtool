@@ -1,23 +1,31 @@
+# The dashboard image, for anyone running the whole platform themselves.
+# The Cloudflare deployment does not use this: see wrangler.jsonc.
+#
+# npm workspaces put a single lockfile at the repository root, so the install
+# stage needs the root manifests as well as the app's own.
+
 FROM node:22-alpine AS deps
 WORKDIR /app
-COPY apps/web/package.json apps/web/package-lock.json* ./
-RUN npm ci 2>/dev/null || npm install
+COPY package.json package-lock.json* ./
+COPY apps/web/package.json ./apps/web/package.json
+RUN npm ci --omit=optional 2>/dev/null || npm install
 
 FROM node:22-alpine AS build
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
-COPY apps/web ./
-RUN npm run build
+COPY --from=deps /app/apps/web/node_modules ./apps/web/node_modules
+COPY package.json ./
+COPY apps/web ./apps/web
+RUN npm run build --workspace=@seoos/web
 
 FROM node:22-alpine AS runtime
 WORKDIR /app
 ENV NODE_ENV=production
 # The API URL is read at request time by the proxy route, never baked in, so
 # this same image runs in every environment.
-COPY --from=build /app/.next ./.next
 COPY --from=build /app/node_modules ./node_modules
-COPY --from=build /app/package.json ./package.json
-COPY --from=build /app/public ./public
+COPY --from=build /app/apps/web/.next ./.next
+COPY --from=build /app/apps/web/package.json ./package.json
 RUN addgroup -g 10001 web && adduser -D -u 10001 -G web web
 USER web
 EXPOSE 3000

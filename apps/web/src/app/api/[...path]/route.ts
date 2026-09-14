@@ -9,7 +9,19 @@
 
 import { NextRequest } from "next/server";
 
+import { handle as handleDemo } from "@/demo/api";
+
 export const dynamic = "force-dynamic";
+
+/**
+ * The public demo has no Python service behind it: Cloudflare Workers cannot
+ * host one. With SEOOS_DEMO=1 and no upstream configured, the recorded demo
+ * API answers instead. Setting SEOOS_API_URL always wins, so pointing a demo
+ * deployment at a real backend is one variable and no rebuild.
+ */
+function demoMode(): boolean {
+  return process.env.SEOOS_DEMO === "1" && !process.env.SEOOS_API_URL;
+}
 
 // Read per request, not at module scope: Next inlines some process.env
 // references during the build, which would freeze the URL into the bundle.
@@ -25,6 +37,18 @@ const STRIP = new Set([
 ]);
 
 async function proxy(request: NextRequest, path: string[]) {
+  if (demoMode()) {
+    // Read the body once, lazily: most demo routes never look at it.
+    let cached: Promise<any> | null = null;
+    return handleDemo({
+      method: request.method,
+      segments: path,
+      params: request.nextUrl.searchParams,
+      cookie: request.headers.get("cookie"),
+      body: () => (cached ??= request.json().catch(() => ({}))),
+    });
+  }
+
   const base = upstream();
   const target = new URL(`/api/${path.join("/")}`, base);
   target.search = request.nextUrl.search;

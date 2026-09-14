@@ -25,7 +25,7 @@ jobs:
         run: pip install -e ".[dev,extract]"
 
       - name: Lint
-        run: ruff check packages tests
+        run: ruff check packages tests scripts
 
       - name: Validate the roster, missions and tools
         # This is the check that matters most: a broken agent or a mission
@@ -56,9 +56,6 @@ jobs:
   web:
     name: Web
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: apps/web
     steps:
       - uses: actions/checkout@v4
 
@@ -66,16 +63,24 @@ jobs:
         with:
           node-version: "22"
           cache: npm
-          cache-dependency-path: apps/web/package-lock.json
+          cache-dependency-path: package-lock.json
 
       - name: Install
         run: npm ci || npm install
 
       - name: Typecheck
-        run: npx tsc --noEmit
+        run: npm run typecheck
 
       - name: Build
         run: npm run build
+
+      - name: Cloudflare bundle
+        # Cloudflare builds from this repository on every push to main. Building
+        # the Worker here means a change that breaks the deployment fails in a
+        # pull request rather than on the live site.
+        # The dry run triggers wrangler.jsonc's build command itself, so this
+        # exercises the same path Cloudflare takes, without credentials.
+        run: npx wrangler deploy --dry-run --outdir /tmp/worker-bundle
 
   docker:
     name: Images

@@ -302,3 +302,63 @@ label { display: block; font-size: 0.82rem; font-weight: 550; margin-bottom: 0.2
   .nav-section { display: none; }
   .main { padding: 1.25rem 1rem 3rem; }
 }
+
+/* --- demo banner ------------------------------------------------------- */
+/* Only rendered when the deployment is the recorded demo. */
+
+.demo-banner {
+  background: var(--accent-soft);
+  border-bottom: 1px solid var(--border-strong);
+  color: var(--text);
+  font-size: 0.85rem;
+}
+
+.demo-banner-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 0.55rem 1.5rem;
+}
+
+.demo-chip {
+  background: var(--accent);
+  color: #fff;
+  border-radius: 999px;
+  padding: 0.1rem 0.55rem;
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.demo-more {
+  background: none;
+  border: none;
+  color: var(--accent);
+  cursor: pointer;
+  font: inherit;
+  text-decoration: underline;
+  padding: 0;
+  margin-left: auto;
+}
+
+.demo-detail {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 0 1.5rem 0.85rem;
+  color: var(--text-muted);
+  max-inline-size: 70ch;
+}
+
+.demo-detail p {
+  margin: 0 0 0.5rem;
+}
+
+@media (max-width: 640px) {
+  .demo-banner-row { padding: 0.55rem 1rem; }
+  .demo-detail { padding: 0 1rem 0.85rem; }
+  .demo-more { margin-left: 0; }
+}

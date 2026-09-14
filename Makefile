@@ -1,4 +1,4 @@
-.PHONY: help install dev api worker web check test lint demo keygen migrate clean docker docs docs-check
+.PHONY: help install dev api worker web check test lint demo keygen migrate clean docker docs docs-check record-demo cf-build cf-preview cf-deploy
 
 VENV := .venv
 PY   := $(VENV)/bin/python
@@ -18,6 +18,10 @@ help:
 	@echo "  make test       run the test suite"
 	@echo "  make docs       regenerate the reference documentation"
 	@echo "  make docker     bring the whole stack up with Postgres"
+	@echo ""
+	@echo "  make cf-preview run the Cloudflare demo Worker locally on :8788"
+	@echo "  make cf-deploy  build and deploy that Worker"
+	@echo "  make record-demo rebuild the demo recording from the seeded database"
 
 $(VENV):
 	python3 -m venv $(VENV)
@@ -25,7 +29,7 @@ $(VENV):
 
 install: $(VENV)
 	$(PIP) install -e ".[dev,extract,postgres]"
-	cd apps/web && npm install
+	npm install
 
 keygen: $(VENV)
 	@$(PY) -m seoos.cli keygen
@@ -46,7 +50,7 @@ worker: $(VENV)
 	$(PY) -m seoos.cli worker
 
 web:
-	cd apps/web && SEOOS_API_URL=http://localhost:8000 npm run dev
+	SEOOS_API_URL=http://localhost:8000 npm run dev
 
 docs: $(VENV)
 	$(PY) scripts/generate_reference.py
@@ -62,12 +66,30 @@ test: $(VENV)
 	$(PY) -m pytest tests/ -q
 
 lint: $(VENV)
-	$(VENV)/bin/ruff check packages tests
-	cd apps/web && npx tsc --noEmit
+	$(VENV)/bin/ruff check packages tests scripts
+	npm run typecheck
 
 docker:
 	docker compose up --build
 
+# --- the public Cloudflare demo -------------------------------------------
+# One Worker serving the dashboard with a recorded API behind it, because
+# Cloudflare Workers cannot host the Python service. See docs/DEPLOYMENT.md.
+
+cf-build:
+	npm run cf:build
+
+cf-preview: cf-build
+	npx wrangler dev --port 8788 --local
+
+cf-deploy:
+	npx wrangler deploy
+
+# Rebuild the recording the demo replays. Needs a database that 'make demo'
+# and scripts/seed_demo.py have already filled.
+record-demo: $(VENV)
+	$(PY) scripts/record_demo.py --org-id $(ORG) --site-id $(SITE)
+
 clean:
-	rm -rf var/*.db var/shots .pytest_cache apps/web/.next
+	rm -rf var/*.db var/shots .pytest_cache apps/web/.next apps/web/.open-next .wrangler
 	find . -name __pycache__ -type d -exec rm -rf {} + 2>/dev/null || true

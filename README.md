@@ -19,12 +19,24 @@ through the API and through the dashboard.
 53 agents · 8 missions · 60 tools · 21 connectors · 71 checks · 43 tables · 141 tests
 ```
 
+## The hosted demo
+
+A Cloudflare Worker serves the dashboard with a recorded API behind it, so the
+product can be clicked through without installing anything. Sign in with any
+email and password.
+
+The pages, findings, scores and mission traces in it are from a real crawl of a
+real site. The drafts, approvals and traffic series are sample records, because
+writing content needs a model provider and measuring traffic needs a Search
+Console connection, and a public demo holds neither. The banner on every screen
+says which is which, and anything needing a credential refuses rather than
+pretending. See [Deployment](docs/DEPLOYMENT.md) for how the recording is made.
+
 ## Quick start
 
 No API keys are needed to see it work.
 
 ```bash
-cd platform
 python3 -m venv .venv && .venv/bin/pip install -e ".[dev,extract]"
 export PYTHONPATH=$PWD/packages
 
@@ -32,7 +44,7 @@ export PYTHONPATH=$PWD/packages
 .venv/bin/python -m seoos.cli demo       # seed a tenant and audit a real site
 .venv/bin/python -m seoos.cli serve      # API on :8000
 
-cd apps/web && npm install && npm run dev # dashboard on :3000
+npm install && npm run dev               # dashboard on :3000
 ```
 
 Or the whole stack with Postgres:
@@ -143,6 +155,7 @@ platform/
 - [Architecture](docs/ARCHITECTURE.md) — layers, decisions and why each was made
 - [The agency](docs/AGENTS.md) — how the roster works and the resolver ladder
 - [Operations](docs/OPERATIONS.md) — running it, scaling it, costing it
+- [Deployment](docs/DEPLOYMENT.md): the Cloudflare demo, and a real installation
 - [Contributing](CONTRIBUTING.md) · [Security](SECURITY.md)
 
 **Generated from the code** (`make docs`, checked in CI so it cannot drift)

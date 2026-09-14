@@ -18,12 +18,10 @@
     "binding": "ASSETS"
   },
 
-  "vars": {
-    // With no Python service to talk to, the dashboard answers /api/v1 from
-    // the recording in apps/web/src/demo. Setting SEOOS_API_URL as a Worker
-    // variable points it at a real backend instead, with no rebuild.
-    "SEOOS_DEMO": "1"
-  },
+  // No vars are needed. The Worker serves the dashboard and the two engine
+  // endpoints it calls; the workspace lives in the visitor's browser. Setting
+  // SEOOS_API_URL as a Worker variable additionally proxies /api/v1 to a
+  // self-hosted Python service, read per request, with no rebuild.
 
   "observability": {
     "enabled": true

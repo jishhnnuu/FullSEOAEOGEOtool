@@ -1,4 +1,4 @@
-.PHONY: help install dev api worker web check test lint demo keygen migrate clean docker docs docs-check record-demo cf-build cf-preview cf-deploy
+.PHONY: help install dev api worker web check test lint demo keygen migrate clean docker docs docs-check cf-build cf-preview cf-deploy
 
 VENV := .venv
 PY   := $(VENV)/bin/python
@@ -19,9 +19,8 @@ help:
 	@echo "  make docs       regenerate the reference documentation"
 	@echo "  make docker     bring the whole stack up with Postgres"
 	@echo ""
-	@echo "  make cf-preview run the Cloudflare demo Worker locally on :8788"
+	@echo "  make cf-preview run the Cloudflare Worker locally on :8788"
 	@echo "  make cf-deploy  build and deploy that Worker"
-	@echo "  make record-demo rebuild the demo recording from the seeded database"
 
 $(VENV):
 	python3 -m venv $(VENV)
@@ -72,9 +71,10 @@ lint: $(VENV)
 docker:
 	docker compose up --build
 
-# --- the public Cloudflare demo -------------------------------------------
-# One Worker serving the dashboard with a recorded API behind it, because
-# Cloudflare Workers cannot host the Python service. See docs/DEPLOYMENT.md.
+# --- the public Cloudflare deployment --------------------------------------
+# One Worker serving the dashboard and the audit engine. Cloudflare Workers
+# cannot host the Python service, so the Worker fetches and parses pages and
+# the browser runs the analysis. See docs/DEPLOYMENT.md.
 
 cf-build:
 	npm run cf:build
@@ -84,11 +84,6 @@ cf-preview: cf-build
 
 cf-deploy:
 	npx wrangler deploy
-
-# Rebuild the recording the demo replays. Needs a database that 'make demo'
-# and scripts/seed_demo.py have already filled.
-record-demo: $(VENV)
-	$(PY) scripts/record_demo.py --org-id $(ORG) --site-id $(SITE)
 
 clean:
 	rm -rf var/*.db var/shots .pytest_cache apps/web/.next apps/web/.open-next .wrangler

@@ -35,9 +35,12 @@ packages/seoos/
   analysis/       Crawler, checks, scoring, the safe HTTP client
   core/           Config, models (43 tables), db session, crypto, errors
   services/       Approvals, content, findings, credentials, audit log
-apps/web/         Next.js dashboard. Client-rendered, SWR, plain CSS.
-  src/demo/       The recorded API the Cloudflare demo replays
-scripts/          Reference generator, demo seeder, demo recorder
+apps/web/         Next.js: the public site and the dashboard. Plain CSS.
+  src/app/(marketing)/  The public pages. No sign-in in front of them.
+  src/app/app/    The signed-in workspace
+  src/engine/     The TypeScript audit engine: crawl, checks, fixes, strategy
+  src/lib/        The browser-held workspace store and the connector catalogue
+scripts/          Reference generator, demo seeder
 docs/reference/   Generated from the registries. Never edit by hand.
 deploy/           Dockerfiles. wrangler.jsonc at the root is Cloudflare.
 ```
@@ -52,7 +55,7 @@ deploy/           Dockerfiles. wrangler.jsonc at the root is Cloudflare.
 | `make api` / `make worker` / `make web` | The three processes |
 | `make test` / `make lint` | 141 tests; ruff and tsc |
 | `make docs` | Regenerate `docs/reference` from the registries |
-| `make cf-preview` | The Cloudflare demo Worker locally on :8788 |
+| `make cf-preview` | The Cloudflare Worker locally on :8788 |
 | `make docker` | Whole stack with Postgres |
 
 ## Invariants
@@ -83,23 +86,35 @@ style disagreement.
 - **`docs/reference` is generated.** Adding a tool, check, agent or mission
   means running `make docs` and committing the result. CI fails if it is stale.
 
-## The Cloudflare demo
+## The public deployment
 
-Cloudflare Workers cannot run Python, so the public demo is the dashboard plus
-a recorded API. `scripts/record_demo.py` drives the real FastAPI app in-process
-over a real crawl and writes `apps/web/src/demo/snapshot.json`; the Worker
-replays it. See `docs/DEPLOYMENT.md`.
+Cloudflare Workers cannot run Python, so the public deployment runs a second
+implementation of the audit, in TypeScript, split across two places:
 
-Two rules hold when touching it:
+- **The Worker fetches and parses.** `src/engine/fetcher.ts` and the two routes
+  under `src/app/api/engine/` read robots.txt, the sitemaps and the pages, in
+  batches of a few URLs per request. An edge runtime bills CPU per request, so
+  a hundred-page crawl is a hundred small requests, not one long one.
+- **The browser analyses and stores.** `src/engine/checks.ts`, `score.ts`,
+  `fixes.ts` and `strategy.ts` run client side over the crawl, and
+  `src/lib/store.ts` keeps the workspace in `localStorage`.
 
-- The demo never invents a payload. If a screen needs data, record it from the
-  API rather than writing it into the snapshot by hand.
-- Anything needing a credential, a worker or a real network call refuses with
-  an explanation. It must never pretend to have succeeded. The bulk-approval
-  refusal on high and critical risk is deliberate and stays.
+Three rules hold when touching it:
 
-Sample rows (drafts, approvals, the traffic series) are marked in the row
-itself and called out in the banner. Keep that honest as it changes.
+- Nothing is invented. Every number on every screen came from the crawl that
+  produced it. A capability that needs a credential says so and degrades with
+  a reason; it never pretends to have succeeded.
+- The catalogue in `src/engine/catalog.ts` shares its codes, severities and
+  weightings with `analysis/findings.py`, so the same problem scores the same
+  way in both engines. It is currently a superset: it carries extra codes the
+  browser engine can emit from a crawl alone. A code that exists in both must
+  never disagree, and the extras belong in the Python catalogue too. That is
+  the next piece of work on this side.
+- No model key of ours, ever. Drafting relays the tenant's own key through
+  `src/app/api/engine/llm/route.ts` and never stores it. Everything else (the
+  audit, the fixes, the schema, the briefs, the link plans) is deterministic
+  and needs no key at all. That property is load-bearing: the platform has to
+  keep working with every external account disconnected.
 
 ## Writing rules
 
@@ -128,6 +143,7 @@ broken Cloudflare build fails locally rather than on the live site.
 ## Deployment
 
 Push to `main`. Cloudflare builds from `wrangler.jsonc` at the repository root
-and deploys the dashboard automatically. A real installation is Docker
-Compose, or the three processes above with Postgres. `SEOOS_API_URL` on the
-Worker points the dashboard at a real backend, read per request, no rebuild.
+and deploys the Worker automatically. A server installation is Docker Compose,
+or the three processes above with Postgres. `SEOOS_API_URL` on the Worker
+additionally proxies `/api/v1` to that installation, read per request, with no
+rebuild.

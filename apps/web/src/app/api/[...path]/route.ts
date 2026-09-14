@@ -1,32 +1,24 @@
 /**
- * Runtime proxy to the API service.
+ * Proxy to a self-hosted API service.
  *
- * Keeping the browser on one origin removes CORS preflights and third-party
- * cookie problems. Reading the upstream URL per request (rather than through
- * a Next rewrite, which is resolved at build time) means the same built image
- * runs in development, staging and production.
+ * The dashboard on this deployment is local first: it runs the engine itself
+ * and keeps the workspace in the browser. A self-hosted installation also runs
+ * the Python service, and pointing SEOOS_API_URL at it makes every /api/v1
+ * path reachable from this same origin, which removes CORS preflights and
+ * third-party cookie problems for the CLI, the worker and anything else
+ * talking to it through the dashboard's domain.
+ *
+ * The URL is read per request rather than through a Next rewrite, because Next
+ * resolves rewrites at build time and bakes the destination into the route
+ * manifest. Reading it here means one built image runs in every environment.
  */
 
 import { NextRequest } from "next/server";
 
-import { handle as handleDemo } from "@/demo/api";
-
 export const dynamic = "force-dynamic";
 
-/**
- * The public demo has no Python service behind it: Cloudflare Workers cannot
- * host one. With SEOOS_DEMO=1 and no upstream configured, the recorded demo
- * API answers instead. Setting SEOOS_API_URL always wins, so pointing a demo
- * deployment at a real backend is one variable and no rebuild.
- */
-function demoMode(): boolean {
-  return process.env.SEOOS_DEMO === "1" && !process.env.SEOOS_API_URL;
-}
-
-// Read per request, not at module scope: Next inlines some process.env
-// references during the build, which would freeze the URL into the bundle.
-function upstream(): string {
-  return process.env.SEOOS_API_URL ?? "http://localhost:8000";
+function upstream(): string | null {
+  return process.env.SEOOS_API_URL ?? null;
 }
 
 // Hop-by-hop headers must not be forwarded, and the upstream sets its own.
@@ -37,19 +29,19 @@ const STRIP = new Set([
 ]);
 
 async function proxy(request: NextRequest, path: string[]) {
-  if (demoMode()) {
-    // Read the body once, lazily: most demo routes never look at it.
-    let cached: Promise<any> | null = null;
-    return handleDemo({
-      method: request.method,
-      segments: path,
-      params: request.nextUrl.searchParams,
-      cookie: request.headers.get("cookie"),
-      body: () => (cached ??= request.json().catch(() => ({}))),
-    });
+  const base = upstream();
+  if (!base) {
+    return Response.json(
+      {
+        code: "no_api_configured",
+        message:
+          "This deployment runs the engine in the browser and has no API service behind it. " +
+          "Set SEOOS_API_URL to proxy /api/v1 to a self-hosted installation.",
+      },
+      { status: 501 },
+    );
   }
 
-  const base = upstream();
   const target = new URL(`/api/${path.join("/")}`, base);
   target.search = request.nextUrl.search;
 
@@ -64,7 +56,7 @@ async function proxy(request: NextRequest, path: string[]) {
   }
 
   try {
-    const upstream = await fetch(target, {
+    const response = await fetch(target, {
       method: request.method,
       headers,
       body,
@@ -73,23 +65,20 @@ async function proxy(request: NextRequest, path: string[]) {
     });
 
     const responseHeaders = new Headers();
-    upstream.headers.forEach((value, key) => {
+    response.headers.forEach((value, key) => {
       if (!STRIP.has(key.toLowerCase())) responseHeaders.set(key, value);
     });
 
-    return new Response(upstream.body, {
-      status: upstream.status,
-      statusText: upstream.statusText,
+    return new Response(response.body, {
+      status: response.status,
+      statusText: response.statusText,
       headers: responseHeaders,
     });
-  } catch (error) {
-    // A dashboard that shows a blank screen when the API is down is worse
-    // than one that says the API is down.
+  } catch {
+    // A dashboard that shows a blank screen when the API is down is worse than
+    // one that says the API is down.
     return Response.json(
-      {
-        code: "api_unreachable",
-        message: `Could not reach the API at ${upstream()}. Is it running?`,
-      },
+      { code: "api_unreachable", message: `Could not reach the API at ${base}. Is it running?` },
       { status: 502 },
     );
   }
@@ -97,18 +86,8 @@ async function proxy(request: NextRequest, path: string[]) {
 
 type Context = { params: Promise<{ path: string[] }> };
 
-export async function GET(req: NextRequest, ctx: Context) {
-  return proxy(req, (await ctx.params).path);
-}
-export async function POST(req: NextRequest, ctx: Context) {
-  return proxy(req, (await ctx.params).path);
-}
-export async function PATCH(req: NextRequest, ctx: Context) {
-  return proxy(req, (await ctx.params).path);
-}
-export async function PUT(req: NextRequest, ctx: Context) {
-  return proxy(req, (await ctx.params).path);
-}
-export async function DELETE(req: NextRequest, ctx: Context) {
-  return proxy(req, (await ctx.params).path);
-}
+export async function GET(req: NextRequest, ctx: Context) { return proxy(req, (await ctx.params).path); }
+export async function POST(req: NextRequest, ctx: Context) { return proxy(req, (await ctx.params).path); }
+export async function PATCH(req: NextRequest, ctx: Context) { return proxy(req, (await ctx.params).path); }
+export async function PUT(req: NextRequest, ctx: Context) { return proxy(req, (await ctx.params).path); }
+export async function DELETE(req: NextRequest, ctx: Context) { return proxy(req, (await ctx.params).path); }

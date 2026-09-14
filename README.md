@@ -19,18 +19,29 @@ through the API and through the dashboard.
 53 agents · 8 missions · 60 tools · 21 connectors · 71 checks · 43 tables · 141 tests
 ```
 
-## The hosted demo
+## Try it without installing anything
 
-A Cloudflare Worker serves the dashboard with a recorded API behind it, so the
-product can be clicked through without installing anything. Sign in with any
-email and password.
+**[fullseoaeogeotool.jishhnnuu.workers.dev](https://fullseoaeogeotool.jishhnnuu.workers.dev/)**
 
-The pages, findings, scores and mission traces in it are from a real crawl of a
-real site. The drafts, approvals and traffic series are sample records, because
-writing content needs a model provider and measuring traffic needs a Search
-Console connection, and a public demo holds neither. The banner on every screen
-says which is which, and anything needing a credential refuses rather than
-pretending. See [Deployment](docs/DEPLOYMENT.md) for how the recording is made.
+Enter any website you own. It gets crawled for real, checked against the whole
+catalogue, and handed back with the fixes already written: titles, meta, JSON-LD,
+sitemap, robots.txt, llms.txt, internal link plans, alt text, content briefs and
+link prospects. No account, no card, no integrations.
+
+That deployment is one Cloudflare Worker. Workers cannot run Python, so the
+audit is implemented a second time in TypeScript: the Worker fetches and parses
+pages, the browser runs the checks and the scoring, and the workspace lives in
+your own browser. Nothing is stored on our side, which is also why exporting
+your workspace is on the Settings screen rather than buried.
+
+Long-form drafting is the one thing that needs a key, and it is yours: add an
+Anthropic, OpenAI, Google or OpenAI-compatible key in Settings and it relays
+straight through. The platform holds no model account of its own. Disconnect
+everything and the audit still runs end to end, which is the property that makes
+it infrastructure rather than a wrapper.
+
+For scheduled unattended runs, multiple users and server-side storage, run the
+full stack. See [Deployment](docs/DEPLOYMENT.md) for both shapes.
 
 ## Quick start
 
@@ -141,7 +152,8 @@ platform/
     missions/     engine, scheduler, 8 YAML workflows
     services/     approvals, findings, content, credentials, audit
     api/          FastAPI routes and security
-  apps/web/       Next.js dashboard
+  apps/web/       Next.js: the public site, the dashboard, and the
+                  TypeScript audit engine the hosted Worker runs
   tests/          141 tests
   docs/           architecture, agents, market analysis, operations
 ```
@@ -155,7 +167,7 @@ platform/
 - [Architecture](docs/ARCHITECTURE.md) — layers, decisions and why each was made
 - [The agency](docs/AGENTS.md) — how the roster works and the resolver ladder
 - [Operations](docs/OPERATIONS.md) — running it, scaling it, costing it
-- [Deployment](docs/DEPLOYMENT.md): the Cloudflare demo, and a real installation
+- [Deployment](docs/DEPLOYMENT.md): the hosted Worker, and a server installation
 - [Contributing](CONTRIBUTING.md) · [Security](SECURITY.md)
 
 **Generated from the code** (`make docs`, checked in CI so it cannot drift)

@@ -4,11 +4,14 @@ import Link from "next/link";
 import { useMemo, useState } from "react";
 
 import { useSite } from "@/lib/site-hooks";
+import { useAnalytics, useSearchQueries } from "@/lib/measured";
+import { useSession } from "@/lib/session";
 import {
   Badge,
   Card,
   CopyButton,
   Empty,
+  Notice,
   PageHeader,
   formatNumber,
   scopeLabel,
@@ -19,6 +22,18 @@ import {
 
 export default function ReportsPage() {
   const { site, runs, result } = useSite();
+  const { session } = useSession();
+
+  // The two measurements that turn a crawl report into a business report.
+  // Both are silent when the account has not connected them.
+  const search = useSearchQueries(Boolean(session.user), { siteId: site?.id, days: 28, dimensions: "page", limit: 50 });
+  const analytics = useAnalytics(Boolean(session.user), {
+    siteId: site?.id,
+    days: 28,
+    dimensions: "sessionDefaultChannelGroup",
+    metrics: "sessions,conversions,totalRevenue",
+    limit: 20,
+  });
   const withDiff = useMemo(() => runs.filter((r) => r.diff), [runs]);
   const [selected, setSelected] = useState<string | null>(null);
   const run = withDiff.find((r) => r.id === selected) ?? withDiff[0];
@@ -57,6 +72,105 @@ export default function ReportsPage() {
           ) : undefined
         }
       />
+
+      {search.data || analytics.data ? (
+        <Card title="What it earned">
+          <p className="small muted">
+            Twenty-eight days, measured rather than modelled. The crawl below says what changed on the site;
+            this says whether it showed up in the numbers.
+          </p>
+          <div className="stat-row">
+            {search.data ? (
+              <>
+                <div className="stat">
+                  <span className="stat-label">Clicks from search</span>
+                  <span className="stat-value">{formatNumber(search.data.totals.clicks)}</span>
+                </div>
+                <div className="stat">
+                  <span className="stat-label">Impressions</span>
+                  <span className="stat-value">{formatNumber(search.data.totals.impressions)}</span>
+                </div>
+                <div className="stat">
+                  <span className="stat-label">Average position</span>
+                  <span className="stat-value">{search.data.totals.position.toFixed(1)}</span>
+                </div>
+              </>
+            ) : null}
+            {analytics.data ? (
+              <>
+                <div className="stat">
+                  <span className="stat-label">Sessions</span>
+                  <span className="stat-value">
+                    {formatNumber(analytics.data.rows.reduce((sum, row) => sum + (row.metrics[0] ?? 0), 0))}
+                  </span>
+                </div>
+                <div className="stat">
+                  <span className="stat-label">Conversions</span>
+                  <span className="stat-value">
+                    {formatNumber(analytics.data.rows.reduce((sum, row) => sum + (row.metrics[1] ?? 0), 0))}
+                  </span>
+                </div>
+              </>
+            ) : null}
+          </div>
+
+          {analytics.data && analytics.data.rows.length > 0 ? (
+            <div className="table-scroll" style={{ marginTop: "1rem" }}>
+              <table>
+                <thead>
+                  <tr>
+                    <th>Channel</th>
+                    <th className="num">Sessions</th>
+                    <th className="num">Conversions</th>
+                    <th className="num">Revenue</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {analytics.data.rows.map((row) => (
+                    <tr key={row.dimensions[0]}>
+                      <td>{row.dimensions[0]}</td>
+                      <td className="num">{formatNumber(row.metrics[0])}</td>
+                      <td className="num">{formatNumber(row.metrics[1])}</td>
+                      <td className="num">{formatNumber(row.metrics[2], 2)}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          ) : null}
+
+          {search.data && search.data.rows.length > 0 ? (
+            <div className="table-scroll" style={{ marginTop: "1rem" }}>
+              <table>
+                <thead>
+                  <tr>
+                    <th>Page</th>
+                    <th className="num">Clicks</th>
+                    <th className="num">Impressions</th>
+                    <th className="num">Position</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {search.data.rows.slice(0, 25).map((row) => (
+                    <tr key={row.keys[0]}>
+                      <td className="truncate">{shortUrl(row.keys[0], 60)}</td>
+                      <td className="num">{formatNumber(row.clicks)}</td>
+                      <td className="num">{formatNumber(row.impressions)}</td>
+                      <td className="num">{row.position.toFixed(1)}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          ) : null}
+        </Card>
+      ) : session.user ? (
+        <Notice kind="warn" title="This report shows crawl movement, not money">
+          {search.reason ?? "Search Console is not connected."}{" "}
+          <Link href={`/app/sites/${site.id}/integrations`}>Connect Search Console and Analytics</Link> and the
+          same report says what the work earned rather than only what it changed.
+        </Notice>
+      ) : null}
 
       <Card>
         <p style={{ marginBottom: "0.7rem" }}><strong>{diff.headline}</strong></p>

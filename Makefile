@@ -67,6 +67,9 @@ test: $(VENV)
 lint: $(VENV)
 	$(VENV)/bin/ruff check packages tests scripts
 	npm run typecheck
+	# The D1 schema lives in TypeScript and is mirrored to .sql. Catch drift here
+	# rather than when someone runs the migration by hand and gets an old schema.
+	node scripts/d1-sql.mjs --check
 
 docker:
 	docker compose up --build

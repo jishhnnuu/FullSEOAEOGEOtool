@@ -7,6 +7,7 @@
 
 import { newId } from "@/server/crypto";
 import { baseUrl, env } from "@/server/env";
+import { ensureSchema } from "@/server/schema";
 import { handleError, redirect } from "@/server/http";
 import { insert, inMinutes, nowIso } from "@/server/db";
 import { identify } from "@/server/session";
@@ -22,6 +23,7 @@ export async function GET(request: Request): Promise<Response> {
 
   try {
     const e = await env();
+    await ensureSchema(e);
     const who = await identify(e, request);
     if (!who) {
       const to = new URL("/app/signin", request.url);

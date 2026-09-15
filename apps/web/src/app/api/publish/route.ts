@@ -16,7 +16,7 @@ import { newId } from "@/server/crypto";
 import { fail, json, notFound, withAuth } from "@/server/http";
 import { fetchScoped, listScoped, insert, nowIso, record, updateScoped } from "@/server/db";
 import { connectionFor, type ConnectionRow } from "@/server/connections";
-import { publish as wpPublish, type PublishAction } from "@/server/wordpress";
+import { planFor, publish as wpPublish, type PublishAction, type PublishRequest } from "@/server/wordpress";
 
 export const dynamic = "force-dynamic";
 
@@ -46,7 +46,12 @@ export async function GET(request: Request): Promise<Response> {
 
 export async function POST(request: Request): Promise<Response> {
   return withAuth(request, async ({ e, who }) => {
-    const body = (await request.json().catch(() => ({}))) as { approvalId?: string; action?: PublishAction };
+    const body = (await request.json().catch(() => ({}))) as {
+      approvalId?: string;
+      action?: PublishAction;
+      /** A URL and a field, resolved to a post id on this side. */
+      target?: PublishRequest;
+    };
     if (!body.approvalId) return fail("no_approval", "A publish has to name the approval it is carrying out.");
 
     const approval = await fetchScoped<ApprovalRow>(e, "approvals", body.approvalId, who.orgId);
@@ -65,8 +70,12 @@ export async function POST(request: Request): Promise<Response> {
     const site = await fetchScoped<{ id: string; url: string }>(e, "sites", approval.site_id, who.orgId);
     if (!site) return notFound();
 
-    const action = body.action ?? (approval.payload ? (JSON.parse(approval.payload) as { action?: PublishAction }).action : undefined);
-    if (!action) return fail("no_action", "That approval carries nothing that can be published.");
+    const stored = approval.payload
+      ? (JSON.parse(approval.payload) as { action?: PublishAction; request?: PublishRequest })
+      : {};
+    let action = body.action ?? stored.action;
+    const wanted = body.target ?? stored.request;
+    if (!action && !wanted) return fail("no_action", "That approval carries nothing that can be published.");
 
     const connection: ConnectionRow | null = await connectionFor(e, who.orgId, "wordpress", approval.site_id);
     if (!connection) {
@@ -79,6 +88,16 @@ export async function POST(request: Request): Promise<Response> {
     }
     const selection = connection.selection ? (JSON.parse(connection.selection) as { siteUrl?: string; seoPlugin?: "yoast" | "rankmath" | null }) : {};
     if (!selection.siteUrl) return fail("no_target", "That connection does not say which site it points at.");
+
+    // The browser knows the URL the finding was on; WordPress writes by id.
+    // Resolving here rather than in the browser keeps the credential server
+    // side and means an unresolvable URL is reported rather than guessed at.
+    if (!action && wanted) {
+      const plan = await planFor(e, connection, selection.siteUrl, wanted);
+      if (!plan.action) return fail("unresolved", plan.reason, 409);
+      action = plan.action;
+    }
+    if (!action) return fail("no_action", "That approval carries nothing that can be published.");
 
     // The connection's own site has to be the site the approval is for.
     if (new URL(selection.siteUrl).host !== new URL(site.url).host) {

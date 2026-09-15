@@ -1,6 +1,7 @@
 /** One run, to the account that owns it or the browser that started it. */
 
 import { env } from "@/server/env";
+import { ensureSchema } from "@/server/schema";
 import { handleError, json, notFound } from "@/server/http";
 import { identify, readCookie, CLAIM_COOKIE } from "@/server/session";
 import { readRun } from "@/server/runs";
@@ -11,6 +12,7 @@ export async function GET(request: Request, context: { params: Promise<{ id: str
   const { id } = await context.params;
   try {
     const e = await env();
+    await ensureSchema(e);
     const who = await identify(e, request).catch(() => null);
     const row = await readRun(e, id, { orgId: who?.orgId, claimToken: readCookie(request, CLAIM_COOKIE) });
     if (!row) return notFound();

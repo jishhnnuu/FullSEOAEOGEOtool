@@ -8,6 +8,7 @@
 
 import { sha256Hex } from "@/server/crypto";
 import { env } from "@/server/env";
+import { ensureSchema } from "@/server/schema";
 import { database } from "@/server/env";
 import { handleError, redirect } from "@/server/http";
 import { isExpired, nowIso, record, sweep } from "@/server/db";
@@ -28,6 +29,7 @@ export async function GET(request: Request): Promise<Response> {
 
   try {
     const e = await env();
+    await ensureSchema(e);
     const id = await sha256Hex(token);
     const row = await database(e)
       .prepare("SELECT * FROM login_tokens WHERE id = ?1 LIMIT 1")

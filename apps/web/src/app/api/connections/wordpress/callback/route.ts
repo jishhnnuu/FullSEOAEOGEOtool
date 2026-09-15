@@ -8,6 +8,7 @@
  */
 
 import { env } from "@/server/env";
+import { ensureSchema } from "@/server/schema";
 import { database } from "@/server/env";
 import { handleError, redirect } from "@/server/http";
 import { isExpired, record, updateScoped, nowIso } from "@/server/db";
@@ -25,6 +26,7 @@ export async function GET(request: Request): Promise<Response> {
 
   try {
     const e = await env();
+    await ensureSchema(e);
     if (!state) return redirect("/app/settings?error=" + encodeURIComponent("That reply was missing its state."));
 
     const pending = await database(e)

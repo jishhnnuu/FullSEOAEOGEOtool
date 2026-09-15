@@ -101,19 +101,19 @@ function SignIn() {
             ) : null}
             <div className="button-row" style={{ marginTop: "1.2rem" }}>
               <Link href="/app" className="button primary">Open the workspace</Link>
-              <Link href="/" className="button">Back to the site</Link>
+              <Link href="/app/setup" className="button">What is missing</Link>
             </div>
           </Card>
         ) : server === "schema_missing" ? (
           <Card className="auth-card">
-            <h1>The database is there but empty</h1>
+            <h1>The tables are still being built</h1>
             <p className="muted small">
-              A D1 database is bound to this Worker, but the schema has not been applied yet, so there are no
-              tables to hold an account.
+              A database is bound to this Worker and the schema applies itself on the next request. Reload in a
+              moment. If this screen persists, something is refusing the write.
             </p>
-            <Notice kind="warn" title="One command fixes it">
-              npx wrangler d1 migrations apply seoos --remote
-            </Notice>
+            <div className="button-row" style={{ marginTop: "1.2rem" }}>
+              <Link href="/app/setup" className="button primary">Check the setup</Link>
+            </div>
           </Card>
         ) : (
           <Card className="auth-card">
@@ -129,7 +129,8 @@ function SignIn() {
               </a>
             ) : (
               <Notice kind="warn" title="Google sign-in is not configured on this deployment">
-                {gaps.find((gap) => gap.capability === "google")?.fix ?? "Set GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET as Worker secrets."}
+                {gaps.find((gap) => gap.capability === "google")?.fix ?? "Set GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET as Worker secrets."}{" "}
+                <Link href="/app/setup">The setup screen lists every value.</Link>
               </Notice>
             )}
 

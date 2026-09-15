@@ -4,14 +4,22 @@ import Link from "next/link";
 import { useMemo, useState } from "react";
 
 import { useSite } from "@/lib/site-hooks";
-import { Badge, Card, Empty, Notice, PageHeader, Tabs, shortUrl } from "@/components/ui";
+import { useSearchQueries } from "@/lib/measured";
+import { useSession } from "@/lib/session";
+import { Badge, Card, Empty, Notice, PageHeader, Tabs, formatNumber, shortUrl } from "@/components/ui";
 
-type View = "terms" | "gaps" | "cannibal";
+type View = "measured" | "terms" | "gaps" | "cannibal";
 
 export default function KeywordsPage() {
   const { site, result } = useSite();
+  const { session } = useSession();
   const [view, setView] = useState<View>("terms");
   const [kind, setKind] = useState("all");
+
+  // Real queries when there is an account with Search Console on it. The hook
+  // does nothing at all when there is not, so a signed-out visitor makes no
+  // request and waits for nothing.
+  const measured = useSearchQueries(Boolean(session.user), { siteId: site?.id, days: 28, limit: 250 });
 
   const rows = useMemo(() => {
     if (!result) return [];
@@ -32,7 +40,7 @@ export default function KeywordsPage() {
 
   const gaps = result.keywords.filter((k) => k.gap);
   const cannibal = result.keywords.filter((k) => k.cannibalised.length > 1);
-  const hasGsc = site.integrations.some((i) => i.provider === "gsc" && i.status === "connected");
+  const hasGsc = measured.data !== null;
 
   return (
     <>
@@ -41,17 +49,36 @@ export default function KeywordsPage() {
         description="Built with tf-idf over your own pages, weighted towards titles and headings. It says what the site is currently about, which is the thing most keyword tools never tell you."
       />
 
-      {!hasGsc && (
-        <Notice kind="warn">
-          This is a model of your own content, not real search demand. Connect{" "}
-          <Link href={`/app/sites/${site.id}/integrations`}>Search Console</Link> and it is replaced by the queries
-          people actually typed before they reached you, which is free and better than most paid keyword data for
-          any site that already ranks for something.
+      {hasGsc ? (
+        <Notice kind="ok" title="These are measured, not modelled">
+          {formatNumber(measured.data!.totals.impressions)} impressions and{" "}
+          {formatNumber(measured.data!.totals.clicks)} clicks over 28 days, from{" "}
+          <span className="mono tiny">{measured.data!.property}</span>. Search Console data lags by about three
+          days, so the window ends there rather than today.
+        </Notice>
+      ) : measured.loading ? (
+        <Notice kind="info">Reading Search Console.</Notice>
+      ) : (
+        <Notice kind="warn" title="This is a model of your own content, not real search demand">
+          {measured.reason ? (
+            <>
+              {measured.reason} {measured.fix ?? ""}{" "}
+            </>
+          ) : (
+            <>
+              Connect <Link href={`/app/sites/${site.id}/integrations`}>Search Console</Link> and the list below is
+              replaced by the queries people actually typed before they reached you.{" "}
+            </>
+          )}
+          It is free, and for any site that already ranks for something it beats most paid keyword data.
         </Notice>
       )}
 
       <Tabs
         tabs={[
+          ...(hasGsc
+            ? [{ key: "measured" as View, label: "What people searched", count: measured.data!.rows.length }]
+            : []),
           { key: "terms" as View, label: "What the site is about", count: result.keywords.length },
           { key: "gaps" as View, label: "Named but missing", count: gaps.length },
           { key: "cannibal" as View, label: "Competing with itself", count: cannibal.length },
@@ -59,6 +86,46 @@ export default function KeywordsPage() {
         active={view}
         onChange={setView}
       />
+
+      {view === "measured" && measured.data && (
+        <Card>
+          <div className="table-scroll">
+            <table>
+              <thead>
+                <tr>
+                  <th>Query</th>
+                  <th className="num">Clicks</th>
+                  <th className="num">Impressions</th>
+                  <th className="num">CTR</th>
+                  <th className="num">Position</th>
+                </tr>
+              </thead>
+              <tbody>
+                {measured.data.rows.slice(0, 200).map((row) => (
+                  <tr key={row.keys.join("|")}>
+                    <td>{row.keys[0]}</td>
+                    <td className="num">{formatNumber(row.clicks)}</td>
+                    <td className="num">{formatNumber(row.impressions)}</td>
+                    <td className="num">{(row.ctr * 100).toFixed(1)}%</td>
+                    <td className="num">
+                      {row.position.toFixed(1)}
+                      {/* Page two is where impressions exist and clicks do not.
+                          It is the cheapest work on any established site. */}
+                      {row.position > 10 && row.position <= 20 && row.impressions > 50 ? (
+                        <Badge kind="warn">page 2</Badge>
+                      ) : null}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          <p className="tiny faint" style={{ marginTop: "0.6rem", marginBottom: 0 }}>
+            Rows marked page 2 are ranking between 11 and 20 with real impressions behind them. Those are the
+            ones worth a rewrite first: the page already qualifies, it just is not being clicked.
+          </p>
+        </Card>
+      )}
 
       {view === "terms" && (
         <>

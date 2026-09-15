@@ -6,6 +6,7 @@
  */
 
 import { baseUrl, env } from "@/server/env";
+import { ensureSchema } from "@/server/schema";
 import { handleError, redirect } from "@/server/http";
 import { exchangeCode, profileFrom, takeState } from "@/server/google";
 import { createSession, upsertUser, isSecure, readCookie, clearCookie, CLAIM_COOKIE } from "@/server/session";
@@ -32,6 +33,7 @@ export async function GET(request: Request): Promise<Response> {
 
   try {
     const e = await env();
+    await ensureSchema(e);
     const pending = await takeState(e, state);
     if (!pending || pending.kind !== "signin") {
       return back(request, "That sign-in link has already been used or has expired. Start again.");

@@ -84,8 +84,8 @@ deploy/           Dockerfiles. wrangler.jsonc at the root is Cloudflare.
 | `make test` / `make lint` | 141 tests; ruff and tsc |
 | `make docs` | Regenerate `docs/reference` from the registries |
 | `make cf-preview` | The Cloudflare Worker locally on :8788 |
-| `npm run cf:setup` | Create the D1 database, apply the schema, set the secrets |
-| `npm run cf:migrate` | Apply new D1 migrations to the live database |
+| `npm run cf:setup` | Optional. Does the Cloudflare side of `docs/ACCOUNTS.md` from a terminal |
+| `npm run d1:sql` | Regenerate `deploy/d1/migrations` from `src/server/schema.ts` |
 | `make docker` | Whole stack with Postgres |
 
 ## Invariants
@@ -157,9 +157,14 @@ Three rules hold when touching it:
   the next piece of work on this side.
 - Accounts are additive, never load-bearing. `src/server/` needs a D1 binding
   and a Google OAuth client, and reports each missing one as a sentence a
-  person can act on rather than throwing. `docs/ACCOUNTS.md` is the whole
-  setup. Signing in adds a server copy of the workspace and the tokens that let
-  scheduled work happen; it does not move the audit off the browser.
+  person can act on rather than throwing. Signing in adds a server copy of the
+  workspace and the tokens that let scheduled work happen; it does not move the
+  audit off the browser.
+- Provisioning needs a browser, never a particular machine. The schema applies
+  itself (`src/server/schema.ts`), secrets are dashboard fields, and
+  `/app/setup` reports what is still missing on the running deployment. Adding
+  a step that only works from a laptop with credentials on it is a regression,
+  whatever it saves.
 - No model key of ours, ever. Drafting relays the tenant's own key through
   `src/app/api/engine/llm/route.ts` and never stores it. Everything else (the
   audit, the fixes, the schema, the briefs, the link plans) is deterministic

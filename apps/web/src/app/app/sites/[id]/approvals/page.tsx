@@ -6,6 +6,8 @@ import { useMemo, useState } from "react";
 import { applyApproval } from "@/lib/runner";
 import { logActivity, type ApprovalRecord } from "@/lib/store";
 import { useSite } from "@/lib/site-hooks";
+import { publishNow, publishable, serverSiteFor, type PublishOutcome } from "@/lib/publish";
+import { useConnections, useSession } from "@/lib/session";
 import {
   Badge,
   BeforeAfter,
@@ -21,10 +23,23 @@ import {
 
 type View = "pending" | "decided";
 
+/** True for a change that a CMS connection could write, if one existed. */
+function publishableShape(approval: ApprovalRecord): boolean {
+  return approval.fix?.kind === "meta" || approval.fix?.kind === "copy";
+}
+
 export default function ApprovalsPage() {
   const { site, workspace, mutate } = useSite();
+  const { session } = useSession();
+  const { connections } = useConnections(Boolean(session.user));
   const [view, setView] = useState<View>("pending");
   const [note, setNote] = useState<Record<string, string>>({});
+  const [publishing, setPublishing] = useState<string | null>(null);
+  const [outcome, setOutcome] = useState<Record<string, PublishOutcome>>({});
+
+  // A CMS that can actually be written to, as opposed to one whose key is in
+  // this browser. Only a server-side connection can publish.
+  const cms = connections.find((c) => c.provider === "wordpress" && c.status === "connected") ?? null;
 
   const all = useMemo(
     () => workspace.approvals.filter((a) => a.siteId === site?.id),
@@ -56,6 +71,63 @@ export default function ApprovalsPage() {
 
   function approveBatch(items: ApprovalRecord[]) {
     for (const item of items) decide(item, "approved");
+  }
+
+  /**
+   * Approve and push it live in one gesture.
+   *
+   * Separate from Approve on purpose. Approving is a decision and publishing
+   * is what the decision causes, and a screen that conflates them is a screen
+   * where someone changes a live site by accident.
+   */
+  async function approveAndPublish(approval: ApprovalRecord) {
+    const plan = publishable(approval);
+    if (!plan || !site) return;
+    setPublishing(approval.id);
+    try {
+      const serverSiteId = await serverSiteFor(site.baseUrl);
+      if (!serverSiteId) {
+        setOutcome({
+          ...outcome,
+          [approval.id]: {
+            ok: false,
+            before: null,
+            after: null,
+            message: "This site is not in your account on the server yet. Run the audit once while signed in and it will be.",
+          },
+        });
+        return;
+      }
+      const result = await publishNow(approval, serverSiteId, plan);
+      setOutcome({ ...outcome, [approval.id]: result });
+      if (result.ok) {
+        mutate((w) => {
+          const record = w.approvals.find((a) => a.id === approval.id);
+          if (!record) return;
+          record.status = "applied";
+          record.decidedAt = new Date().toISOString();
+          record.note = `Published to the live site. Previous value kept, so this can be reversed.`;
+          logActivity(w, {
+            siteId: approval.siteId,
+            actor: "you",
+            action: "Published",
+            detail: approval.title,
+          });
+        });
+      }
+    } catch (error) {
+      setOutcome({
+        ...outcome,
+        [approval.id]: {
+          ok: false,
+          before: null,
+          after: null,
+          message: error instanceof Error ? error.message : "That did not publish.",
+        },
+      });
+    } finally {
+      setPublishing(null);
+    }
   }
 
   return (
@@ -136,6 +208,21 @@ export default function ApprovalsPage() {
                           </>
                         )}
 
+                        {outcome[approval.id] ? (
+                          <Notice
+                            kind={outcome[approval.id].ok ? "ok" : "warn"}
+                            title={outcome[approval.id].ok ? "Published to the live site" : "Not published"}
+                          >
+                            {outcome[approval.id].message}
+                            {outcome[approval.id].ok && outcome[approval.id].before !== null ? (
+                              <>
+                                {" "}The previous value was kept, so this can be reversed:{" "}
+                                <span className="mono tiny">{outcome[approval.id].before || "(empty)"}</span>
+                              </>
+                            ) : null}
+                          </Notice>
+                        ) : null}
+
                         <input
                           placeholder="A note, if you want one on the record"
                           value={note[approval.id] ?? ""}
@@ -143,11 +230,33 @@ export default function ApprovalsPage() {
                         />
 
                         <div className="button-row">
-                          <button className="primary small" onClick={() => decide(approval, "approved")}>Approve</button>
+                          {cms && publishable(approval) ? (
+                            <button
+                              className="primary small"
+                              disabled={publishing !== null}
+                              onClick={() => void approveAndPublish(approval)}
+                            >
+                              {publishing === approval.id ? "Publishing" : "Approve and publish"}
+                            </button>
+                          ) : null}
+                          <button
+                            className={cms && publishable(approval) ? "small" : "primary small"}
+                            onClick={() => decide(approval, "approved")}
+                          >
+                            Approve{cms && publishable(approval) ? " without publishing" : ""}
+                          </button>
                           <button className="small" onClick={() => decide(approval, "changes_requested")}>Request changes</button>
                           <button className="small danger" onClick={() => decide(approval, "rejected")}>Reject</button>
                           {approval.fix && <CopyButton text={approval.fix.after} label="Copy the change" />}
                         </div>
+
+                        {!cms && approval.fix && publishableShape(approval) ? (
+                          <p className="tiny faint" style={{ margin: 0 }}>
+                            {session.user
+                              ? "Connect WordPress and this becomes a button rather than something to paste."
+                              : "Sign in and connect a CMS and this becomes a button rather than something to paste."}
+                          </p>
+                        ) : null}
                       </div>
                     </details>
                   ))}

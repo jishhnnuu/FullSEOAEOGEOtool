@@ -8,6 +8,7 @@
  */
 
 import { baseUrl, env, NotConfigured } from "@/server/env";
+import { ensureSchema } from "@/server/schema";
 import { handleError, redirect } from "@/server/http";
 import { IDENTITY_SCOPES, startAuth } from "@/server/google";
 import { readCookie, CLAIM_COOKIE } from "@/server/session";
@@ -17,6 +18,7 @@ export const dynamic = "force-dynamic";
 export async function GET(request: Request): Promise<Response> {
   try {
     const e = await env();
+    await ensureSchema(e);
     const next = new URL(request.url).searchParams.get("next") ?? "/app";
     const url = await startAuth(e, {
       kind: "signin",

@@ -7,6 +7,7 @@
  */
 
 import { authMethods, env } from "@/server/env";
+import { ensureSchema } from "@/server/schema";
 import { json, sameOrigin, fail } from "@/server/http";
 import { identify, destroySession, isSecure, clearCookie, SESSION_COOKIE, CLAIM_COOKIE } from "@/server/session";
 import { schemaReady } from "@/server/db";
@@ -15,6 +16,7 @@ export const dynamic = "force-dynamic";
 
 export async function GET(request: Request): Promise<Response> {
   const e = await env();
+  await ensureSchema(e);
   const methods = await authMethods();
   const who = await identify(e, request).catch(() => null);
   const ready = methods.ready ? await schemaReady(e) : false;
@@ -44,6 +46,7 @@ export async function GET(request: Request): Promise<Response> {
 export async function DELETE(request: Request): Promise<Response> {
   if (!sameOrigin(request)) return fail("bad_origin", "That request did not come from this site.", 403);
   const e = await env();
+  await ensureSchema(e);
   await destroySession(e, request).catch(() => undefined);
   const secure = isSecure(request);
   const headers = new Headers({ "content-type": "application/json", "cache-control": "no-store" });

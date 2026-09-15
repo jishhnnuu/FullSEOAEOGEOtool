@@ -8,6 +8,7 @@
  */
 
 import { baseUrl, env, NotConfigured } from "@/server/env";
+import { ensureSchema } from "@/server/schema";
 import { handleError, redirect } from "@/server/http";
 import { PRODUCT_SCOPES, startAuth } from "@/server/google";
 import { identify } from "@/server/session";
@@ -22,6 +23,7 @@ export async function GET(request: Request): Promise<Response> {
 
   try {
     const e = await env();
+    await ensureSchema(e);
     const who = await identify(e, request);
     if (!who) {
       const to = new URL("/app/signin", request.url);

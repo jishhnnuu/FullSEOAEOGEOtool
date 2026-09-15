@@ -3,6 +3,7 @@
  */
 
 import { env, NotConfigured, type Env } from "./env";
+import { ensureSchema } from "./schema";
 import { identify, type Identity } from "./session";
 
 export type ApiError = { code: string; message: string; fix?: string };
@@ -66,6 +67,7 @@ export async function withAuth(
   if (!sameOrigin(request)) return fail("bad_origin", "That request did not come from this site.", 403);
   try {
     const e = await env();
+    await ensureSchema(e);
     const who = await identify(e, request);
     if (!who) return unauthorized();
     return await handler({ e, who });
@@ -82,6 +84,7 @@ export async function withEnv(
   if (!sameOrigin(request)) return fail("bad_origin", "That request did not come from this site.", 403);
   try {
     const e = await env();
+    await ensureSchema(e);
     const who = await identify(e, request).catch(() => null);
     return await handler(e, who);
   } catch (error) {

@@ -20,17 +20,38 @@ The magic link is the only part that needs a third party, and it is optional:
 without `RESEND_API_KEY` the sign-in screen offers Google alone and does not
 pretend otherwise.
 
-## Setup, in one command and one form
+## Setup, from a browser, on any device
 
-```bash
-npm run cf:setup
+Nothing here needs a terminal, a laptop, or a particular machine. Four things,
+and the running deployment tells you which are done: open `/app/setup` on the
+live site and it re-checks itself every fifteen seconds.
+
+**1. Create the database.** Cloudflare dashboard, Storage and Databases, D1,
+Create. Call it `seoos`. Copy the database ID it shows you.
+
+**2. Bind it to the Worker.** The binding has to be in `wrangler.jsonc`,
+because Cloudflare rebuilds the Worker from that file on every push. Add it
+above the `observability` block:
+
+```jsonc
+  "d1_databases": [
+    { "binding": "DB", "database_name": "seoos", "database_id": "the id you copied" }
+  ],
 ```
 
-It creates the D1 database, writes the binding into `wrangler.jsonc`, applies
-the schema, and sets the secrets. Run it from a machine logged into wrangler
-(`npx wrangler login`), then commit the `wrangler.jsonc` change and push.
+You can do that from github.com in a browser: edit the file, commit, and
+Cloudflare redeploys. **The tables build themselves** on the first request
+after that. There is no migration command to run.
 
-The one thing it cannot do for you is the Google OAuth client.
+**3. Add the secrets.** Cloudflare dashboard, Workers, this Worker, Settings,
+Variables and Secrets. Add each as a Secret, not a Variable. These survive
+every deploy, so they are set once.
+
+**4. Create the Google OAuth client.** The only step that is not Cloudflare,
+below. `/app/setup` prints the exact two URLs to paste, with a copy button.
+
+There is also `npm run cf:setup`, which does steps 1 to 3 in one command for
+anyone who prefers a terminal. It is a convenience, not the path.
 
 ### The Google OAuth client
 
@@ -75,18 +96,42 @@ derived from the request unless `PUBLIC_BASE_URL` overrides it.
 
 ## The secrets
 
+Set in the Cloudflare dashboard, under Workers, this Worker, Settings,
+Variables and Secrets. Adding them there rather than in a file is deliberate:
+a secret in `wrangler.jsonc` would be in git, and a secret set from one laptop
+would be a secret only that laptop could rotate.
+
 | Name | Required | What it does |
 | --- | --- | --- |
-| `SEOOS_MASTER_KEY` | Yes, for connections | Seals every stored credential. 32 bytes, base64. `openssl rand -base64 32` |
+| `SEOOS_MASTER_KEY` | Yes, for connections | Seals every stored credential. 32 bytes, base64. Any password generator set to 32 bytes works, or `openssl rand -base64 32` |
 | `GOOGLE_CLIENT_ID` | Yes, for sign-in | The OAuth client |
 | `GOOGLE_CLIENT_SECRET` | Yes, for sign-in | |
 | `RESEND_API_KEY` | No | Turns on the magic-link fallback |
 | `MAIL_FROM` | No | Defaults to Resend's test sender |
 | `PUBLIC_BASE_URL` | No | Pins the OAuth redirect to a custom domain |
 
-Set each with `npx wrangler secret put NAME`. Losing `SEOOS_MASTER_KEY` means
-every connected account has to be reconnected; nothing else is lost, because a
-sealed row is worthless without it and that is the point.
+Losing `SEOOS_MASTER_KEY` means every connected account has to be reconnected.
+Nothing else is lost, because a sealed row is worthless without it, and that is
+the point. Keep a copy somewhere that is not this deployment.
+
+## What is tied to a machine, and what is not
+
+Nothing about running this product is. Once the four steps above are done, the
+configuration lives in Cloudflare and Google, and the product is a website:
+any browser, any device, any country, nothing installed, no account with any
+vendor except the one you signed in with.
+
+The audit itself has always been free of all of it. It makes no model call, so
+it needs no AI account of anyone's, including the one this was built with.
+Drafting is the single feature that calls a model, and it relays the tenant's
+own key through one route that never stores it. Disconnect everything and the
+crawl, the checks, the scoring, the fixes, the schema, the briefs and the link
+plans all still work, because they are deterministic code rather than prompts.
+
+What does need an account is provisioning: someone has to own the Cloudflare
+Worker and the Google OAuth client, the same way someone has to own the domain.
+That is ownership, not a dependency, and it can be moved by handing over two
+logins.
 
 ## The shape of it
 

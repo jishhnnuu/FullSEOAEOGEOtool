@@ -48,19 +48,19 @@ export class NotConfigured extends Error {
 const DB_GAP: Gap = {
   capability: "accounts",
   reason: "This deployment has no database bound, so there is nowhere to keep an account.",
-  fix: "Run `npm run cf:setup` once against your Cloudflare account. It creates the D1 database, writes the binding into wrangler.jsonc and applies the schema.",
+  fix: "Create a D1 database in the Cloudflare dashboard and bind it to this Worker as DB. The tables build themselves on the first request after that. docs/ACCOUNTS.md has the four steps.",
 };
 
 const KEY_GAP: Gap = {
   capability: "credentials",
   reason: "SEOOS_MASTER_KEY is not set, so no connected account's token can be stored safely.",
-  fix: "Run `npx wrangler secret put SEOOS_MASTER_KEY` and paste the output of `openssl rand -base64 32`.",
+  fix: "Add it as a secret in the Cloudflare dashboard, under Workers, Settings, Variables and Secrets. Any 32 random bytes, base64 encoded.",
 };
 
 const GOOGLE_GAP: Gap = {
   capability: "google",
   reason: "No Google OAuth client is configured on this deployment.",
-  fix: "Create a Web application client in Google Cloud Console, then set GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET as Worker secrets. `npm run cf:setup` walks through it.",
+  fix: "Create a Web application client in Google Cloud Console, then add GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET as secrets in the Cloudflare dashboard. The setup screen at /app/setup lists the exact redirect URLs to paste.",
 };
 
 /** The database, or a stated reason there is none. */

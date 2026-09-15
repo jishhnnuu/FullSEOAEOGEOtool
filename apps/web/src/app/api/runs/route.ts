@@ -8,6 +8,7 @@
  */
 
 import { env } from "@/server/env";
+import { ensureSchema } from "@/server/schema";
 import { fail, json, handleError, sameOrigin } from "@/server/http";
 import { identify, isSecure, setCookie, CLAIM_COOKIE } from "@/server/session";
 import { ensureSite, listRuns, saveRun, CLAIM_DAYS } from "@/server/runs";
@@ -18,6 +19,7 @@ export const dynamic = "force-dynamic";
 export async function GET(request: Request): Promise<Response> {
   try {
     const e = await env();
+    await ensureSchema(e);
     const who = await identify(e, request).catch(() => null);
     if (!who) return json({ runs: [] });
     const site = new URL(request.url).searchParams.get("site") ?? undefined;
@@ -43,6 +45,7 @@ export async function POST(request: Request): Promise<Response> {
   if (!sameOrigin(request)) return fail("bad_origin", "That request did not come from this site.", 403);
   try {
     const e = await env();
+    await ensureSchema(e);
     const who = await identify(e, request).catch(() => null);
     const body = (await request.json().catch(() => ({}))) as {
       url?: string;

@@ -11,6 +11,7 @@
  */
 
 import { baseUrl, env } from "@/server/env";
+import { ensureSchema } from "@/server/schema";
 import { handleError, redirect } from "@/server/http";
 import { exchangeCode, profileFrom, takeState, PRODUCT_SCOPES } from "@/server/google";
 import { saveConnection, getConnection, type Provider } from "@/server/connections";
@@ -35,6 +36,7 @@ export async function GET(request: Request): Promise<Response> {
 
   try {
     const e = await env();
+    await ensureSchema(e);
     const pending = state ? await takeState(e, state) : null;
     const next = pending?.next ?? "/app/settings";
 

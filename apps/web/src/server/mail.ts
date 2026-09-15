@@ -1,0 +1,49 @@
+/**
+ * The magic link, for people who will not use a Google account.
+ *
+ * Sending email is the one part of this that needs a paid service sooner or
+ * later. Resend's free tier covers a product being tested, and until a key is
+ * set the sign-in screen does not offer the option at all rather than
+ * accepting an address and dropping the message on the floor.
+ */
+
+import type { Env } from "./env";
+
+export type SendResult = { ok: true } | { ok: false; reason: string };
+
+export function canSend(e: Env): boolean {
+  return Boolean(e.RESEND_API_KEY);
+}
+
+export async function sendLoginLink(e: Env, to: string, link: string): Promise<SendResult> {
+  if (!e.RESEND_API_KEY) {
+    return {
+      ok: false,
+      reason:
+        "No email sender is configured on this deployment, so a sign-in link cannot be sent. " +
+        "Set RESEND_API_KEY as a Worker secret, or sign in with Google instead.",
+    };
+  }
+  const from = e.MAIL_FROM ?? "SEO OS <onboarding@resend.dev>";
+  const response = await fetch("https://api.resend.com/emails", {
+    method: "POST",
+    headers: { authorization: `Bearer ${e.RESEND_API_KEY}`, "content-type": "application/json" },
+    body: JSON.stringify({
+      from,
+      to: [to],
+      subject: "Your sign-in link",
+      text: [
+        "Here is the link that signs you in. It works once and expires in fifteen minutes.",
+        "",
+        link,
+        "",
+        "If you did not ask for this, nothing has happened and you can ignore it.",
+      ].join("\n"),
+    }),
+  });
+  if (!response.ok) {
+    const body = await response.text();
+    return { ok: false, reason: `The email service answered ${response.status}: ${body.slice(0, 200)}` };
+  }
+  return { ok: true };
+}

@@ -18,10 +18,33 @@
     "binding": "ASSETS"
   },
 
-  // No vars are needed. The Worker serves the dashboard and the two engine
-  // endpoints it calls; the workspace lives in the visitor's browser. Setting
-  // SEOOS_API_URL as a Worker variable additionally proxies /api/v1 to a
-  // self-hosted Python service, read per request, with no rebuild.
+  // Accounts, OAuth tokens and the publish log live in D1. The binding is
+  // deliberately absent until `npm run cf:setup` writes it, because a
+  // d1_databases block naming a database that does not exist fails the deploy
+  // and would take the public site down while the database is being made.
+  //
+  //   "d1_databases": [
+  //     {
+  //       "binding": "DB",
+  //       "database_name": "seoos",
+  //       "database_id": "...",
+  //       "migrations_dir": "deploy/d1/migrations"
+  //     }
+  //   ],
+  //
+  // Everything the database serves degrades with a stated reason while it is
+  // missing: the audit runs, the workspace stays in the browser, and the
+  // sign-in screen says why there is nothing to sign in to.
+  //
+  // Secrets are set with `npx wrangler secret put NAME`, never written here:
+  //   SEOOS_MASTER_KEY       seals every stored credential (openssl rand -base64 32)
+  //   GOOGLE_CLIENT_ID       the OAuth client, for sign-in and for Search Console
+  //   GOOGLE_CLIENT_SECRET
+  //   RESEND_API_KEY         optional, turns on the magic-link fallback
+  //   PUBLIC_BASE_URL        optional, pins the OAuth redirect to a custom domain
+  //
+  // SEOOS_API_URL additionally proxies /api/v1 to a self-hosted Python
+  // service, read per request, with no rebuild.
 
   "observability": {
     "enabled": true

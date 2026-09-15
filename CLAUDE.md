@@ -15,6 +15,32 @@ someone else. Anything added here should do the work, not describe it.
 53 agents · 8 missions · 60 tools · 21 connectors · 71 checks · 43 tables · 141 tests
 ```
 
+## How to work on this
+
+Treat every task here as an SEO operator would, not as a ticket. The standard
+is someone who has run search programmes for a decade, built the tooling an
+agency runs on, and knows which of the hundred things a tool could measure are
+the five that move a business. Bring that judgement to each request: work out
+what the person actually needs, decide the approach, and build it. Do not stop
+at the literal ask when the literal ask would ship something that does not
+work in the field, and do not wait to be told what the right answer is.
+
+Three things follow from that, and they decide most arguments:
+
+- **The user is the client, not the operator.** Anything that makes them do SEO
+  work themselves is a failure of this product. They approve, they do not
+  execute. If a feature ends in "and then you paste this into your CMS", the
+  feature is unfinished unless no API exists, in which case say so plainly.
+- **Every screen answers "so what".** A number without a decision attached is
+  decoration. A finding without a written fix is an audit tool, which is the
+  thing this explicitly is not.
+- **Honesty is the moat.** The category is full of tools that invent metrics,
+  round scores upward and imply work they did not do. Never report a change as
+  applied that was not applied, never show a modelled number as a measured one,
+  and always name the reason a capability is degraded. Being the tool that does
+  not lie is worth more than being the tool with the most features.
+
+
 ## This repository stands alone
 
 It shares no code, history, dependency or deployment with any other project.
@@ -36,10 +62,12 @@ packages/seoos/
   core/           Config, models (43 tables), db session, crypto, errors
   services/       Approvals, content, findings, credentials, audit log
 apps/web/         Next.js: the public site and the dashboard. Plain CSS.
-  src/app/(marketing)/  The public pages. No sign-in in front of them.
-  src/app/app/    The signed-in workspace
+  src/app/        The public pages at the top level, the workspace under /app
+  src/app/api/    Engine endpoints, plus auth, connections, runs and publishing
   src/engine/     The TypeScript audit engine: crawl, checks, fixes, strategy
-  src/lib/        The browser-held workspace store and the connector catalogue
+  src/server/     Sessions, D1, envelope sealing, Google OAuth, GSC, GA4, WordPress
+  src/lib/        The browser-held workspace store, the connector catalogue, sync
+deploy/d1/        The D1 schema. Applied by `npm run cf:setup`.
 scripts/          Reference generator, demo seeder
 docs/reference/   Generated from the registries. Never edit by hand.
 deploy/           Dockerfiles. wrangler.jsonc at the root is Cloudflare.
@@ -56,6 +84,8 @@ deploy/           Dockerfiles. wrangler.jsonc at the root is Cloudflare.
 | `make test` / `make lint` | 141 tests; ruff and tsc |
 | `make docs` | Regenerate `docs/reference` from the registries |
 | `make cf-preview` | The Cloudflare Worker locally on :8788 |
+| `npm run cf:setup` | Create the D1 database, apply the schema, set the secrets |
+| `npm run cf:migrate` | Apply new D1 migrations to the live database |
 | `make docker` | Whole stack with Postgres |
 
 ## Invariants
@@ -83,6 +113,21 @@ style disagreement.
   `session_scope()`. Do not pass a session into concurrent work.
 - **Commit before a long network phase.** A crawl holding a write transaction
   open for a minute locks SQLite and starves Postgres.
+- **Cross-tenant reads answer 404.** The TypeScript side has the same rule as
+  the Python side: `fetchScoped()` in `src/server/db.ts` puts the org in the
+  WHERE clause rather than checking ownership afterwards, and a miss is
+  indistinguishable from a row belonging to someone else. No route writes its
+  own `org_id` filter.
+- **A stored secret never leaves the server.** Connections are sealed with
+  `src/server/crypto.ts` (per-record data key, wrapped by `SEOOS_MASTER_KEY`).
+  No route returns one in any shape, including masked, because a mask still
+  confirms the value. `accessToken()` is the only function that unseals.
+- **The session cookie is never stored.** Only its SHA-256 is, so a copy of the
+  database cannot be replayed as a login.
+- **Nothing on the server is load-bearing for the audit.** Every server call
+  from the browser fails quietly and every screen renders without one. A
+  deployment with no database still audits, still writes fixes, still works.
+  That property is the product's spine, not a nicety.
 - **`docs/reference` is generated.** Adding a tool, check, agent or mission
   means running `make docs` and committing the result. CI fails if it is stale.
 
@@ -110,6 +155,11 @@ Three rules hold when touching it:
   browser engine can emit from a crawl alone. A code that exists in both must
   never disagree, and the extras belong in the Python catalogue too. That is
   the next piece of work on this side.
+- Accounts are additive, never load-bearing. `src/server/` needs a D1 binding
+  and a Google OAuth client, and reports each missing one as a sentence a
+  person can act on rather than throwing. `docs/ACCOUNTS.md` is the whole
+  setup. Signing in adds a server copy of the workspace and the tokens that let
+  scheduled work happen; it does not move the audit off the browser.
 - No model key of ours, ever. Drafting relays the tenant's own key through
   `src/app/api/engine/llm/route.ts` and never stores it. Everything else (the
   audit, the fixes, the schema, the briefs, the link plans) is deterministic

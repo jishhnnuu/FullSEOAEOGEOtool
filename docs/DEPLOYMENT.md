@@ -135,3 +135,19 @@ This works and is a reasonable shape: put the API and worker on a container host
 and set `SEOOS_API_URL` on the Worker to the API's public URL. The browser only
 ever talks to the Worker's own origin, so there are no CORS preflights and no
 third-party cookies.
+
+## Accounts and connections
+
+The public deployment ships with accounts switched off: no database is bound,
+so sign-in says why there is nothing to sign in to and the audit runs anyway.
+Turning them on is one command plus a Google OAuth client, and it is documented
+end to end in [ACCOUNTS.md](./ACCOUNTS.md).
+
+```bash
+npm run cf:setup      # creates D1, writes the binding, applies the schema, sets secrets
+git commit -am "Bind the D1 database" && git push
+```
+
+Nothing about the existing deployment changes: the same Worker serves the same
+pages, with four more route groups under `/api` that answer honestly when the
+database is absent.

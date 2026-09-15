@@ -5,6 +5,7 @@ import { usePathname, useRouter } from "next/navigation";
 
 import { pendingApprovals, siteById } from "@/lib/store";
 import { useWorkspace } from "@/lib/useWorkspace";
+import { signInHref, signOut, useSession } from "@/lib/session";
 import { Badge } from "@/components/ui";
 
 const NAV = [
@@ -47,6 +48,7 @@ export function AppShell({ siteId, children }: { siteId: string; children: React
   const pathname = usePathname();
   const router = useRouter();
   const [workspace] = useWorkspace();
+  const { session } = useSession();
   const site = siteById(workspace, siteId);
   const pending = pendingApprovals(workspace, siteId).length;
   const base = `/app/sites/${siteId}`;
@@ -94,7 +96,20 @@ export function AppShell({ siteId, children }: { siteId: string; children: React
 
         <div style={{ marginTop: "auto" }} className="stack-sm">
           <Link href="/app/new" className="button small">Add a site</Link>
-          <Link href="/app/settings" className="button small ghost">Account</Link>
+          {session.user ? (
+            <>
+              <Link href="/app/settings" className="button small ghost truncate" title={session.user.email}>
+                {session.user.email}
+              </Link>
+              <button className="small ghost" onClick={() => void signOut()}>Sign out</button>
+            </>
+          ) : session.server === "ready" ? (
+            // Signed out with a server present: say what an account buys,
+            // because this browser is currently the only copy of the work.
+            <Link href={signInHref()} className="button small primary">Sign in to keep this</Link>
+          ) : (
+            <Link href="/app/settings" className="button small ghost">Account</Link>
+          )}
         </div>
       </aside>
       <main className="main">{children}</main>

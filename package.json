@@ -12,7 +12,9 @@
     "typecheck": "npm run typecheck --workspace=@seoos/web",
     "cf:build": "npm run cf:build --workspace=@seoos/web",
     "cf:preview": "npm run cf:preview --workspace=@seoos/web",
-    "deploy": "npm run cf:build && wrangler deploy"
+    "deploy": "npm run cf:build && wrangler deploy",
+    "cf:setup": "node scripts/cf-setup.mjs",
+    "cf:migrate": "wrangler d1 migrations apply seoos --remote"
   },
   "devDependencies": {
     "wrangler": "4.131.2"

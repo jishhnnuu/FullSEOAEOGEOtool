@@ -118,7 +118,7 @@ async function anthropic({ apiKey, model, prompt, system, maxTokens }: CallArgs)
     }),
   });
   if (!response.ok) throw new Error(await readError(response));
-  const data = await response.json();
+  const data = (await response.json()) as { content?: { type?: string; text?: string }[] };
   const blocks = Array.isArray(data?.content) ? data.content : [];
   return blocks.filter((b: { type?: string }) => b?.type === "text").map((b: { text?: string }) => b.text ?? "").join("");
 }
@@ -137,7 +137,7 @@ async function openaiCompatible({ apiKey, model, prompt, system, maxTokens }: Ca
     }),
   });
   if (!response.ok) throw new Error(await readError(response));
-  const data = await response.json();
+  const data = (await response.json()) as { choices?: { message?: { content?: string } }[] };
   return data?.choices?.[0]?.message?.content ?? "";
 }
 
@@ -153,7 +153,7 @@ async function google({ apiKey, model, prompt, system, maxTokens }: CallArgs): P
     }),
   });
   if (!response.ok) throw new Error(await readError(response));
-  const data = await response.json();
+  const data = (await response.json()) as { candidates?: { content?: { parts?: { text?: string }[] } }[] };
   const parts = data?.candidates?.[0]?.content?.parts ?? [];
   return parts.map((p: { text?: string }) => p.text ?? "").join("");
 }

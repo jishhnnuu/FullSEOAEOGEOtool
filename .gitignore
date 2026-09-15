@@ -19,3 +19,5 @@ next-env.d.ts
 .open-next/
 .wrangler/
 *.tsbuildinfo
+.dev.vars
+wrangler.localtest.jsonc

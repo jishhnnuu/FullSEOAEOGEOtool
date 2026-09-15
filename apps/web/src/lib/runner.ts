@@ -7,6 +7,7 @@
  */
 
 import { diffRuns } from "@/engine/diff";
+import { pushWorkspace, recordRun } from "./sync";
 import { runAudit, type RunProgress } from "@/engine/run";
 import type { AuditResult, CrawlOptions } from "@/engine/types";
 
@@ -121,6 +122,13 @@ export function startRun(
           detail: diff.headline,
         });
       });
+
+      // Server side, when there is one. A signed-out visitor's run is stored
+      // against a claim cookie so that signing in later moves it into the new
+      // account rather than making them crawl the site a second time. Both
+      // calls fail quietly: the audit above is already finished and saved.
+      void recordRun({ url: site.baseUrl, status: "complete", result, startedAt });
+      void pushWorkspace();
 
       return result;
     })

@@ -23,21 +23,34 @@ export default function SecurityPage() {
         <div className="feature-grid">
           <div className="feature">
             <span className="tag">Storage</span>
-            <h3>Your workspace is in your browser</h3>
+            <h3>The browser is the working copy</h3>
             <p>
-              On the hosted app, sites, runs, findings, drafts and settings are held in this browser&apos;s local
-              storage. The server that renders the app is stateless: it fetches and parses pages on request and
-              keeps none of it. Export and import are built in, because that is the trade you are making.
+              Sites, runs, findings and drafts are produced in this browser and held in its local storage. That
+              stays true with an account: signing in adds a copy on the server so the work follows you to another
+              machine, it does not move the work off your machine. Without an account nothing of yours is on our
+              side at all, and the audit still runs.
             </p>
           </div>
           <div className="feature">
             <span className="tag">Credentials</span>
-            <h3>Keys are never stored on our side</h3>
+            <h3>A model key is never stored. A connection is sealed.</h3>
             <p>
               A model key you add is held in your browser and sent with the one request that uses it. It is never
-              logged, never cached and never written to a server. In a self-hosted installation, credentials are
-              envelope encrypted: a per-record data key sealed by the deployment master key, so rotating the
-              master key does not require rewriting every ciphertext.
+              logged, never cached, never written down. A connection you approve is different, because a token
+              that renews itself is the only way work can happen while your browser is closed: those are envelope
+              encrypted, a per-record data key sealed by the deployment master key, so the master key rotates
+              without rewriting a single ciphertext and a stolen database row is useless on its own. No route in
+              the product returns a stored secret in any form, including a masked one.
+            </p>
+          </div>
+          <div className="feature">
+            <span className="tag">Sessions</span>
+            <h3>No password, and no session to steal from the database</h3>
+            <p>
+              Sign-in is Google or a one-time link by email, so there is no password here to leak or reuse. The
+              session cookie holds a random value and the database holds only its hash, which means a copy of the
+              database cannot be replayed as a login. Disconnecting a Google account hands the grant back to
+              Google rather than only dropping our copy of it.
             </p>
           </div>
           <div className="feature">

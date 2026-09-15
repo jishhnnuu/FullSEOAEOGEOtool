@@ -7,6 +7,7 @@ import type { RunProgress } from "@/engine/run";
 import { CATEGORY_LABEL } from "@/engine/catalog";
 import { startRun } from "@/lib/runner";
 import { useSite } from "@/lib/site-hooks";
+import { KeepThisRun } from "@/components/gate";
 import {
   Badge,
   Card,
@@ -56,6 +57,9 @@ export default function SiteDashboard() {
           </button>
         }
       />
+
+      {/* Offered once the report exists, never before it. */}
+      {runs.length > 0 && !progress ? <KeepThisRun siteId={site.id} /> : null}
 
       {progress && (
         <Card className="card-flat" title="Run in progress">

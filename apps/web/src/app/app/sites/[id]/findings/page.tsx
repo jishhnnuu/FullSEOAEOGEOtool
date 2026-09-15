@@ -7,6 +7,7 @@ import { CATALOG, CATEGORY_LABEL } from "@/engine/catalog";
 import type { Finding, Severity } from "@/engine/types";
 import { approvalsFromResult, agentFor, id, logActivity } from "@/lib/store";
 import { useSite } from "@/lib/site-hooks";
+import { Gate } from "@/components/gate";
 import {
   Badge,
   BeforeAfter,
@@ -35,6 +36,16 @@ export default function FindingsPage() {
     () => new Set(workspace.approvals.filter((a) => a.findingId).map((a) => a.findingId as string)),
     [workspace.approvals],
   );
+
+  // The one fix shown in full without an account: the highest-priority fix in
+  // the whole audit, not the first one that happens to be on screen, so the
+  // free example is the one worth having rather than an alt attribute.
+  const freeFixId = useMemo(() => {
+    if (!result) return null;
+    const fixable = result.findings.filter((f) => f.fix);
+    if (fixable.length === 0) return null;
+    return fixable.reduce((best, f) => (f.priority > best.priority ? f : best), fixable[0]).id;
+  }, [result]);
 
   const findings = useMemo(() => {
     if (!result) return [];
@@ -182,6 +193,7 @@ export default function FindingsPage() {
                         key={finding.id}
                         finding={finding}
                         queued={queued.has(finding.id)}
+                        free={finding.id === freeFixId}
                         onQueue={() => queue([finding])}
                       />
                     ))}
@@ -215,7 +227,12 @@ export default function FindingsPage() {
               <div className="stack-sm">
                 <p className="small muted" style={{ margin: 0 }}><strong>Why it matters.</strong> {finding.why}</p>
                 <p className="small muted" style={{ margin: 0 }}><strong>What to do.</strong> {finding.recommendation}</p>
-                <Occurrence finding={finding} queued={queued.has(finding.id)} onQueue={() => queue([finding])} />
+                <Occurrence
+                  finding={finding}
+                  queued={queued.has(finding.id)}
+                  free={finding.id === freeFixId}
+                  onQueue={() => queue([finding])}
+                />
               </div>
             </details>
           ))}
@@ -228,12 +245,16 @@ export default function FindingsPage() {
 function Occurrence({
   finding,
   queued,
+  free,
   onQueue,
 }: {
   finding: Finding;
   queued: boolean;
+  /** The one fix shown in full to someone with no account. */
+  free: boolean;
   onQueue: () => void;
 }) {
+  const freeFix = free;
   return (
     <div className="card card-flat" style={{ background: "var(--bg-alt)" }}>
       <div className="between" style={{ alignItems: "flex-start", gap: "0.6rem" }}>
@@ -278,13 +299,15 @@ function Occurrence({
       )}
 
       {finding.fix ? (
-        <div style={{ marginTop: "0.7rem" }}>
-          <div className="tiny faint" style={{ marginBottom: "0.35rem" }}>{finding.fix.label.toUpperCase()}</div>
-          <BeforeAfter before={finding.fix.before} after={finding.fix.after} />
-          <p className="tiny muted" style={{ marginTop: "0.5rem", marginBottom: 0 }}>
-            <strong>Where it goes.</strong> {finding.fix.applyVia}. {finding.fix.instructions}
-          </p>
-        </div>
+        <Gate open={freeFix} what="This fix">
+          <div style={{ marginTop: "0.7rem" }}>
+            <div className="tiny faint" style={{ marginBottom: "0.35rem" }}>{finding.fix.label.toUpperCase()}</div>
+            <BeforeAfter before={finding.fix.before} after={finding.fix.after} />
+            <p className="tiny muted" style={{ marginTop: "0.5rem", marginBottom: 0 }}>
+              <strong>Where it goes.</strong> {finding.fix.applyVia}. {finding.fix.instructions}
+            </p>
+          </div>
+        </Gate>
       ) : (
         <Notice>
           <span className="small">

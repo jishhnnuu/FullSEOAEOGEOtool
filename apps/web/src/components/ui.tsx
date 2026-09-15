@@ -51,13 +51,22 @@ export function Loading({ label = "Loading" }: { label?: string }) {
 
 export function Notice({
   kind = "info",
+  title,
   children,
 }: {
-  kind?: "info" | "warn" | "bad" | "ok";
+  /** "error" reads better at the call site than "bad" and means the same. */
+  kind?: "info" | "warn" | "bad" | "ok" | "error";
+  title?: string;
   children: React.ReactNode;
 }) {
-  const suffix = kind === "info" ? "" : ` notice-${kind}`;
-  return <div className={`notice${suffix}`}>{children}</div>;
+  const tone = kind === "error" ? "bad" : kind;
+  const suffix = tone === "info" ? "" : ` notice-${tone}`;
+  return (
+    <div className={`notice${suffix}`}>
+      {title && <strong className="small" style={{ display: "block", marginBottom: "0.25rem" }}>{title}</strong>}
+      {children}
+    </div>
+  );
 }
 
 export function PageHeader({

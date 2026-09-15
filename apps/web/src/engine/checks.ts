@@ -49,6 +49,118 @@ export function runChecks(report: CrawlReport, options: CrawlOptions): Draft[] {
 
 /* ------------------------------------------------------------- per page */
 
+/*
+ * The signatures of tools that apply SEO changes in the browser.
+ *
+ * Named by the script host they load from, because that is what is visible in
+ * the HTML. This is not a judgement on the tools, it is a statement about
+ * where their output lands: injected by script means invisible to every AI
+ * crawler, and gone the day the script is removed.
+ */
+const INJECTION_HOSTS: { host: string; name: string }[] = [
+  { host: "otto.searchatlas.com", name: "OTTO, by Search Atlas" },
+  { host: "sa.searchatlas.com", name: "Search Atlas" },
+  { host: "dashboard.searchatlas.com", name: "Search Atlas" },
+  { host: "alliai.com", name: "Alli AI" },
+  { host: "cdn.alliai.com", name: "Alli AI" },
+  { host: "seoptimer", name: "an SEO injector" },
+  { host: "rankscience", name: "RankScience" },
+  { host: "sitespeed-seo", name: "an SEO injector" },
+];
+
+/**
+ * How much of this page exists before JavaScript runs.
+ *
+ * The crawler never executes script, which makes it an exact stand-in for
+ * GPTBot, ClaudeBot and PerplexityBot. So whatever is missing here is missing
+ * for them, and the measurement needs no rendering step to be trustworthy.
+ */
+function javascriptChecks(page: CrawledPage): Draft[] {
+  const out: Draft[] = [];
+  const s = page.signals;
+  if (!s) return out;
+  const url = page.url;
+
+  /*
+   * Thresholds calibrated against real pages rather than guessed. Measured
+   * words in the served HTML, which is exactly what an AI crawler gets:
+   *
+   *   excalidraw.com          1 word     6.8 kB    1 script    shell
+   *   tldraw.com              6 words    13 kB     2 scripts   shell
+   *   app.netlify.com         5 words    16 kB    21 scripts   shell
+   *   create-react-app.dev  224 words    14 kB     2 scripts   fine
+   *   wordpress.org         519 words   165 kB     5 scripts   fine
+   *   react.dev           1,201 words   272 kB    11 scripts   fine
+   *   example.com            19 words   0.6 kB     0 scripts   fine, just small
+   *
+   * So the rule is: almost no words, at least one script, and enough bytes to
+   * rule out a genuinely tiny page. Script count is confirmation, not the
+   * signal. An early version required three scripts and missed two of the
+   * three shells above, which is the kind of miss that makes a check worthless.
+   */
+  const scriptBytes = s.inlineScriptBytes + s.scripts.length * 2_000;
+
+  if (s.wordCount < 50 && s.scripts.length >= 1 && page.bytes >= 3_000) {
+    out.push({
+      code: "content_needs_javascript",
+      url,
+      detail: `${s.wordCount} word${s.wordCount === 1 ? "" : "s"} in the served HTML, across ${(page.bytes / 1024).toFixed(0)} kB and ${s.scripts.length} script${s.scripts.length === 1 ? "" : "s"}`,
+      evidence: {
+        words_in_source: s.wordCount,
+        page_bytes: page.bytes,
+        scripts: s.scripts.length,
+        inline_script_bytes: s.inlineScriptBytes,
+        what_an_ai_crawler_sees: s.text.slice(0, 300) || "(nothing at all)",
+      },
+    });
+  } else if (s.wordCount < 150 && s.paragraphs.length <= 1 && s.scripts.length >= 3 && scriptBytes > 30_000) {
+    out.push({
+      code: "content_needs_javascript",
+      url,
+      detail: `Only ${s.wordCount} words and ${s.paragraphs.length} paragraph${s.paragraphs.length === 1 ? "" : "s"} in source, against ${(scriptBytes / 1024).toFixed(0)} kB of script`,
+      severityOverride: "high",
+      evidence: {
+        words_in_source: s.wordCount,
+        scripts: s.scripts.length,
+        what_an_ai_crawler_sees: s.text.slice(0, 300) || "(nothing at all)",
+      },
+    });
+  }
+
+  // A page with body copy but no served title is almost always a framework
+  // setting it on the client.
+  if (!s.title && s.wordCount > 100 && s.scripts.length > 0) {
+    out.push({
+      code: "meta_needs_javascript",
+      url,
+      detail: "No title in the served HTML, though the page has content",
+      evidence: { scripts: s.scripts.length },
+    });
+  }
+
+  const injectors = new Set<string>();
+  for (const src of s.scripts) {
+    const lower = src.toLowerCase();
+    for (const entry of INJECTION_HOSTS) {
+      if (lower.includes(entry.host)) injectors.add(entry.name);
+    }
+  }
+  if (injectors.size > 0) {
+    out.push({
+      code: "seo_injection_script",
+      url,
+      detail: `${[...injectors].join(", ")} is applying changes in the browser`,
+      evidence: {
+        tools: [...injectors],
+        why_it_matters:
+          "Those changes are not in the HTML an answer engine reads, and they revert if the script is removed.",
+      },
+    });
+  }
+
+  return out;
+}
+
 function pageChecks(page: CrawledPage, report: CrawlReport, options: CrawlOptions): Draft[] {
   const out: Draft[] = [];
   const url = page.url;
@@ -290,6 +402,9 @@ function pageChecks(page: CrawledPage, report: CrawlReport, options: CrawlOption
 
   /* -- international -- */
   out.push(...hreflangChecks(page));
+
+  /* -- what survives without JavaScript, which is what AI crawlers get -- */
+  out.push(...javascriptChecks(page));
 
   /* -- measurement -- */
   if (page.depth === 0 && s.analytics.length === 0) {

@@ -221,6 +221,25 @@ export default function Home() {
               entity a model can resolve. Each one is checked, and each gap comes with the block that fills it.
             </p>
           </div>
+          <div className="feature">
+            <span className="tag">Measurement</span>
+            <h3>Whether they actually name you</h3>
+            <p>
+              Readiness is the theory. This is the fact: a dozen questions a buyer would really type, put to a
+              model, read for whether you were named, whether you were linked, and who got named instead. On your
+              own provider key, at cost, rather than as a subscription.
+            </p>
+          </div>
+          <div className="feature">
+            <span className="tag">The catch nobody mentions</span>
+            <h3>A fix injected by script is a fix no engine sees</h3>
+            <p>
+              GPTBot, ClaudeBot and PerplexityBot fetch raw HTML and never run JavaScript. So the popular pixel
+              tools, the ones that promise to fix your SEO from a script tag, produce changes the answer engines
+              cannot read and that vanish the day you cancel. We detect that, name the tool doing it, and write
+              into the CMS instead.
+            </p>
+          </div>
         </div>
         <p style={{ marginTop: "1.6rem" }}>
           <Link href="/ai-search">How AEO and GEO work here</Link>

@@ -9,7 +9,8 @@
     "lint": "next lint",
     "typecheck": "tsc --noEmit",
     "cf:build": "opennextjs-cloudflare build --skipWranglerConfigCheck",
-    "cf:preview": "wrangler dev --config ../../wrangler.jsonc"
+    "cf:preview": "wrangler dev --config ../../wrangler.jsonc",
+    "test": "tsc -p tsconfig.test.json && node --test .test-build/tests/*.test.js"
   },
   "dependencies": {
     "next": "15.5.25",

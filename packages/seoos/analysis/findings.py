@@ -253,6 +253,26 @@ CATALOG: dict[str, CheckDef] = {d.code: d for d in [
        "Blocking GPTBot, ClaudeBot, PerplexityBot and friends removes the site from AI answers.",
        "Decide deliberately: allow the crawlers you want citations from.",
        impact=0.7, effort=0.2, auto_fixable=True, fix_strategy="update_robots_ai"),
+    # No major AI crawler executes JavaScript. GPTBot, ClaudeBot and
+    # PerplexityBot fetch raw HTML and move on, which makes client-side
+    # rendering an SEO problem and an AEO catastrophe. It also makes the
+    # "install our pixel" tools misleading: their fixes are injected by
+    # script, so the engines that matter for citations never see one of them.
+    _c("content_needs_javascript", "aeo", "critical",
+       "The page's content only exists after JavaScript runs",
+       "AI crawlers do not execute JavaScript, so a page whose copy is assembled in the browser is a blank page to every answer engine except Google's.",
+       "Server-render the content, pre-render it at build time, or ship the copy in the initial HTML.",
+       impact=0.9, effort=0.7, confidence=0.75),
+    _c("meta_needs_javascript", "aeo", "high",
+       "Title or description is injected by script rather than served",
+       "A title set by JavaScript is a title half the machines reading the page never see.",
+       "Put the title and meta description in the HTML the server sends.",
+       impact=0.7, effort=0.4, confidence=0.7),
+    _c("seo_injection_script", "aeo", "high",
+       "An SEO tool is injecting fixes client side",
+       "Scripts that apply SEO changes in the browser produce fixes no AI crawler can see, and the changes disappear the day the subscription stops.",
+       "Move those changes into the CMS so they are served in the HTML and survive the tool that suggested them.",
+       impact=0.6, effort=0.5, confidence=0.6),
     _c("no_direct_answer", "aeo", "medium",
        "Page does not answer its question directly",
        "Answer engines quote the passage that states the answer plainly near the top.",

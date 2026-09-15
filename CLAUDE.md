@@ -81,7 +81,8 @@ deploy/           Dockerfiles. wrangler.jsonc at the root is Cloudflare.
 | `make check` | Validate the roster, missions and tools. Run this first. |
 | `make demo` | Seed a tenant and audit a real site, no API keys needed |
 | `make api` / `make worker` / `make web` | The three processes |
-| `make test` / `make lint` | 141 tests; ruff and tsc |
+| `make test` / `make lint` | 141 Python tests plus the engine suite; ruff and tsc |
+| `npm run test:engine` | The TypeScript engine tests, pinned to real measurements |
 | `make docs` | Regenerate `docs/reference` from the registries |
 | `make cf-preview` | The Cloudflare Worker locally on :8788 |
 | `npm run cf:setup` | Optional. Does the Cloudflare side of `docs/ACCOUNTS.md` from a terminal |
@@ -147,7 +148,9 @@ implementation of the audit, in TypeScript, split across two places:
 Three rules hold when touching it:
 
 - Nothing is invented. Every number on every screen came from the crawl that
-  produced it. A capability that needs a credential says so and degrades with
+  produced it. `docs/COMPETITORS.md` records what the rest of the field does
+  and the two facts that decide it: no major AI crawler runs JavaScript, and a
+  fix injected by script is a fix you are renting. A capability that needs a credential says so and degrades with
   a reason; it never pretends to have succeeded.
 - The catalogue in `src/engine/catalog.ts` shares its codes, severities and
   weightings with `analysis/findings.py`, so the same problem scores the same

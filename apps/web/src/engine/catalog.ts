@@ -318,6 +318,33 @@ const DEFS: CheckDef[] = [
     "An llms.txt gives answer engines a curated map of what matters on the site.",
     "Publish /llms.txt listing the canonical pages and what each covers.",
     { impact: 0.2, effort: 0.2, autoFixable: true, fixStrategy: "generate_llms_txt" }),
+  /*
+   * The three checks below exist because of a fact most of this category has
+   * not caught up with: no major AI crawler executes JavaScript. GPTBot,
+   * ClaudeBot and PerplexityBot fetch raw HTML, read what is there, and move
+   * on. Google's own renderer is the exception, and Gemini rides it.
+   *
+   * That makes client-side rendering an SEO problem and an AEO catastrophe,
+   * and it makes the popular "install our pixel and we fix your SEO" tools
+   * actively misleading: their fixes are injected by script, so the engines
+   * that matter most for citations never see a single one of them.
+   */
+  c("content_needs_javascript", "aeo", "critical",
+    "The page's content only exists after JavaScript runs",
+    "AI crawlers do not execute JavaScript. GPTBot, ClaudeBot and PerplexityBot read the raw HTML and nothing else, so a page whose copy is assembled in the browser is a blank page to every answer engine except Google's.",
+    "Server-render the content, pre-render it at build time, or ship the copy in the initial HTML. Whatever the framework, the test is the same: view source and check the words are there.",
+    { impact: 0.9, effort: 0.7, confidence: 0.75 }),
+  c("meta_needs_javascript", "aeo", "high",
+    "Title or description is injected by script rather than served",
+    "A title set by JavaScript is a title half the machines reading the page never see. Google usually renders and catches it. The answer engines do not.",
+    "Put the title and meta description in the HTML the server sends.",
+    { impact: 0.7, effort: 0.4, confidence: 0.7 }),
+  c("seo_injection_script", "aeo", "high",
+    "An SEO tool is injecting fixes client side",
+    "Scripts that apply SEO changes in the browser produce fixes no AI crawler can see, and the changes disappear the day the subscription stops because they were never written into the site.",
+    "Move those changes into the CMS so they are served in the HTML and survive the tool that suggested them.",
+    { impact: 0.6, effort: 0.5, confidence: 0.6 }),
+
   c("no_author_attribution", "aeo", "medium",
     "No identifiable author",
     "Experience and expertise cannot be assessed without a real, credentialed author.",

@@ -1,0 +1,15 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": false,
+    "outDir": ".test-build",
+    "rootDir": ".",
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "jsx": "react-jsx",
+    "types": ["node", "@cloudflare/workers-types/2023-07-01"],
+    "incremental": false
+  },
+  "include": ["src/engine/**/*.ts", "tests/**/*.ts"],
+  "exclude": ["node_modules"]
+}

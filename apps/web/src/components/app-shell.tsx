@@ -32,6 +32,7 @@ const NAV = [
       { href: "/aeo", label: "AI answers" },
       { href: "/local", label: "Local" },
       { href: "/links", label: "Links" },
+      { href: "/rivals", label: "Rivals" },
       { href: "/runs", label: "Activity" },
     ],
   },

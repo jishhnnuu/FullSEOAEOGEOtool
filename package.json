@@ -15,7 +15,8 @@
     "deploy": "npm run cf:build && wrangler deploy",
     "cf:setup": "node scripts/cf-setup.mjs",
     "cf:migrate": "wrangler d1 migrations apply seoos --remote",
-    "d1:sql": "node scripts/d1-sql.mjs"
+    "d1:sql": "node scripts/d1-sql.mjs",
+    "test:engine": "npm run test --workspace=@seoos/web"
   },
   "devDependencies": {
     "wrangler": "4.131.2"

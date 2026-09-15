@@ -3,6 +3,8 @@
 import Link from "next/link";
 
 import { useSite } from "@/lib/site-hooks";
+import { AnswerVisibilityPanel } from "@/components/answer-visibility";
+import { buildLlmsTxt } from "@/engine/answers";
 import { Badge, Card, CopyButton, Empty, Notice, PageHeader, Score, shortUrl } from "@/components/ui";
 
 export default function AeoPage() {
@@ -23,15 +25,19 @@ export default function AeoPage() {
   const aeo = result.aeo;
   const blocked = aeo.crawlerAccess.filter((a) => !a.allowed);
   const llmsFix = result.findings.find((f) => f.code === "missing_llms_txt")?.fix;
+  const llmsTxt = buildLlmsTxt(result.crawl, { brand: site.name || site.domain, summary: site.industry || undefined });
   const robotsFix = result.findings.find((f) => f.code === "ai_crawler_blocked")?.fix;
   const notExtractable = result.findings.filter((f) => f.code === "content_not_extractable");
 
   return (
     <>
       <PageHeader
-        title="AI answer readiness"
-        description="Whether the engines that write answers can reach you, read you, resolve who you are, and find a passage worth quoting."
+        title="AI answers"
+        description="Two questions, in order. Can the engines reach and read you, and do they actually name you when someone asks."
       />
+
+      {/* The measurement comes first. Readiness is the explanation for it. */}
+      <AnswerVisibilityPanel site={site} result={result} />
 
       <div className="grid grid-3">
         <Score label="AI answer readiness" value={result.scores.aeo.score} hint="Weighted across access, structure and citability" />
@@ -159,18 +165,23 @@ export default function AeoPage() {
         )}
       </Card>
 
-      {llmsFix && (
-        <Card title="llms.txt, generated from this crawl">
-          <p className="small muted">
-            A curated map of the site for answer engines, grouped by section, each entry summarised from the page
-            itself. Trim anything you would not want quoted, then publish it at the site root.
-          </p>
-          <pre className="codeblock after" style={{ maxHeight: "360px", overflowY: "auto" }}>{llmsFix.after}</pre>
-          <div className="button-row" style={{ marginTop: "0.6rem" }}>
-            <CopyButton text={llmsFix.after} label="Copy llms.txt" />
-          </div>
-        </Card>
-      )}
+      {/*
+        * Shown whether or not the site already has one. A file that exists and
+        * lists the wrong forty pages is worse than none, and the only way to
+        * know is to see what this crawl would have written.
+        */}
+      <Card title="llms.txt, generated from this crawl">
+        <p className="small muted">
+          A curated map for answer engines: the pages worth quoting, ranked by how much each one reads like an
+          answer rather than a stub, with what each covers. Not a sitemap, which lists everything and ranks
+          nothing. Trim anything you would not want quoted, then publish it at the site root.
+          {llmsFix ? "" : " The site already has one; this is what the crawl would write today."}
+        </p>
+        <pre className="codeblock after" style={{ maxHeight: "360px", overflowY: "auto" }}>{llmsTxt}</pre>
+        <div className="button-row" style={{ marginTop: "0.6rem" }}>
+          <CopyButton text={llmsTxt} label="Copy llms.txt" />
+        </div>
+      </Card>
 
       <Card title="Questions worth owning next">
         <p className="small muted">

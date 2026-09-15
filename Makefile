@@ -63,6 +63,7 @@ docs-check: $(VENV)
 
 test: $(VENV)
 	$(PY) -m pytest tests/ -q
+	npm run test:engine
 
 lint: $(VENV)
 	$(VENV)/bin/ruff check packages tests scripts

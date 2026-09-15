@@ -21,3 +21,4 @@ next-env.d.ts
 *.tsbuildinfo
 .dev.vars
 wrangler.localtest.jsonc
+.test-build/

@@ -6,7 +6,7 @@ Every check the audit runs. All of them are deterministic: no model is
 involved, so a given page always produces the same findings and an
 audit costs nothing to produce.
 
-**71 checks** across 12 categories.
+**74 checks** across 12 categories.
 
 ## Prioritisation
 
@@ -21,17 +21,35 @@ allows. Everything else needs a person or a developer.
 
 | Code | Severity | Check | Impact | Effort | Fix |
 |---|---|---|---|---|---|
+| `content_needs_javascript` | critical | The page's content only exists after JavaScript runs | 0.90 | 0.70 | - |
 | `ai_crawler_blocked` | high | AI crawlers are blocked | 0.70 | 0.20 | auto |
+| `meta_needs_javascript` | high | Title or description is injected by script rather than served | 0.70 | 0.40 | - |
+| `seo_injection_script` | high | An SEO tool is injecting fixes client side | 0.60 | 0.50 | - |
 | `entity_unclear` | medium | The brand entity is not defined | 0.40 | 0.30 | auto |
 | `no_author_attribution` | medium | No identifiable author | 0.45 | 0.40 | - |
 | `no_citable_facts` | medium | No citable facts or data | 0.45 | 0.60 | - |
 | `no_direct_answer` | medium | Page does not answer its question directly | 0.50 | 0.40 | auto |
 | `missing_llms_txt` | low | No llms.txt | 0.20 | 0.20 | auto |
 
+**`content_needs_javascript`** — The page's content only exists after JavaScript runs
+
+- *Why it matters:* AI crawlers do not execute JavaScript, so a page whose copy is assembled in the browser is a blank page to every answer engine except Google's.
+- *What to do:* Server-render the content, pre-render it at build time, or ship the copy in the initial HTML.
+
 **`ai_crawler_blocked`** — AI crawlers are blocked
 
 - *Why it matters:* Blocking GPTBot, ClaudeBot, PerplexityBot and friends removes the site from AI answers.
 - *What to do:* Decide deliberately: allow the crawlers you want citations from.
+
+**`meta_needs_javascript`** — Title or description is injected by script rather than served
+
+- *Why it matters:* A title set by JavaScript is a title half the machines reading the page never see.
+- *What to do:* Put the title and meta description in the HTML the server sends.
+
+**`seo_injection_script`** — An SEO tool is injecting fixes client side
+
+- *Why it matters:* Scripts that apply SEO changes in the browser produce fixes no AI crawler can see, and the changes disappear the day the subscription stops.
+- *What to do:* Move those changes into the CMS so they are served in the HTML and survive the tool that suggested them.
 
 **`entity_unclear`** — The brand entity is not defined
 

@@ -5,7 +5,7 @@ import { useCallback, useSyncExternalStore } from "react";
 import { load, subscribe, update, type Workspace } from "./store";
 
 const SERVER: Workspace = {
-  version: 1, account: null, sites: [], runs: [], approvals: [], content: [], model: null, activity: [],
+  version: 1, account: null, sites: [], runs: [], approvals: [], content: [], model: null, activity: [], visibility: [],
 };
 
 /**

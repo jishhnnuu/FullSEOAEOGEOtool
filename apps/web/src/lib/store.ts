@@ -155,6 +155,24 @@ export type Workspace = {
   content: ContentRecord[];
   model: ModelConfig | null;
   activity: ActivityRecord[];
+  /**
+   * What the answer engines said, per site, over time.
+   *
+   * Kept apart from runs because it moves on its own schedule: a crawl is
+   * about the site, and this is about the model's memory of the site, which
+   * changes without anyone touching a page.
+   */
+  visibility: VisibilityHistory[];
+};
+
+/** One reading of how often the answer engines named the site. */
+export type VisibilityPoint = { at: string; presence: number; citationRate: number; asked: number };
+
+export type VisibilityHistory = {
+  siteId: string;
+  points: VisibilityPoint[];
+  /** The full detail of the most recent run, including every answer. */
+  latest: unknown | null;
 };
 
 export type ActivityRecord = {
@@ -175,6 +193,7 @@ const EMPTY: Workspace = {
   content: [],
   model: null,
   activity: [],
+  visibility: [],
 };
 
 /* ------------------------------------------------------------- persistence */

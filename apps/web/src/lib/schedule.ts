@@ -9,6 +9,7 @@
  * the honest half of the arrangement and is printed on the screen.
  */
 
+import { useCallback } from "react";
 import useSWR from "swr";
 
 import type { Cadence, JobKey, ScheduleEntry } from "@/engine/schedule";
@@ -81,12 +82,35 @@ export function useSchedule(siteId: string | undefined, enabled: boolean) {
       method: "POST",
       credentials: "same-origin",
       headers: { "content-type": "application/json" },
-      body: JSON.stringify({ site: siteId }),
+      body: JSON.stringify({ site: siteId, seen: true }),
     });
     await mutate();
   }
 
-  return { data: data ?? null, loading: isLoading, error: error ?? null, saveEntry, markRead, refresh: mutate };
+  /**
+   * Tell the server a stage finished.
+   *
+   * The audit runs here, so this browser is the only thing that knows. The
+   * server deduplicates, so calling it on every render is safe and calling it
+   * once is enough.
+   */
+  const recordMilestones = useCallback(
+    async (milestones: { kind: string; what: string }[]): Promise<void> => {
+      if (!siteId || milestones.length === 0) return;
+      const response = await fetch("/api/schedule", {
+        method: "POST",
+        credentials: "same-origin",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ site: siteId, milestones }),
+      });
+      const body = (await response.json().catch(() => ({}))) as { written?: number };
+      if (body.written) await mutate();
+    },
+    // Stable, so the screen that calls it from an effect does not loop.
+    [siteId, mutate],
+  );
+
+  return { data: data ?? null, loading: isLoading, error: error ?? null, saveEntry, markRead, recordMilestones, refresh: mutate };
 }
 
 /** The jobs whose time has passed and which need this tab to run them. */

@@ -286,3 +286,21 @@ export async function ownerEmail(e: Env, orgId: string): Promise<string | null> 
     .first<{ email: string }>();
   return row?.email ?? null;
 }
+
+/** Milestones that have not been emailed yet, oldest first. */
+export async function unnotified(e: Env, orgId: string, siteId: string): Promise<MilestoneRow[]> {
+  const rows = await listScoped<MilestoneRow>(e, "milestones", orgId, {
+    orderBy: "at ASC",
+    where: "site_id = ?2 AND notified_at IS NULL",
+    bind: [siteId],
+    limit: 20,
+  });
+  return rows;
+}
+
+export async function markNotified(e: Env, ids: string[]): Promise<void> {
+  if (ids.length === 0) return;
+  const now = nowIso();
+  const db = database(e);
+  await db.batch(ids.map((id) => db.prepare("UPDATE milestones SET notified_at = ?1 WHERE id = ?2").bind(now, id)));
+}

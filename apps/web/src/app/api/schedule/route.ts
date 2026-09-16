@@ -13,6 +13,7 @@ import { fail, handleError, json, sameOrigin } from "@/server/http";
 import { identify } from "@/server/session";
 import { record } from "@/server/db";
 import {
+  addMilestone,
   listMilestones,
   listSchedules,
   markSeen,
@@ -91,22 +92,52 @@ export async function PUT(request: Request): Promise<Response> {
   }
 }
 
-/** Mark the milestones read, so the badge clears. */
+/**
+ * Record what happened, or mark it read.
+ *
+ * The audit runs in the browser, so the browser is the only thing that knows a
+ * stage just finished. It posts the milestone here so the schedule screen and
+ * the report email can both see it. Deliberately narrow: only the kinds the
+ * programme emits, capped, and each one deduplicated against what is already
+ * stored, because a page that re-renders must not manufacture news.
+ */
 export async function POST(request: Request): Promise<Response> {
   if (!sameOrigin(request)) return fail("bad_origin", "That request did not come from this site.", 403);
   try {
     const e = await env();
     await ensureSchema(e);
     const who = await identify(e, request).catch(() => null);
-    if (!who) return fail("no_account", "Nothing to mark read without an account.", 401);
-    const body = (await request.json().catch(() => ({}))) as { site?: string };
+    if (!who) return fail("no_account", "Nothing to record without an account.", 401);
+
+    const body = (await request.json().catch(() => ({}))) as {
+      site?: string;
+      seen?: boolean;
+      milestones?: { kind?: string; what?: string }[];
+    };
     if (!body.site) return fail("no_site", "Which site?");
-    await markSeen(e, who.orgId, body.site);
+
+    if (Array.isArray(body.milestones) && body.milestones.length > 0) {
+      const existing = new Set((await listMilestones(e, who.orgId, body.site, 100)).map((row) => row.what));
+      let written = 0;
+      for (const milestone of body.milestones.slice(0, 10)) {
+        const kind = typeof milestone.kind === "string" ? milestone.kind : "";
+        const what = typeof milestone.what === "string" ? milestone.what.trim() : "";
+        if (!MILESTONE_KINDS.includes(kind) || what.length < 10 || existing.has(what)) continue;
+        await addMilestone(e, { orgId: who.orgId, siteId: body.site, kind, what });
+        existing.add(what);
+        written += 1;
+      }
+      return json({ ok: true, written });
+    }
+
+    if (body.seen !== false) await markSeen(e, who.orgId, body.site);
     return json({ ok: true });
   } catch (error) {
     return handleError(error);
   }
 }
+
+const MILESTONE_KINDS = ["stage_complete", "severe_cleared", "first_measurement", "link_won", "regression"];
 
 function clean(input: Partial<ScheduleEntry>): ScheduleEntry | null {
   if (!input.job || !JOB_KEYS.includes(input.job)) return null;

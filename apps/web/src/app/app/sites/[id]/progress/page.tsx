@@ -17,14 +17,14 @@ import { useSchedule } from "@/lib/schedule";
 import { useSession } from "@/lib/session";
 import { useSite } from "@/lib/site-hooks";
 import { loadLinks } from "@/lib/links";
-import { assessProgramme, type Stage } from "@/engine/progress";
+import { assessProgramme, milestonesBetween, type Programme, type Stage } from "@/engine/progress";
 
 export default function ProgressPage() {
   const { site, result, runs, workspace } = useSite();
   const { session } = useSession();
   const signedIn = Boolean(session.user);
   const search = useSearchQueries(signedIn, { siteId: site?.id, days: 28, limit: 1 });
-  const { data: schedule } = useSchedule(site?.id, signedIn);
+  const { data: schedule, recordMilestones } = useSchedule(site?.id, signedIn);
 
   const [links, setLinks] = useState<{ mentions: number; verified: number }>({ mentions: 0, verified: 0 });
   useEffect(() => {
@@ -58,6 +58,36 @@ export default function ProgressPage() {
       cleanRuns,
     });
   }, [result, runs, search.data, links, schedule]);
+
+  /*
+   * A stage finishing is the one thing in this product worth interrupting
+   * someone for, and the browser is the only place that knows it happened,
+   * because the audit runs here. The previous state is kept alongside the
+   * workspace; the server deduplicates, so a re-render cannot manufacture
+   * news.
+   */
+  useEffect(() => {
+    if (!site || !result) return;
+    const key = `seoos.programme.${site.id}`;
+    let previous: Programme | null = null;
+    try {
+      const raw = window.localStorage.getItem(key);
+      previous = raw ? (JSON.parse(raw) as Programme) : null;
+    } catch {
+      previous = null;
+    }
+
+    const milestones = milestonesBetween(previous, programme);
+    try {
+      window.localStorage.setItem(key, JSON.stringify(programme));
+    } catch {
+      // A browser with storage blocked still shows the programme; it just
+      // cannot tell what changed since last time.
+    }
+    if (milestones.length > 0 && signedIn) {
+      void recordMilestones(milestones.map((milestone) => ({ kind: milestone.kind, what: milestone.what })));
+    }
+  }, [site, result, programme, signedIn, recordMilestones]);
 
   if (!site) return null;
 

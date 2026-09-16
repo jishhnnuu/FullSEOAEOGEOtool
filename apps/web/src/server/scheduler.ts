@@ -23,11 +23,14 @@ import {
   addMilestone,
   completeRun,
   dueNow,
+  markNotified,
   ownerEmail,
   recordMeasurement,
   series,
+  unnotified,
   type DueJob,
   type MeasurementRow,
+  type MilestoneRow,
 } from "./schedules";
 
 export type TickResult = { ran: number; ok: number; failed: number; skipped: number; notes: string[] };
@@ -203,7 +206,8 @@ async function deliver(e: Env, job: DueJob, now: Date): Promise<Outcome> {
   const since = new Date(now.getTime() - days * 2 * 86_400_000).toISOString();
   const readings = await series(e, job.orgId, job.siteId, { since });
 
-  const text = digest({ site, days, readings, now });
+  const milestones = await unnotified(e, job.orgId, job.siteId);
+  const text = digest({ site, days, readings, milestones, now });
   const sent = await send(e, {
     to,
     subject: `${site.name}: the last ${days} days`,
@@ -211,6 +215,9 @@ async function deliver(e: Env, job: DueJob, now: Date): Promise<Outcome> {
   });
 
   if (!sent.ok) return { status: "skipped", detail: sent.reason };
+  // Only once it has actually gone out, so a failed send is retried rather
+  // than quietly swallowing the news it carried.
+  await markNotified(e, milestones.map((milestone) => milestone.id));
   return { status: "ok", detail: `Sent to ${to}.` };
 }
 
@@ -225,6 +232,7 @@ function digest(input: {
   site: { url: string; name: string };
   days: number;
   readings: MeasurementRow[];
+  milestones: MilestoneRow[];
   now: Date;
 }): string {
   const half = input.now.getTime() - input.days * 86_400_000;
@@ -257,6 +265,11 @@ function digest(input: {
     lines.push(
       "These are measurements, not estimates. Anything this report does not have a number for, it does not claim.",
     );
+  }
+
+  if (input.milestones.length > 0) {
+    lines.push("", "What finished");
+    for (const milestone of input.milestones) lines.push(`  ${milestone.what}`);
   }
 
   lines.push(

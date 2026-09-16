@@ -106,7 +106,7 @@ would be a secret only that laptop could rotate.
 | `SEOOS_MASTER_KEY` | Yes, for connections | Seals every stored credential. 32 bytes, base64. Any password generator set to 32 bytes works, or `openssl rand -base64 32` |
 | `GOOGLE_CLIENT_ID` | Yes, for sign-in | The OAuth client |
 | `GOOGLE_CLIENT_SECRET` | Yes, for sign-in | |
-| `RESEND_API_KEY` | No | Turns on the magic-link fallback |
+| `RESEND_API_KEY` | No | Turns on the magic-link fallback, and delivery of the scheduled report. Without it the report is still built and shown in the app; it just is not emailed, and the schedule says so rather than reporting a send that never happened |
 | `MAIL_FROM` | No | Defaults to Resend's test sender |
 | `PUBLIC_BASE_URL` | No | Pins the OAuth redirect to a custom domain |
 
@@ -147,6 +147,28 @@ The browser still runs the audit. The server holds the four things a browser
 cannot: an identity that survives a new machine, refresh tokens that let work
 happen with nobody watching, the record of who approved what, and the previous
 value of everything that was published so it can be reversed.
+
+### What the schedule can and cannot do here
+
+An hourly cron fires on the Worker. There is nothing to configure for it: no
+secret, no endpoint, no dashboard setting. It needs the D1 binding, because a
+schedule with nowhere to store itself is not a schedule.
+
+Two jobs run on it, and they are the two that are a handful of API calls rather
+than a hundred page fetches:
+
+- **The measurement sample.** Reads clicks, impressions, position and sessions
+  and stores a dated reading. This is what turns the report from a snapshot
+  into a trend, and it is what catches a sudden fall on the day it starts.
+- **The report.** Builds the period report from what was stored and emails it,
+  if `RESEND_API_KEY` is set.
+
+The audit is not one of them. It runs in the browser, so a scheduled crawl
+waits for the next time someone opens the app and then starts by itself,
+announces that it did, and tells the schedule so the clock moves on. The
+schedule screen prints which jobs need a tab and which do not, by name. A
+self-hosted installation with the Python worker runs all of it unattended;
+same product, different trade.
 
 ## The gate
 

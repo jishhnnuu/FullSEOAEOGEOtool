@@ -1,11 +1,13 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 import type { RunProgress } from "@/engine/run";
 import { CATEGORY_LABEL } from "@/engine/catalog";
 import { startRun } from "@/lib/runner";
+import { overdueInBrowser, useSchedule } from "@/lib/schedule";
+import { useSession } from "@/lib/session";
 import { useSite } from "@/lib/site-hooks";
 import { KeepThisRun } from "@/components/gate";
 import {
@@ -23,17 +25,14 @@ import {
 
 export default function SiteDashboard() {
   const { site, result, runs, workspace } = useSite();
+  const { session } = useSession();
   const [progress, setProgress] = useState<RunProgress | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [startedBySchedule, setStartedBySchedule] = useState(false);
   const running = runs.some((r) => r.status === "running");
+  const { data: schedule, markRan } = useSchedule(site?.id, Boolean(session.user));
 
-  if (!site) return null;
-
-  const pending = workspace.approvals.filter((a) => a.siteId === site.id && a.status === "pending");
-  const diff = runs.find((r) => r.diff)?.diff ?? null;
-  const connected = site.integrations.filter((i) => i.status === "connected");
-
-  async function run() {
+  const run = useCallback(async () => {
     if (!site) return;
     setError(null);
     const handle = startRun(site, setProgress);
@@ -44,7 +43,31 @@ export default function SiteDashboard() {
     } finally {
       setProgress(null);
     }
-  }
+  }, [site]);
+
+  /*
+   * The half of the schedule that needs a tab.
+   *
+   * The audit runs in this browser, so a scheduled crawl cannot start itself.
+   * The schedule screen says exactly that, and this is the other half of the
+   * promise: when a run is overdue, opening the app begins it. Once per visit,
+   * never on top of a run already going, and the schedule is told so it stops
+   * reading as overdue.
+   */
+  const autoStarted = useRef(false);
+  useEffect(() => {
+    if (autoStarted.current || !site || !schedule?.signedIn || running || progress) return;
+    if (!overdueInBrowser(schedule.schedules).includes("audit")) return;
+    autoStarted.current = true;
+    setStartedBySchedule(true);
+    void run().then(() => markRan("audit", "Crawled in the browser, on schedule."));
+  }, [site, schedule, running, progress, run, markRan]);
+
+  if (!site) return null;
+
+  const pending = workspace.approvals.filter((a) => a.siteId === site.id && a.status === "pending");
+  const diff = runs.find((r) => r.diff)?.diff ?? null;
+  const connected = site.integrations.filter((i) => i.status === "connected");
 
   return (
     <>
@@ -52,11 +75,19 @@ export default function SiteDashboard() {
         title={site.name}
         description={`${site.domain} · ${site.businessType}${site.industry ? ` · ${site.industry}` : ""}`}
         action={
-          <button className="primary" onClick={run} disabled={running || !!progress}>
+          <button className="primary" onClick={() => void run()} disabled={running || !!progress}>
             {progress || running ? "Running" : runs.length ? "Run now" : "Start the first run"}
           </button>
         }
       />
+
+      {startedBySchedule ? (
+        <Notice kind="ok" title="This run started on its own">
+          The audit was due on your schedule. It runs in this browser rather than on a server, so it waits for you to
+          open the app and then begins without being asked.{" "}
+          <Link href={`/app/sites/${site.id}/schedule`}>Change the cadence</Link>.
+        </Notice>
+      ) : null}
 
       {/* Offered once the report exists, never before it. */}
       {runs.length > 0 && !progress ? <KeepThisRun siteId={site.id} /> : null}

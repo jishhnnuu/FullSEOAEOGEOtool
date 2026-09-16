@@ -304,3 +304,33 @@ export async function markNotified(e: Env, ids: string[]): Promise<void> {
   const db = database(e);
   await db.batch(ids.map((id) => db.prepare("UPDATE milestones SET notified_at = ?1 WHERE id = ?2").bind(now, id)));
 }
+
+/**
+ * Record that a browser ran a job the deployment cannot run itself.
+ *
+ * The audit, the visibility check and the mention sweep all happen in the
+ * user's tab. Without this the schedule would show them permanently overdue,
+ * which would be the same lie in the other direction.
+ */
+export async function markJobRan(
+  e: Env,
+  orgId: string,
+  siteId: string,
+  job: JobKey,
+  detail: string,
+  now: Date = new Date(),
+): Promise<boolean> {
+  const row = await database(e)
+    .prepare("SELECT * FROM schedules WHERE org_id = ?1 AND site_id = ?2 AND job = ?3 LIMIT 1")
+    .bind(orgId, siteId, job)
+    .first<ScheduleRow>();
+  if (!row) return false;
+
+  await completeRun(
+    e,
+    { ...toView(row), id: row.id, orgId: row.org_id, siteId: row.site_id },
+    { status: "ok", detail },
+    now,
+  );
+  return true;
+}

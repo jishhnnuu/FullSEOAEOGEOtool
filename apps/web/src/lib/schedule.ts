@@ -110,7 +110,31 @@ export function useSchedule(siteId: string | undefined, enabled: boolean) {
     [siteId, mutate],
   );
 
-  return { data: data ?? null, loading: isLoading, error: error ?? null, saveEntry, markRead, recordMilestones, refresh: mutate };
+  /** Tell the server a browser-only job ran, so it stops reading as overdue. */
+  const markRan = useCallback(
+    async (job: JobKey, detail?: string): Promise<void> => {
+      if (!siteId) return;
+      await fetch("/api/schedule", {
+        method: "POST",
+        credentials: "same-origin",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ site: siteId, ran: job, detail }),
+      });
+      await mutate();
+    },
+    [siteId, mutate],
+  );
+
+  return {
+    data: data ?? null,
+    loading: isLoading,
+    error: error ?? null,
+    saveEntry,
+    markRead,
+    recordMilestones,
+    markRan,
+    refresh: mutate,
+  };
 }
 
 /** The jobs whose time has passed and which need this tab to run them. */

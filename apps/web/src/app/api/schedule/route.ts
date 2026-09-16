@@ -14,6 +14,7 @@ import { identify } from "@/server/session";
 import { record } from "@/server/db";
 import {
   addMilestone,
+  markJobRan,
   listMilestones,
   listSchedules,
   markSeen,
@@ -112,9 +113,24 @@ export async function POST(request: Request): Promise<Response> {
     const body = (await request.json().catch(() => ({}))) as {
       site?: string;
       seen?: boolean;
+      ran?: string;
+      detail?: string;
       milestones?: { kind?: string; what?: string }[];
     };
     if (!body.site) return fail("no_site", "Which site?");
+
+    // A job the deployment cannot run itself, run by the tab instead.
+    if (body.ran) {
+      if (!JOB_KEYS.includes(body.ran as JobKey)) return fail("bad_job", "That is not a job this platform runs.");
+      const moved = await markJobRan(
+        e,
+        who.orgId,
+        body.site,
+        body.ran as JobKey,
+        (body.detail ?? "Run in the browser, because this job cannot run without one.").slice(0, 300),
+      );
+      return json({ ok: moved });
+    }
 
     if (Array.isArray(body.milestones) && body.milestones.length > 0) {
       const existing = new Set((await listMilestones(e, who.orgId, body.site, 100)).map((row) => row.what));

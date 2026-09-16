@@ -6,11 +6,19 @@ import { useState } from "react";
 import type { LinkProspect } from "@/engine/types";
 import { useSite } from "@/lib/site-hooks";
 import { LinkLimits, LinkVerifier, TacticPlan } from "@/components/link-verify";
+import { LinkProgramme } from "@/components/link-programme";
+import { useWorkspace } from "@/lib/useWorkspace";
+import type { AnswerVisibility } from "@/engine/answers";
 import { Badge, Card, CopyButton, Empty, Notice, PageHeader } from "@/components/ui";
 
 export default function LinksPage() {
   const { site, result } = useSite();
+  const [workspace] = useWorkspace();
   const [kind, setKind] = useState("all");
+
+  // The answer visibility run drives the mention targets and the asset ideas,
+  // because the questions we lost are the best evidence of demand available.
+  const visibility = (workspace.visibility.find((v) => v.siteId === site?.id)?.latest ?? null) as AnswerVisibility | null;
 
   if (!site) return null;
   if (!result) {
@@ -50,6 +58,8 @@ export default function LinksPage() {
         * Verification first, because it is the one part of link building that
         * is nearly always done wrong and the one this can do exactly.
         */}
+      <LinkProgramme site={site} visibility={visibility} />
+
       <LinkVerifier targetDomain={site.domain} />
 
       {noAsset && (

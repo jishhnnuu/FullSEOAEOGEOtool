@@ -208,8 +208,8 @@ export type PortfolioLink = {
   followed: boolean;
   anchorText: string;
   placement: LinkVerdict["placement"];
-  /** Where the claim came from: search console, an upload, or a won pitch. */
-  origin: "search_console" | "bing" | "upload" | "outreach" | "crawl";
+  /** Where the claim came from: a provider, an export, a crawl, or a won pitch. */
+  origin: "search_console" | "bing" | "upload" | "outreach" | "crawl" | "connector";
 };
 
 export type PortfolioHealth = {

@@ -111,7 +111,7 @@ deploy/           Dockerfiles. wrangler.jsonc at the root is Cloudflare.
 | `make test` / `make lint` | 141 Python tests plus the engine suite; ruff and tsc |
 | `npm run test:engine` | The TypeScript engine tests, pinned to real measurements |
 | `docs/COMPETITORS.md` | The field, and the two facts that decide it |
-| `docs/BACKLINKS.md` | What links work can and cannot do, measured |
+| `docs/BACKLINKS.md` | The link programme: data, mentions, risk, and the limits |
 | `make docs` | Regenerate `docs/reference` from the registries |
 | `make cf-preview` | The Cloudflare Worker locally on :8788 |
 | `npm run cf:setup` | Optional. Does the Cloudflare side of `docs/ACCOUNTS.md` from a terminal |
@@ -173,6 +173,18 @@ style disagreement.
   `@id` is a reference into the entity graph, not an incomplete copy of it.
   Proposing to "complete" one writes a second conflicting definition and breaks
   what it was fixing.
+- **Mentions are weighted above links.** Ahrefs measured 75,000 brands in
+  2026: brand mentions correlate with AI Overview visibility at 0.664,
+  backlinks at 0.218. A model has no link graph, it has text. `mentions.ts`
+  tracks both and an unlinked mention is treated as most of the value already
+  delivered, not as a failure to reclaim.
+- **Risk has two numbers, never one.** `link-risk.ts` separates scheme risk
+  from waste risk, because a link that does nothing and a link that could earn
+  a manual action need opposite responses. Every signal carries the observation,
+  why it matters under Google's published policy, and how to check it yourself.
+  A disavow file is refused unless a manual action is reported: Google's own
+  guidance is that the tool is not normal site maintenance, and a careless
+  disavow removes links that were counting in your favour.
 - **An incomplete fix never reaches the queue.** `fixIsComplete()` in
   `fixes.ts` rejects empty payloads and `REPLACE:` markers. The queue is a
   promise that everything in it can ship as-is.

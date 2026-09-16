@@ -4,11 +4,15 @@ import Link from "next/link";
 import { useMemo, useState } from "react";
 
 import { useSite } from "@/lib/site-hooks";
+import { useSchedule } from "@/lib/schedule";
+import { workFor } from "@/lib/work";
+import { buildReport, reportAsText, type Period } from "@/engine/report";
 import { useAnalytics, useSearchQueries } from "@/lib/measured";
 import { useSession } from "@/lib/session";
 import {
   Badge,
   Card,
+  Chart,
   CopyButton,
   Empty,
   Notice,
@@ -21,7 +25,7 @@ import {
 } from "@/components/ui";
 
 export default function ReportsPage() {
-  const { site, runs, result } = useSite();
+  const { site, runs, result, workspace } = useSite();
   const { session } = useSession();
 
   // The two measurements that turn a crawl report into a business report.
@@ -38,40 +42,195 @@ export default function ReportsPage() {
   const [selected, setSelected] = useState<string | null>(null);
   const run = withDiff.find((r) => r.id === selected) ?? withDiff[0];
 
+  // The period report, which is the thing a client reads. It sits above the
+  // run-to-run comparison because "what happened this month" is the question,
+  // and "what changed between two crawls" is how we answer part of it.
+  const [period, setPeriod] = useState<Period>("month");
+  const [custom, setCustom] = useState<{ from: string; to: string }>(() => ({
+    from: new Date(Date.now() - 30 * 86_400_000).toISOString().slice(0, 10),
+    to: new Date().toISOString().slice(0, 10),
+  }));
+  const schedule = useSchedule(site?.id, Boolean(session.user));
+
+  const report = useMemo(() => {
+    if (!site || !result) return null;
+    const completed = runs.filter((r) => r.status === "complete" && r.result);
+    const previous = completed[1]?.result ?? null;
+    const readings = schedule.data?.measurements ?? [];
+    const half = Date.now() - (period === "week" ? 7 : period === "quarter" ? 90 : 30) * 86_400_000;
+    const recent = readings.filter((m) => Date.parse(m.taken_at) >= half);
+    const earlier = readings.filter((m) => Date.parse(m.taken_at) < half);
+    const pick = (rows: typeof readings, key: "clicks" | "impressions" | "position" | "sessions" | "conversions") => {
+      const values = rows.map((r) => r[key]).filter((v): v is number => typeof v === "number");
+      return values.length === 0 ? null : values.reduce((sum, v) => sum + v, 0) / values.length;
+    };
+    const pair = (key: "clicks" | "impressions" | "position" | "sessions" | "conversions") => {
+      const after = pick(recent, key);
+      if (after === null) return undefined;
+      return { before: pick(earlier, key), after };
+    };
+
+    return buildReport({
+      period,
+      custom: period === "custom" ? { from: new Date(custom.from).toISOString(), to: new Date(custom.to).toISOString() } : undefined,
+      site: { name: site.name, url: site.baseUrl },
+      work: workFor(workspace, site.id),
+      current: result,
+      previous,
+      measurements: {
+        clicks: pair("clicks"),
+        impressions: pair("impressions"),
+        position: pair("position"),
+        sessions: pair("sessions"),
+        conversions: pair("conversions"),
+      },
+      firstRunAt: completed.length > 0 ? completed[completed.length - 1].startedAt : null,
+    });
+  }, [site, result, runs, workspace, period, custom, schedule.data]);
+
   if (!site) return null;
-  if (!run?.diff || !result) {
+  if (!result) {
     return (
       <>
-        <PageHeader title="What changed" />
-        <Empty title="Nothing to compare yet">
+        <PageHeader title="Reports" />
+        <Empty title="Nothing to report yet">
           <p className="small">
-            The first run is the baseline. <Link href={`/app/sites/${site.id}`}>Run it again</Link> and this page
-            reports the difference rather than the state.
+            The first run is the baseline. <Link href={`/app/sites/${site.id}`}>Run it</Link> and this page reports the
+            period rather than the state.
           </p>
         </Empty>
       </>
     );
   }
 
-  const diff = run.diff;
+  const diff = run?.diff ?? null;
+  const readings = schedule.data?.measurements ?? [];
 
   return (
     <>
       <PageHeader
-        title="What changed"
-        description="The comparison a retainer is supposed to produce: what cleared, what appeared, what got worse, and which way the numbers moved."
+        title="Reports"
+        description="What was done, what moved, and what it earned. In that order, and the third one is left blank rather than guessed at."
         action={
-          withDiff.length > 1 ? (
-            <select value={run.id} onChange={(e) => setSelected(e.target.value)} style={{ width: "auto" }}>
-              {withDiff.map((option) => (
-                <option key={option.id} value={option.id}>
-                  Run of {new Date(option.startedAt).toLocaleDateString()}
-                </option>
-              ))}
+          <div className="row" style={{ gap: "0.4rem" }}>
+            <select value={period} onChange={(e) => setPeriod(e.target.value as Period)} style={{ width: "auto" }}>
+              <option value="week">Week on week</option>
+              <option value="month">Month on month</option>
+              <option value="quarter">Quarter on quarter</option>
+              <option value="custom">Custom range</option>
             </select>
-          ) : undefined
+            {withDiff.length > 1 ? (
+              <select value={run?.id ?? ""} onChange={(e) => setSelected(e.target.value)} style={{ width: "auto" }}>
+                {withDiff.map((option) => (
+                  <option key={option.id} value={option.id}>
+                    Run of {new Date(option.startedAt).toLocaleDateString()}
+                  </option>
+                ))}
+              </select>
+            ) : null}
+          </div>
         }
       />
+
+      {period === "custom" ? (
+        <div className="row" style={{ marginBottom: "1rem" }}>
+          <label className="field">
+            <span className="rule-label">From</span>
+            <input type="date" value={custom.from} onChange={(e) => setCustom({ ...custom, from: e.target.value })} />
+          </label>
+          <label className="field">
+            <span className="rule-label">To</span>
+            <input type="date" value={custom.to} onChange={(e) => setCustom({ ...custom, to: e.target.value })} />
+          </label>
+        </div>
+      ) : null}
+
+      {report ? (
+        <>
+          <Card
+            title={`What happened in ${report.range.label}`}
+            action={<CopyButton text={reportAsText(report)} label="Copy the report" />}
+          >
+            <ul className="small" style={{ paddingLeft: "1.1rem" }}>
+              {report.narrative.map((line, index) => (
+                <li key={index}>{line}</li>
+              ))}
+            </ul>
+
+            {report.work.byKind.length > 0 ? (
+              <div className="stat-row" style={{ marginTop: "0.8rem" }}>
+                {report.work.byKind.map((kind) => (
+                  <div className="stat" key={kind.kind}>
+                    <span className="stat-label">{kind.label}</span>
+                    <span className="stat-value">{kind.count}</span>
+                  </div>
+                ))}
+              </div>
+            ) : null}
+
+            {report.next.length > 0 ? (
+              <div style={{ marginTop: "1rem" }}>
+                <div className="rule-label">Next</div>
+                <ul className="small" style={{ paddingLeft: "1.1rem", marginBottom: 0 }}>
+                  {report.next.map((item) => (
+                    <li key={item.what}>
+                      <strong>{item.what}.</strong> <span className="muted">{item.why}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ) : null}
+          </Card>
+
+          {[...report.change.measured, ...report.change.scores].length > 0 ? (
+            <div className="grid grid-4">
+              {[...report.change.measured, ...report.change.scores].map((move) => (
+                <div className="card score" key={move.key}>
+                  <div className="label">{move.label}</div>
+                  <div className="row" style={{ gap: "0.5rem", alignItems: "baseline" }}>
+                    <div className="value">{formatNumber(move.after, move.after < 10 ? 1 : 0)}</div>
+                    {move.percent !== null ? (
+                      <span
+                        className={`delta delta-${
+                          Math.abs(move.percent) < 3 ? "flat" : (move.percent > 0) === move.higherIsBetter ? "up" : "down"
+                        }`}
+                      >
+                        {move.percent > 0 ? "+" : ""}
+                        {Math.round(move.percent)}%
+                      </span>
+                    ) : null}
+                  </div>
+                  <div className="hint">{move.before === null ? "first reading" : `was ${formatNumber(move.before, 1)}`}</div>
+                </div>
+              ))}
+            </div>
+          ) : null}
+
+          {readings.length > 1 ? (
+            <Card title="The trend behind those numbers">
+              <p className="small muted">
+                Plotted from the readings the schedule took, on the dates it took them. Nothing is interpolated across a
+                gap.
+              </p>
+              <Chart
+                label="Clicks from search"
+                points={readings.filter((m) => m.source === "gsc").map((m) => ({ at: m.taken_at, value: m.clicks }))}
+              />
+              <Chart
+                label="Average position"
+                higherIsBetter={false}
+                points={readings.filter((m) => m.source === "gsc").map((m) => ({ at: m.taken_at, value: m.position }))}
+              />
+            </Card>
+          ) : session.user ? (
+            <Notice kind="warn" title="No trend yet">
+              A chart needs readings taken over time, and nothing has been sampling them.{" "}
+              <Link href={`/app/sites/${site.id}/schedule`}>Turn the measurement sample on</Link> and this fills in a
+              reading a day, without you.
+            </Notice>
+          ) : null}
+        </>
+      ) : null}
 
       {search.data || analytics.data ? (
         <Card title="What it earned">
@@ -172,6 +331,8 @@ export default function ReportsPage() {
         </Notice>
       ) : null}
 
+      {diff ? (
+        <>
       <Card>
         <p style={{ marginBottom: "0.7rem" }}><strong>{diff.headline}</strong></p>
         <div className="tiny faint" style={{ marginBottom: "0.9rem" }}>
@@ -292,6 +453,14 @@ export default function ReportsPage() {
           </details>
         )}
       </Card>
+
+        </>
+      ) : (
+        <Notice kind="warn" title="Only one run so far">
+          A run-to-run comparison needs two. <Link href={`/app/sites/${site.id}`}>Run it again</Link> and this page adds
+          what cleared, what appeared and what got worse.
+        </Notice>
+      )}
 
       <Card title="The run behind this report">
         <dl className="kv">

@@ -111,6 +111,7 @@ deploy/           Dockerfiles. wrangler.jsonc at the root is Cloudflare.
 | `make test` / `make lint` | 141 Python tests plus the engine suite; ruff and tsc |
 | `npm run test:engine` | The TypeScript engine tests, pinned to real measurements |
 | `docs/COMPETITORS.md` | The field, and the two facts that decide it |
+| `docs/opinion/` | A dated, versioned record of what this thing is honestly worth. Standalone: nothing imports it, nothing publishes it, and old entries are never edited. Read the newest before claiming the product is further along than it is, and add a new version rather than revising one. |
 | `docs/BACKLINKS.md` | The link programme: data, mentions, risk, and the limits |
 | `make docs` | Regenerate `docs/reference` from the registries |
 | `make cf-preview` | The Cloudflare Worker locally on :8788 |
@@ -188,6 +189,42 @@ style disagreement.
 - **An incomplete fix never reaches the queue.** `fixIsComplete()` in
   `fixes.ts` rejects empty payloads and `REPLACE:` markers. The queue is a
   promise that everything in it can ship as-is.
+- **A draft with a placeholder is not a draft.** `outreach.ts` returns `null`
+  rather than an email whenever the proof is shorter than a sentence or the
+  sender is incomplete. A template burns the sender's domain, and it is their
+  domain, not ours. Nothing in the outreach path sends: `composeUrl()` opens
+  the user's own mail client with the fields filled, which is also why no
+  Google restricted scope, CASA assessment or copy of anyone's correspondence
+  is involved.
+- **A contextual link needs a sentence that already exists.**
+  `planContextualLinks()` refuses unless a paragraph on the source page already
+  shares terms with the target, because inserting a link anywhere else means
+  writing a sentence, and that is a content change pretending to be a linking
+  change. Three orphans in one section is the threshold for building the index
+  page instead: two is a coincidence, and a listing page with two entries is
+  thin content that fixes nothing.
+- **A schedule says which jobs it cannot run.** `JOBS` in `schedule.ts` carries
+  `runsHeadless`, and only the measurement sample and the report have it. The
+  audit runs in the browser, so a scheduled crawl waits for a tab, and
+  `headlessNote()` prints that on the screen. A schedule that quietly does
+  nothing is worse than no schedule.
+- **The cron handler lives outside Next.** `deploy/worker.js` re-exports
+  OpenNext's generated worker and adds `scheduled`, because Cloudflare will not
+  fire a cron trigger without one. It reaches the app through an in-isolate
+  fetch guarded by a token minted in memory at start, so there is no public
+  endpoint and no secret for an operator to set. `wrangler.jsonc` points `main`
+  at the wrapper, not at `.open-next/worker.js`.
+- **A stage is blocked, never guessed.** `progress.ts` refuses to score the
+  competitive stage without Search Console, because choosing which page to
+  rewrite from a proxy wastes the most expensive work in the programme. A
+  blocked stage steps aside rather than stopping the programme, and
+  `milestonesBetween()` emits only stage completions and regressions: a
+  notification for every finding cleared trains people to ignore
+  notifications.
+- **A report never substitutes crawl movement for business results.**
+  `compareRuns()` drops any score whose `measured` flag is false, and
+  `measurementMissing` makes the report say so in its first paragraph rather
+  than filling the space. `report.ts` reads flat as flat.
 - **`docs/reference` is generated.** Adding a tool, check, agent or mission
   means running `make docs` and committing the result. CI fails if it is stale.
 

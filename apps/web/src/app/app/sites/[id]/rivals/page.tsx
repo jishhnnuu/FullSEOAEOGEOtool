@@ -8,6 +8,8 @@ import { benchmarkOptions, findGaps, sideFrom, type Benchmark, type BenchmarkSid
 import { optionsFor } from "@/lib/runner";
 import { useSite } from "@/lib/site-hooks";
 import { Badge, Card, Empty, Notice, PageHeader, formatNumber } from "@/components/ui";
+import { ContentGap } from "@/components/content-gap";
+import { useSession } from "@/lib/session";
 
 /**
  * The comparison, measured rather than estimated.
@@ -24,6 +26,7 @@ import { Badge, Card, Empty, Notice, PageHeader, formatNumber } from "@/componen
  */
 export default function RivalsPage() {
   const { site, result } = useSite();
+  const { session } = useSession();
   const [benchmark, setBenchmark] = useState<Benchmark | null>(null);
   const [running, setRunning] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -191,6 +194,17 @@ export default function RivalsPage() {
           </Card>
         </>
       ) : null}
+
+      {/*
+        * Site against site says how they are built. This says why one page of
+        * yours is behind one page of theirs, which is the level a rewrite
+        * actually happens at.
+        */}
+      <PageHeader
+        title="Page against page"
+        description="Site-level comparison tells you how they build. This tells you what to change on one page, and which page to change first."
+      />
+      <ContentGap result={result} signedIn={Boolean(session.user)} siteId={site.id} competitors={site.competitors} />
     </>
   );
 }

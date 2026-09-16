@@ -47,3 +47,37 @@ export async function sendLoginLink(e: Env, to: string, link: string): Promise<S
   }
   return { ok: true };
 }
+
+/**
+ * Any other message this deployment sends: a report, a milestone, a
+ * regression worth knowing about the day it happens.
+ *
+ * Same rule as the sign-in link. With no sender configured this returns the
+ * reason rather than throwing, and the caller records that the report was
+ * generated but not delivered. A report that silently never arrives is worse
+ * than one that says it could not be sent.
+ */
+export async function send(
+  e: Env,
+  message: { to: string; subject: string; text: string },
+): Promise<SendResult> {
+  if (!e.RESEND_API_KEY) {
+    return {
+      ok: false,
+      reason:
+        "No email sender is configured on this deployment, so the report was built but not sent. " +
+        "Set RESEND_API_KEY as a Worker secret to turn delivery on.",
+    };
+  }
+  const from = e.MAIL_FROM ?? "SEO OS <onboarding@resend.dev>";
+  const response = await fetch("https://api.resend.com/emails", {
+    method: "POST",
+    headers: { authorization: `Bearer ${e.RESEND_API_KEY}`, "content-type": "application/json" },
+    body: JSON.stringify({ from, to: [message.to], subject: message.subject, text: message.text }),
+  });
+  if (!response.ok) {
+    const body = await response.text();
+    return { ok: false, reason: `The email service answered ${response.status}: ${body.slice(0, 200)}` };
+  }
+  return { ok: true };
+}

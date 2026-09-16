@@ -380,3 +380,100 @@ function inline(text: string): React.ReactNode {
     return <span key={i}>{part}</span>;
   });
 }
+
+/* ---------------------------------------------------------------- charts */
+
+export type SeriesPoint = { at: string; value: number | null };
+
+/**
+ * A line chart, drawn as SVG with no library.
+ *
+ * Deliberately plain: one series, a dotted baseline at the previous period's
+ * average, and gaps where nothing was measured rather than a line interpolated
+ * across them. A chart that joins two readings a fortnight apart with a
+ * straight line is drawing eleven days of data it does not have.
+ */
+export function Chart({
+  points,
+  label,
+  higherIsBetter = true,
+  height = 120,
+  format = (n: number) => String(Math.round(n * 10) / 10),
+}: {
+  points: SeriesPoint[];
+  label: string;
+  higherIsBetter?: boolean;
+  height?: number;
+  format?: (value: number) => string;
+}) {
+  const real = points.filter((p): p is { at: string; value: number } => typeof p.value === "number");
+  if (real.length < 2) {
+    return (
+      <div className="chart-empty small muted">
+        {real.length === 0
+          ? `Nothing measured for ${label} yet.`
+          : `One reading of ${label} so far. A chart needs two, and the schedule takes the next one.`}
+      </div>
+    );
+  }
+
+  const width = 640;
+  const pad = 6;
+  const values = real.map((p) => p.value);
+  const min = Math.min(...values);
+  const max = Math.max(...values);
+  const span = max - min || 1;
+  const firstTime = Date.parse(real[0].at);
+  const lastTime = Date.parse(real[real.length - 1].at);
+  const timeSpan = lastTime - firstTime || 1;
+
+  const x = (at: string) => pad + ((Date.parse(at) - firstTime) / timeSpan) * (width - pad * 2);
+  const y = (value: number) => pad + (1 - (value - min) / span) * (height - pad * 2);
+
+  // Break the line wherever the gap between readings is more than three times
+  // the usual one, so a pause in measurement looks like a pause.
+  const gaps: number[] = [];
+  for (let i = 1; i < real.length; i += 1) gaps.push(Date.parse(real[i].at) - Date.parse(real[i - 1].at));
+  const typical = gaps.slice().sort((a, b) => a - b)[Math.floor(gaps.length / 2)] || 1;
+
+  const segments: string[] = [];
+  let current = `M ${x(real[0].at)} ${y(real[0].value)}`;
+  for (let i = 1; i < real.length; i += 1) {
+    if (gaps[i - 1] > typical * 3) {
+      segments.push(current);
+      current = `M ${x(real[i].at)} ${y(real[i].value)}`;
+    } else {
+      current += ` L ${x(real[i].at)} ${y(real[i].value)}`;
+    }
+  }
+  segments.push(current);
+
+  const last = real[real.length - 1];
+  const first = real[0];
+  const direction = last.value === first.value ? "flat" : last.value > first.value ? "up" : "down";
+  const good = direction === "flat" ? "flat" : (direction === "up") === higherIsBetter ? "up" : "down";
+
+  return (
+    <figure className="chart">
+      <figcaption className="between">
+        <span className="small muted">{label}</span>
+        <span className={`delta delta-${good}`}>
+          {format(first.value)} to {format(last.value)}
+        </span>
+      </figcaption>
+      <svg viewBox={`0 0 ${width} ${height}`} role="img" aria-label={`${label}, ${real.length} readings`} preserveAspectRatio="none">
+        {segments.map((d, index) => (
+          <path key={index} d={d} fill="none" strokeWidth="2" vectorEffect="non-scaling-stroke" className={`chart-line chart-${good}`} />
+        ))}
+        <circle cx={x(last.at)} cy={y(last.value)} r="3.5" className={`chart-dot chart-${good}`} />
+      </svg>
+      <div className="between tiny faint">
+        <span>{new Date(first.at).toLocaleDateString()}</span>
+        <span>
+          {real.length} reading{real.length === 1 ? "" : "s"}
+        </span>
+        <span>{new Date(last.at).toLocaleDateString()}</span>
+      </div>
+    </figure>
+  );
+}

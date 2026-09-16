@@ -1,12 +1,15 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import type { LinkProspect } from "@/engine/types";
 import { useSite } from "@/lib/site-hooks";
 import { LinkLimits, LinkVerifier, TacticPlan } from "@/components/link-verify";
 import { LinkProgramme } from "@/components/link-programme";
+import { OutreachDesk } from "@/components/outreach-desk";
+import { loadLinks } from "@/lib/links";
+import type { Mention } from "@/engine/mentions";
 import { useWorkspace } from "@/lib/useWorkspace";
 import type { AnswerVisibility } from "@/engine/answers";
 import { Badge, Card, CopyButton, Empty, Notice, PageHeader } from "@/components/ui";
@@ -15,6 +18,11 @@ export default function LinksPage() {
   const { site, result } = useSite();
   const [workspace] = useWorkspace();
   const [kind, setKind] = useState("all");
+  const [mentions, setMentions] = useState<Mention[]>([]);
+
+  useEffect(() => {
+    if (site) setMentions(loadLinks(site.id).mentions);
+  }, [site]);
 
   // The answer visibility run drives the mention targets and the asset ideas,
   // because the questions we lost are the best evidence of demand available.
@@ -62,6 +70,18 @@ export default function LinksPage() {
 
       <LinkVerifier targetDomain={site.domain} />
 
+      {/*
+        * The desk. Everything above finds and judges prospects; this writes the
+        * email and opens it, which is the part that used to be the founder's
+        * evening.
+        */}
+      <OutreachDesk
+        site={site}
+        prospects={result.prospects}
+        mentions={mentions}
+        accountName={workspace.account?.name ?? ""}
+      />
+
       {noAsset && (
         <Notice kind="bad">
           <strong>Nothing on the site is worth linking to.</strong> {noAsset.why} Outreach without an asset is
@@ -107,7 +127,7 @@ export default function LinksPage() {
                 </div>
                 <div className="button-row">
                   <a href={prospect.url} target="_blank" rel="noopener noreferrer" className="button small">Open</a>
-                  <CopyButton text={outreachDraft(prospect, site.name, site.domain)} label="Copy an outreach draft" />
+                  <span className="tiny faint">The written draft for this one is at the top of the page.</span>
                 </div>
               </div>
             </details>
@@ -117,11 +137,11 @@ export default function LinksPage() {
 
       <Card title="How outreach works here">
         <ul className="small muted" style={{ paddingLeft: "1.1rem", marginBottom: 0 }}>
-          <li>Email is sent from your domain through your own provider, never through platform infrastructure. A shared sending domain gets burned by somebody else&apos;s campaign and takes your deliverability with it.</li>
-          <li>There is a per-domain daily cap, and it is not adjustable upward past what a person could plausibly send.</li>
-          <li>The drafting tool refuses role addresses, template outreach, and anything with no substantive reference to what the recipient actually published.</li>
-          <li>Follow-ups stop the moment somebody replies.</li>
-          <li>Every send waits for your approval regardless of autonomy level.</li>
+          <li>Email goes out from your own account, in your own mail client. Nothing passes through this platform, so a shared sending domain cannot be burned by somebody else&apos;s campaign and take your deliverability with it.</li>
+          <li>Two approaches per domain per month, one follow-up, and the sequence stops the moment somebody replies.</li>
+          <li>A draft is refused outright unless it can quote something from the recipient&apos;s own page. There are no placeholders to fill in, because a draft with placeholders is a template.</li>
+          <li>Shared mailboxes are flagged rather than used.</li>
+          <li>Nothing sends itself, at any autonomy level. A compose window opens and you press send.</li>
         </ul>
       </Card>
       <TacticPlan />
@@ -129,29 +149,4 @@ export default function LinksPage() {
       <LinkLimits />
     </>
   );
-}
-
-function outreachDraft(prospect: LinkProspect, brand: string, domain: string): string {
-  return [
-    `Subject: [REPLACE: reference something specific they published]`,
-    ``,
-    `Hi [REPLACE: their first name],`,
-    ``,
-    `[REPLACE: one sentence about the specific piece of theirs you read, with what you took from it. If you cannot write this sentence honestly, do not send the email.]`,
-    ``,
-    `I work on ${brand} (${domain}). ${prospect.pitchAngle}`,
-    ``,
-    `[REPLACE: the specific thing you are offering: the data, the quote, the correction. One sentence.]`,
-    ``,
-    `Either way, thanks for [REPLACE: the thing you actually found useful].`,
-    ``,
-    `[Your name]`,
-    ``,
-    `---`,
-    `Checklist before this goes out:`,
-    `- Is it addressed to a person, not info@ or hello@?`,
-    `- Does the first line reference something only somebody who read their work would know?`,
-    `- Are you offering something before you ask for anything?`,
-    `- Would you reply to this?`,
-  ].join("\n");
 }

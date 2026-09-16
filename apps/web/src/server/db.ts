@@ -42,6 +42,9 @@ const SCOPED = new Set([
   "workspaces",
   "memberships",
   "sessions",
+  "schedules",
+  "measurements",
+  "milestones",
 ]);
 
 function assertScoped(table: string): void {

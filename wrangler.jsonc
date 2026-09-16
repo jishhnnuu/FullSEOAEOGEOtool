@@ -1,7 +1,9 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "fullseoaeogeotool",
-  "main": "apps/web/.open-next/worker.js",
+  // Not the generated worker directly: `deploy/worker.js` re-exports it and
+  // adds the `scheduled` handler Cloudflare needs before a cron trigger fires.
+  "main": "deploy/worker.js",
   "compatibility_date": "2025-09-01",
   // Next's server bundle reaches for node: builtins; nodejs_compat supplies them.
   "compatibility_flags": ["nodejs_compat"],
@@ -45,6 +47,18 @@
   //
   // SEOOS_API_URL additionally proxies /api/v1 to a self-hosted Python
   // service, read per request, with no rebuild.
+
+  // Hourly. Each firing runs the jobs that can work with nobody present: the
+  // measurement sample and the report. The audit runs in the browser, so a
+  // scheduled crawl waits for the next time the app is opened, and the
+  // schedule screen says so rather than implying otherwise.
+  //
+  // Cron triggers are included on the free plan. If none is configured the
+  // rest of the Worker is unaffected; nothing here is load-bearing for the
+  // audit.
+  "triggers": {
+    "crons": ["0 * * * *"]
+  },
 
   "observability": {
     "enabled": true

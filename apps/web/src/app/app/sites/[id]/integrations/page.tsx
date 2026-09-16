@@ -277,8 +277,18 @@ function Integrations() {
         </p>
         <p className="small">
           <strong>Business Profile</strong> is gated behind an access request against the API itself, not just a
-          scope, and wants a verified profile that has been active for two months. Until it clears, posts and
-          review replies are drafted here and pasted there.
+          scope, and wants a verified profile that has been active for two months. It is one form, once, for the
+          whole account:{" "}
+          <a
+            href="https://developers.google.com/my-business/content/prereqs#request-access"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            the access request
+          </a>
+          . After it clears, individual posts are <em>not</em> reviewed by Google. Posting, review replies and
+          profile edits all run on the permission you granted when you connected, so nothing asks you again. Until
+          it clears, posts and review replies are drafted here and pasted there.
         </p>
       </Card>
     </div>

@@ -13,7 +13,8 @@ const NAV = [
     section: "Overview",
     items: [
       { href: "", label: "Dashboard" },
-      { href: "/reports", label: "What changed" },
+      { href: "/progress", label: "Progress" },
+      { href: "/reports", label: "Reports" },
     ],
   },
   {
@@ -32,6 +33,7 @@ const NAV = [
       { href: "/aeo", label: "AI answers" },
       { href: "/local", label: "Local" },
       { href: "/links", label: "Links" },
+      { href: "/linking", label: "Internal linking" },
       { href: "/rivals", label: "Rivals" },
       { href: "/runs", label: "Activity" },
     ],
@@ -40,6 +42,7 @@ const NAV = [
     section: "Setup",
     items: [
       { href: "/integrations", label: "Connections" },
+      { href: "/schedule", label: "Schedule" },
       { href: "/settings", label: "Settings" },
     ],
   },

@@ -759,3 +759,60 @@ details.reveal[open] summary { margin-bottom: 0.6rem; }
 .coverage.complete { border-left-color: var(--ok); }
 .coverage strong { font-size: 0.9rem; }
 .coverage .muted { font-size: 0.82rem; }
+
+/* ------------------------------------------------------------- charts */
+
+.chart { margin: 0; }
+.chart svg { width: 100%; height: 120px; display: block; margin: 0.35rem 0 0.2rem; }
+.chart-line { stroke: var(--accent); }
+.chart-dot { fill: var(--accent); }
+.chart-up { stroke: var(--ok); fill: var(--ok); }
+.chart-down { stroke: var(--bad); fill: var(--bad); }
+.chart-flat { stroke: var(--text-faint); fill: var(--text-faint); }
+.chart-empty {
+  border: 1px dashed var(--border-strong);
+  border-radius: 6px;
+  padding: 1rem;
+  text-align: center;
+}
+
+/* --------------------------------------------------------- the programme */
+
+.stage { border: 1px solid var(--border); border-radius: 8px; padding: 0.9rem 1rem; background: var(--surface); }
+.stage + .stage { margin-top: 0.6rem; }
+.stage-done { border-color: color-mix(in srgb, var(--ok) 45%, var(--border)); }
+.stage-current { border-color: var(--accent); box-shadow: var(--shadow); }
+.stage-blocked { border-color: color-mix(in srgb, var(--warn) 45%, var(--border)); }
+.stage h3 { font-size: 0.97rem; margin: 0; }
+.stage .meter { margin-top: 0.6rem; }
+
+/* ------------------------------------------------------------- outreach */
+
+.draft { border: 1px solid var(--border); border-radius: 8px; background: var(--surface); padding: 0.9rem 1rem; }
+.draft + .draft { margin-top: 0.7rem; }
+.draft pre {
+  white-space: pre-wrap;
+  font-family: var(--mono);
+  font-size: 0.79rem;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 0.7rem 0.8rem;
+  margin: 0.5rem 0;
+  max-height: 260px;
+  overflow: auto;
+}
+.draft-proof {
+  border-left: 3px solid var(--accent);
+  padding-left: 0.7rem;
+  font-size: 0.82rem;
+  color: var(--text-muted);
+}
+
+/* A link styled as a button, held back because the rule says not yet. */
+.button.disabled,
+a.button.disabled {
+  opacity: 0.45;
+  pointer-events: none;
+  cursor: not-allowed;
+}

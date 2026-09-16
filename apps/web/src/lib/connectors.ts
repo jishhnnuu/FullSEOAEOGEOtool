@@ -90,7 +90,7 @@ export const CONNECTORS: ConnectorSpec[] = [
     authKind: "oauth",
     docsUrl: "https://developers.google.com/my-business",
     setupNotes:
-      "The Business Profile API needs approved access from Google, which takes a few days. Until then, the platform drafts posts and replies for you to paste in.",
+      "One access request to Google, once, for the whole account. It takes a few days and it is free. After that nothing needs approving again: posting, replying to reviews and editing the profile all run on the business.manage scope you granted at connection, and Google does not review individual posts. Until the request clears, posts and replies are drafted here for you to paste in.",
     fields: [
       { key: "location_id", label: "Location ID", kind: "text", required: true, help: "From the Business Profile API, or the profile URL." },
       { key: "oauth_token", label: "OAuth refresh token", kind: "password", required: true, help: "Held in this browser only." },

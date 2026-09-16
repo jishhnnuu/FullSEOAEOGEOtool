@@ -269,10 +269,36 @@ policy in a document is a policy the software can break:
 
 A draft cannot be generated without a specific detail from the target page.
 That is not politeness, it is the only thing that separates a reply from a
-delete, so the template will not fill without it.
+delete, so `draft()` returns nothing rather than something with a hole in it.
 
-**The limit:** reply tracking needs a mailbox connection. Until one exists, the
-pipeline knows what was drafted and not what came back.
+### How the message gets sent, and why it works this way
+
+The founder's part is reading the draft and pressing send. Everything before
+that is done: the address field, the subject, the body, and the fact from the
+recipient's page that the first line quotes. The button opens a compose window
+in their own mail client with all of it filled in.
+
+No model is involved and no API key is needed. Seven tactics, each with a
+three-part body (the proof, the ask, the exit), assembled from what the crawl
+measured. A model would write a more varied sentence and a less specific one,
+and it would put a key between the user and their own outreach.
+
+The delivery mechanism is a compose URL rather than the Gmail API, and that is
+a decision worth recording. `gmail.compose` is a Google restricted scope. It
+needs app verification, a CASA security assessment, and annual
+re-certification, and the moment restricted-scope data touches a server the
+assessment tier climbs again. A compose URL needs none of it, works on day one
+for every account, and the user's mail never reaches this platform at all. The
+cost is one click: the draft opens rather than saving itself.
+
+Gmail, Outlook on the web, and whatever the device uses are all supported.
+Approaches are recorded against the domain as the compose window opens, which
+is what enforces the two-per-month cap.
+
+**The limit:** reply tracking needs a mailbox connection, and this deliberately
+does not have one. The pipeline knows what was drafted and opened, not what
+came back. Marking a reply is a click. That is the price of not holding a copy
+of anyone's correspondence, and it is the right price.
 
 ## What an agency does that this still does not
 

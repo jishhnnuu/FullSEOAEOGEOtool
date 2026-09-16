@@ -64,7 +64,7 @@ export default function RunsPage() {
                   <span>{run.result.findings.length} findings</span>
                   <span>{run.result.findings.filter((f) => f.fix).length} fixes generated</span>
                   <span>{run.result.briefs.length} briefs</span>
-                  <span>£0 model spend</span>
+                  <span>no model spend</span>
                 </div>
               )}
 

@@ -730,3 +730,32 @@ details.reveal[open] summary { margin-bottom: 0.6rem; }
 }
 .stat-label { font-size: 0.74rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; }
 .stat-value { font-size: 1.45rem; font-weight: 650; letter-spacing: -0.02em; }
+
+/*
+ * A score with nothing behind it.
+ *
+ * Deliberately plain: no colour band, no meter, no number. A greyed-out 100
+ * still reads as 100 at a glance, which is the exact failure this avoids.
+ */
+.score-unmeasured {
+  border-style: dashed;
+  background: var(--surface);
+}
+.score-unmeasured .hint { margin-top: 0.3rem; line-height: 1.4; }
+
+/* Crawl coverage, stated beside the scores rather than in a caption below. */
+.coverage {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+  padding: 0.65rem 0.9rem;
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--warn);
+  border-radius: var(--radius);
+  background: var(--surface);
+  margin-bottom: 1rem;
+}
+.coverage.complete { border-left-color: var(--ok); }
+.coverage strong { font-size: 0.9rem; }
+.coverage .muted { font-size: 0.82rem; }

@@ -69,15 +69,59 @@ function weighted(findings: Finding[], weights: Partial<Record<Category, number>
     .slice(0, 8)
     .map((f) => ({ code: f.code, title: f.title, severity: f.severity, url: f.url, priority: f.priority }));
 
-  return { score: Math.round(total * 10) / 10, components, counts, topIssues };
+  return {
+    score: Math.round(total * 10) / 10,
+    components,
+    counts,
+    topIssues,
+    measured: true,
+    unmeasuredReason: null,
+    unmeasuredFix: null,
+  };
 }
 
-export function scoreAll(findings: Finding[], pageCount: number): Scores {
+/**
+ * Mark a score as asserted rather than measured.
+ *
+ * The number is still computed, because it is still the best reading of what
+ * the crawl saw, but nothing downstream may present it as a measurement.
+ */
+function unmeasured(breakdown: ScoreBreakdown, reason: string, fix: string): ScoreBreakdown {
+  return { ...breakdown, measured: false, unmeasuredReason: reason, unmeasuredFix: fix };
+}
+
+/** What evidence exists for the two categories that usually have none. */
+export type Evidence = {
+  /** A Lighthouse or field-data reading of real speed. */
+  performance: boolean;
+  /** Any backlink or referring-domain data at all. */
+  links: boolean;
+};
+
+export function scoreAll(findings: Finding[], pageCount: number, evidence: Evidence = { performance: false, links: false }): Scores {
+  const experience = weighted(findings, EXPERIENCE_WEIGHTS, pageCount);
+  const authority = weighted(findings, AUTHORITY_WEIGHTS, pageCount);
+
   return {
     health: weighted(findings, HEALTH_WEIGHTS, pageCount),
     aeo: weighted(findings, AEO_WEIGHTS, pageCount),
-    authority: weighted(findings, AUTHORITY_WEIGHTS, pageCount),
-    experience: weighted(findings, EXPERIENCE_WEIGHTS, pageCount),
+    // Authority without link data is a guess about the one input that defines
+    // it. Experience without a timing run is HTML heuristics wearing the
+    // clothes of a performance score.
+    authority: evidence.links
+      ? authority
+      : unmeasured(
+          authority,
+          "Nothing here measures your backlink profile, and links are most of what authority means.",
+          "Connect Search Console for its referring-domain sample, or a backlink provider for the full picture.",
+        ),
+    experience: evidence.performance
+      ? experience
+      : unmeasured(
+          experience,
+          "No page was actually timed. This reads speed from the HTML, which catches heavy images and little else.",
+          "Connect Search Console so Core Web Vitals field data can be read, or run Lighthouse against the site.",
+        ),
   };
 }
 

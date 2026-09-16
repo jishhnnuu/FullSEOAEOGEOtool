@@ -91,6 +91,33 @@ export default function SiteDashboard() {
 
       {result && (
         <>
+          {/*
+            * Coverage sits above the scores, not under them. A score computed
+            * over 40 of 55 pages is a score of those 40 pages, and the reader
+            * has to know that before they read the number, not after.
+            */}
+          {result.coverage ? (
+            <div className={`coverage${result.coverage.complete ? " complete" : ""}`}>
+              <strong>{result.coverage.complete ? "Full coverage" : "Partial coverage"}</strong>
+              <span className="muted">{result.coverage.headline}</span>
+              {result.coverage.unseen.length > 0 ? (
+                <details style={{ width: "100%" }}>
+                  <summary className="tiny faint">Which pages were not read</summary>
+                  <div className="mono tiny" style={{ maxHeight: "200px", overflowY: "auto", marginTop: "0.4rem" }}>
+                    {result.coverage.gaps.map((gap) => (
+                      <div key={gap.section}>
+                        <strong>{gap.section}</strong>: {gap.count} unseen
+                        {gap.examples.map((url) => (
+                          <div key={url} className="truncate" style={{ paddingLeft: "1rem", opacity: 0.75 }}>{url}</div>
+                        ))}
+                      </div>
+                    ))}
+                  </div>
+                </details>
+              ) : null}
+            </div>
+          ) : null}
+
           <div className="grid grid-4">
             <Score
               label="Search health"
@@ -109,12 +136,18 @@ export default function SiteDashboard() {
               value={result.scores.authority.score}
               change={diff?.scores.find((s) => s.key === "authority")?.change}
               hint="Links, entity, local presence"
+              measured={result.scores.authority.measured}
+              unmeasuredReason={result.scores.authority.unmeasuredReason}
+              unmeasuredFix={result.scores.authority.unmeasuredFix}
             />
             <Score
               label="Experience"
               value={result.scores.experience.score}
               change={diff?.scores.find((s) => s.key === "experience")?.change}
               hint="Speed, mobile, can they act"
+              measured={result.scores.experience.measured}
+              unmeasuredReason={result.scores.experience.unmeasuredReason}
+              unmeasuredFix={result.scores.experience.unmeasuredFix}
             />
           </div>
 
@@ -231,7 +264,8 @@ export default function SiteDashboard() {
                 <div className="tiny faint">content briefs</div>
               </div>
               <div>
-                <div className="score value" style={{ fontSize: "1.9rem" }}>£0</div>
+                {/* Zero in every currency, so no symbol is needed and none is guessed. */}
+                <div className="score value" style={{ fontSize: "1.9rem" }}>Nothing</div>
                 <div className="tiny faint">marginal cost of this run</div>
               </div>
             </div>

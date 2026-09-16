@@ -75,6 +75,10 @@ export type PageSignals = {
   analytics: string[];
   cms: string | null;
   questionHeadings: string[];
+  /** Question and answer pairs read from the page's own FAQPage or QAPage markup. */
+  faqPairs: { question: string; answer: string }[];
+  /** True when the page marked its main region, so chrome removal was exact. */
+  contentRegionFound: boolean;
   hasFaqBlock: boolean;
   numbers: number;
   externalCitations: number;
@@ -181,6 +185,22 @@ export type ScoreBreakdown = {
   components: Record<string, number>;
   counts: Partial<Record<Severity, number>>;
   topIssues: { code: string; title: string; severity: Severity; url: string | null; priority: number }[];
+  /**
+   * Whether anything was actually measured for this score.
+   *
+   * A category with no evidence behind it must not render a number. An
+   * earlier version scored Experience 100 with no performance measurement of
+   * any kind and Authority 84 with no link data, in the same visual language
+   * as the two scores that were computed from real findings. A confident
+   * number nobody measured is the single worst thing a tool in this category
+   * can put on a screen, because it is indistinguishable from one that means
+   * something.
+   */
+  measured: boolean;
+  /** What is missing, in a sentence, when `measured` is false. */
+  unmeasuredReason: string | null;
+  /** What would turn this into a measurement. */
+  unmeasuredFix: string | null;
 };
 
 export type Scores = {
@@ -239,7 +259,19 @@ export type ContentBrief = {
 export type LinkProspect = {
   domain: string;
   url: string;
-  kind: "unlinked_mention" | "competitor_link" | "resource_page" | "directory" | "partner" | "press";
+  kind:
+    | "unlinked_mention"
+    | "broken_inbound"
+    | "redirect_only"
+    | "relationship"
+    | "directory"
+    | "resource_page"
+    | "broken_replacement"
+    | "journalist"
+    | "podcast"
+    | "competitor_link"
+    | "partner"
+    | "press";
   why: string;
   authorityHint: string;
   contactPath: string;
@@ -281,6 +313,8 @@ export type RunStep = {
   blockedBy?: string;
 };
 
+import type { Coverage } from "./coverage";
+
 export type AuditResult = {
   version: number;
   siteId: string;
@@ -298,6 +332,8 @@ export type AuditResult = {
   aeo: AeoReadiness;
   local: LocalReadiness;
   inventory: PageInventoryRow[];
+  /** What the crawl read, against what the sitemap declares. */
+  coverage: Coverage;
   steps: RunStep[];
   quickWins: Finding[];
   estimatedAgencyHours: number;

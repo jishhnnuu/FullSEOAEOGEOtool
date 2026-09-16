@@ -52,7 +52,7 @@ function signals(sample: Sample, overrides: Partial<PageSignals> = {}): PageSign
     lede: "An opening sentence.", paragraphs: Array.from({ length: sample.paragraphs }, () => "A paragraph."),
     lists: 0, tables: 0, forms: 0, publishedAt: null, modifiedAt: null, author: "A Person",
     analytics: ["ga4"], cms: null, questionHeadings: [], hasFaqBlock: false,
-    numbers: 2, externalCitations: 1, ctaCount: 1,
+    numbers: 2, externalCitations: 1, ctaCount: 1, faqPairs: [], contentRegionFound: true,
     ...overrides,
   };
 }

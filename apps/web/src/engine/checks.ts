@@ -9,7 +9,7 @@
 
 import { CATALOG } from "./catalog";
 import { jsonLdNodes, jsonLdTypes, safeHost } from "./parse";
-import type { CrawlOptions, CrawledPage, CrawlReport, Finding, Severity } from "./types";
+import type { CrawlOptions, CrawledPage, CrawlReport, Finding, PageSignals, Severity } from "./types";
 
 export type Draft = {
   code: string;
@@ -40,8 +40,12 @@ export function runChecks(report: CrawlReport, options: CrawlOptions): Draft[] {
   const fetched = report.pages.filter((p) => p.status > 0);
   const indexable = fetched.filter((p) => isIndexable(p));
 
+  // Built once and shared, so a node defined on the homepage can complete a
+  // reference made on any other page.
+  const graph = buildSchemaGraph(report.pages);
+
   for (const page of report.pages) {
-    drafts.push(...pageChecks(page, report, options));
+    drafts.push(...pageChecks(page, report, options, graph));
   }
   drafts.push(...siteChecks(report, fetched, indexable, options));
   return drafts;
@@ -161,7 +165,62 @@ function javascriptChecks(page: CrawledPage): Draft[] {
   return out;
 }
 
-function pageChecks(page: CrawledPage, report: CrawlReport, options: CrawlOptions): Draft[] {
+/**
+ * Copy that tells the reader what to do, rather than describing a service.
+ *
+ * This is the line between "we advise founders on valuation" (a description
+ * of a business) and "you should raise at a lower valuation" (advice a reader
+ * could act on and be harmed by). Only the second needs a credentialed author.
+ */
+const ADVICE_PATTERN =
+  /\b(you should|you must|you need to|we recommend|our advice|before you (invest|borrow|buy|sign)|how to (treat|diagnose|claim|sue|file|invest)|the best way to (invest|treat|claim)|consult (a|your) (doctor|lawyer|adviser))\b/i;
+
+/** URL and title shapes that mark a page as legal or administrative boilerplate. */
+const LEGAL_PATH = /\/(privacy|privacy-policy|terms|terms-conditions|terms-of-service|terms-and-conditions|cookie|cookies|cookie-policy|legal|disclaimer|accessibility|gdpr|imprint|impressum|refund|returns|shipping|acceptable-use|dpa|sla)(\/|$|\.)/i;
+const LEGAL_TITLE = /\b(privacy policy|terms (and|&) conditions|terms of (service|use)|cookie policy|legal notice|disclaimer|accessibility statement|imprint|refund policy|returns policy)\b/i;
+
+/**
+ * Whether this page is the kind of document that has to mention money and law.
+ *
+ * A privacy policy naming "financial information" is not financial advice, and
+ * a terms page naming "legal" is not a legal guide. Both were flagged as
+ * high-severity YMYL failures by an earlier version of this check.
+ */
+function isLegalBoilerplate(url: string, s: PageSignals): boolean {
+  if (LEGAL_PATH.test(url)) return true;
+  if (s.title && LEGAL_TITLE.test(s.title)) return true;
+  if (s.h1.some((h) => LEGAL_TITLE.test(h))) return true;
+  return false;
+}
+
+/**
+ * Every @id in the site's structured data, resolved to its fullest definition.
+ *
+ * Built once per run and handed to the per-page schema check, because the
+ * whole point is that a node defined on the homepage completes a reference
+ * made on another page.
+ */
+export type SchemaGraph = { byId: Map<string, Record<string, unknown>> };
+
+export function buildSchemaGraph(pages: CrawledPage[]): SchemaGraph {
+  const byId = new Map<string, Record<string, unknown>>();
+  for (const page of pages) {
+    if (!page.signals) continue;
+    for (const node of jsonLdNodes(page.signals.jsonLd)) {
+      const id = node["@id"];
+      if (typeof id !== "string" || !id) continue;
+      const existing = byId.get(id);
+      // Keep the richest definition. A reference carries @id and little else;
+      // the real node carries the properties.
+      if (!existing || Object.keys(node).length > Object.keys(existing).length) {
+        byId.set(id, node);
+      }
+    }
+  }
+  return { byId };
+}
+
+function pageChecks(page: CrawledPage, report: CrawlReport, options: CrawlOptions, graph?: SchemaGraph): Draft[] {
   const out: Draft[] = [];
   const url = page.url;
 
@@ -351,7 +410,7 @@ function pageChecks(page: CrawledPage, report: CrawlReport, options: CrawlOption
   if (types.length === 0 && s.microdataTypes.length === 0 && s.wordCount > 150) {
     out.push({ code: "schema_missing", url, detail: "No JSON-LD or microdata on the page" });
   }
-  out.push(...schemaRequirements(page, types));
+  out.push(...schemaRequirements(page, types, graph));
   if (!types.includes("BreadcrumbList") && page.depth >= 2) {
     out.push({ code: "no_breadcrumb_schema", url, detail: "No BreadcrumbList markup on a nested page" });
   }
@@ -384,8 +443,30 @@ function pageChecks(page: CrawledPage, report: CrawlReport, options: CrawlOption
 
   /* -- compliance -- */
   const topic = `${s.title ?? ""} ${s.text.slice(0, 4000)}`;
-  if (YMYL.test(topic) && !s.author && s.wordCount > 400) {
-    out.push({ code: "ymyl_no_credentials", url, detail: "Advice on a health, legal or financial topic with no named, credentialed author" });
+  /*
+   * YMYL, narrowed.
+   *
+   * The first version of this matched vocabulary and fired on every page that
+   * contained the word "financial". On one real audit it produced seven of the
+   * nine high-severity findings, including a privacy policy and a terms page,
+   * and single-handedly dragged Search Health from the low eighties to 69. A
+   * check whose whole category is false positives is worse than no check: it
+   * teaches the reader to discount the severe findings, which are the ones
+   * that matter.
+   *
+   * Three conditions now, all required. The page must not be a legal or
+   * administrative document, which is what excludes the boilerplate that has
+   * to mention money and law by its nature. The topic must match. And the
+   * copy must actually give advice, in the second person or the imperative,
+   * rather than merely describing a service.
+   */
+  if (!isLegalBoilerplate(url, s) && YMYL.test(topic) && ADVICE_PATTERN.test(topic) && !s.author && s.wordCount > 400) {
+    out.push({
+      code: "ymyl_no_credentials",
+      url,
+      detail: "Advice on a health, legal or financial topic with no named, credentialed author",
+      evidence: { advice_phrase: ADVICE_PATTERN.exec(topic)?.[0] ?? null },
+    });
   }
   const claim = SUPERLATIVE.exec(topic);
   if (claim && s.externalCitations === 0) {
@@ -493,15 +574,60 @@ function siteChecks(
   /* -- duplicates and cannibalisation -- */
   out.push(...duplicateChecks(indexable));
 
-  /* -- orphans -- */
-  const orphans = indexable.filter((p) => p.depth > 0 && p.inlinks.length === 0);
-  if (orphans.length) {
+  /*
+   * Orphans, counted against the sitemap rather than against the crawl.
+   *
+   * The earlier version counted orphans among fetched pages only, so a crawl
+   * that stopped at 40 of 55 reported 9 orphans where the true figure was 21.
+   * It also reported them as 21 page-level defects when there was one
+   * structural cause: a resources index that linked to no article at all.
+   * Fixing the listing page fixes every one of them; adding an internal link
+   * to each orphan in turn treats the symptom twenty-one times.
+   */
+  const linkedSomewhere = new Set<string>();
+  for (const page of fetched) {
+    for (const link of page.signals?.links ?? []) {
+      if (link.internal) linkedSomewhere.add(normaliseUrl(link.href));
+    }
+  }
+  const declared = report.files.sitemapEntries ?? [];
+  const crawledOrphans = indexable.filter((p) => p.depth > 0 && p.inlinks.length === 0);
+  const declaredOrphans = declared.filter((url) => !linkedSomewhere.has(normaliseUrl(url)));
+  // Take the larger, honest count: a declared URL nothing links to is an
+  // orphan whether or not we got round to fetching it.
+  const orphanUrls = [...new Set([...crawledOrphans.map((p) => p.url), ...declaredOrphans])]
+    .filter((url) => normaliseUrl(url) !== normaliseUrl(report.baseUrl));
+
+  if (orphanUrls.length) {
+    const sections = new Map<string, number>();
+    for (const url of orphanUrls) {
+      try {
+        const parts = new URL(url).pathname.split("/").filter(Boolean);
+        const section = parts.length > 1 ? `/${parts[0]}` : "top level";
+        sections.set(section, (sections.get(section) ?? 0) + 1);
+      } catch {
+        // A URL that will not parse is still an orphan.
+      }
+    }
+    const worst = [...sections.entries()].sort((a, b) => b[1] - a[1])[0];
+    // When most orphans share a section, the cause is one missing index page.
+    const structural = worst && worst[1] >= 3 && worst[1] / orphanUrls.length > 0.5;
+
     out.push({
       code: "orphan_page",
       url: null,
-      detail: `${orphans.length} pages were found in the sitemap but nothing links to them`,
-      affectedUrls: orphans.map((p) => p.url).slice(0, 50),
-      evidence: { examples: orphans.slice(0, 8).map((p) => p.url) },
+      detail: structural
+        ? `${orphanUrls.length} pages have no internal link pointing at them, and ${worst[1]} of them are in ${worst[0]}. That is one missing listing page, not ${orphanUrls.length} separate problems.`
+        : `${orphanUrls.length} pages are declared in the sitemap with nothing linking to them`,
+      affectedUrls: orphanUrls.slice(0, 200),
+      evidence: {
+        total: orphanUrls.length,
+        found_in_crawl: crawledOrphans.length,
+        declared_but_unlinked: declaredOrphans.length,
+        by_section: Object.fromEntries(sections),
+        structural_cause: structural ? `${worst[0]} has no index page linking to its contents` : null,
+        examples: orphanUrls.slice(0, 8),
+      },
     });
   }
 
@@ -570,6 +696,17 @@ function siteChecks(
 
 /* --------------------------------------------------------------- helpers */
 
+/** A URL compared the way a person compares them: trailing slash and www ignored. */
+function normaliseUrl(url: string): string {
+  try {
+    const u = new URL(url);
+    const path = u.pathname.replace(/\/+$/, "") || "/";
+    return `${u.host.replace(/^www\./, "")}${path}`.toLowerCase();
+  } catch {
+    return url.replace(/\/+$/, "").toLowerCase();
+  }
+}
+
 export function isIndexable(page: CrawledPage): boolean {
   const robots = page.signals?.robotsMeta?.toLowerCase() ?? "";
   if (/\bnoindex\b/.test(robots) || /\bnone\b/.test(robots)) return false;
@@ -616,7 +753,7 @@ const SCHEMA_REQUIRED: Record<string, string[]> = {
   SoftwareApplication: ["name", "applicationCategory"],
 };
 
-function schemaRequirements(page: CrawledPage, types: string[]): Draft[] {
+function schemaRequirements(page: CrawledPage, types: string[], graph?: SchemaGraph): Draft[] {
   const s = page.signals;
   if (!s) return [];
   const out: Draft[] = [];
@@ -628,13 +765,33 @@ function schemaRequirements(page: CrawledPage, types: string[]): Draft[] {
     for (const type of nodeTypes) {
       const required = SCHEMA_REQUIRED[type];
       if (!required) continue;
-      const missing = required.filter((key) => node[key] == null || node[key] === "");
+      /*
+       * A node that carries an @id is a reference into the site's entity
+       * graph, not an incomplete copy of it. The correct pattern is one full
+       * Organization defined once, referenced by @id everywhere else, and a
+       * validator that does not resolve the reference reports the reference
+       * as a defect and proposes "completing" it. Doing that writes a second
+       * conflicting definition and breaks the graph it was trying to fix.
+       *
+       * So: resolve first, and only report what is missing everywhere.
+       */
+      const id = typeof node["@id"] === "string" ? (node["@id"] as string) : null;
+      const resolved = id ? graph?.byId.get(id) : undefined;
+      const missing = required.filter((key) => {
+        if (node[key] != null && node[key] !== "") return false;
+        if (resolved && resolved[key] != null && resolved[key] !== "") return false;
+        return true;
+      });
+      // A bare reference, correctly formed, is complete by design.
+      if (id && resolved && missing.length === required.length) continue;
       if (missing.length) {
         out.push({
           code: "schema_missing_required",
           url: page.url,
-          detail: `${type} is missing ${missing.join(", ")}`,
-          evidence: { type, missing },
+          detail: id && resolved
+            ? `${type} is missing ${missing.join(", ")}, and the node it references does not supply them either`
+            : `${type} is missing ${missing.join(", ")}`,
+          evidence: { type, missing, references: id ?? null, resolved_elsewhere: Boolean(resolved) },
         });
       }
       if (type === "Product") {

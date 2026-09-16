@@ -57,6 +57,65 @@ function brandFromSiteTitle(home: CrawledPage | undefined): string | null {
 
 /* ------------------------------------------------------------ generators */
 
+/**
+ * Complete question and answer pairs for a page, or as few as it really has.
+ *
+ * Schema first, because a page that declares its questions has told us what
+ * they are. Then headings that ask something, paired with the prose that
+ * follows them. A question with no answer under it is dropped rather than
+ * padded with a placeholder, because a placeholder is what turns a fix into a
+ * thing somebody has to come back and finish.
+ */
+function faqPairsForPage(page: CrawledPage): { question: string; answer: string }[] {
+  const s = page.signals;
+  if (!s) return [];
+  if (s.faqPairs.length >= 2) {
+    return s.faqPairs.filter((p) => p.question && p.answer.length > 20).slice(0, 10);
+  }
+
+  const out: { question: string; answer: string }[] = [];
+  const asking = s.headings.filter((h) => h.text.includes("?"));
+  for (const heading of asking) {
+    const index = s.headings.indexOf(heading);
+    // The paragraph nearest after the heading is the answer often enough to
+    // be worth proposing, and the reader sees it before approving.
+    const answer = s.paragraphs[index] ?? s.paragraphs.find((para) => para.length > 60) ?? "";
+    if (answer.length > 20) out.push({ question: heading.text, answer });
+  }
+  return out.slice(0, 10);
+}
+
+/**
+ * Whether a generated fix is complete enough to be approved.
+ *
+ * The approval queue is a promise: everything in it can ship as-is. A payload
+ * carrying a REPLACE marker, an empty array or nothing at all breaks that
+ * promise, and the reader finds out after they approve it. So the gate sits
+ * here, at the point of generation, rather than being something the screen
+ * has to remember to check.
+ */
+export function fixIsComplete(fix: Fix | null): boolean {
+  if (!fix) return false;
+  const after = fix.after?.trim() ?? "";
+  if (!after) return false;
+  if (/\bREPLACE:/.test(after)) return false;
+
+  // Structured data specifically: an empty container is invalid markup, and
+  // invalid markup is worse than none.
+  if (fix.kind === "jsonld") {
+    try {
+      const parsed = JSON.parse(after) as Record<string, unknown>;
+      for (const key of ["mainEntity", "itemListElement", "hasPart"]) {
+        const value = parsed[key];
+        if (Array.isArray(value) && value.length === 0) return false;
+      }
+    } catch {
+      return false;
+    }
+  }
+  return true;
+}
+
 export function generateFix(finding: Finding, ctx: FixContext): Fix | null {
   switch (finding.fixStrategy) {
     case "rewrite_title": return titleFix(finding, ctx);
@@ -294,17 +353,29 @@ function schemaFix(finding: Finding, ctx: FixContext): Fix | null {
         : {}),
     };
     label = local ? "LocalBusiness JSON-LD" : "Organization JSON-LD";
-  } else if (finding.code === "no_faq_structure" && p.signals?.questionHeadings.length) {
+  } else if (finding.code === "no_faq_structure") {
+    /*
+     * FAQPage markup with an empty mainEntity is invalid, and shipping it
+     * makes a page worse than leaving it alone. An earlier version queued
+     * twenty-nine of them on a site where no model key was set, then told the
+     * reader "36 fixes already written". Approving that batch would have
+     * added twenty-nine invalid schema blocks.
+     *
+     * So the fix is built from real question and answer pairs, taken from the
+     * page's own markup where it has them and from question headings paired
+     * with the paragraph that follows otherwise. If neither produces at least
+     * two complete pairs, no fix is generated and the finding stands on its
+     * own with a recommendation instead.
+     */
+    const pairs = faqPairsForPage(p);
+    if (pairs.length < 2) return null;
     node = {
       "@context": "https://schema.org",
       "@type": "FAQPage",
-      mainEntity: p.signals.questionHeadings.slice(0, 8).map((q, i) => ({
+      mainEntity: pairs.map((pair) => ({
         "@type": "Question",
-        name: q,
-        acceptedAnswer: {
-          "@type": "Answer",
-          text: clamp(p.signals!.paragraphs[i] ?? p.signals!.paragraphs[0] ?? "REPLACE: the answer as it appears on the page", 320),
-        },
+        name: pair.question,
+        acceptedAnswer: { "@type": "Answer", text: clamp(pair.answer, 320) },
       })),
     };
     label = "FAQPage JSON-LD";

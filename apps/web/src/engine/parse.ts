@@ -28,6 +28,43 @@ const ENTITIES: Record<string, string> = {
   reg: "(r)", trade: "(tm)", pound: "£", euro: "€", deg: "°", times: "x",
 };
 
+/**
+ * The page with its chrome removed.
+ *
+ * Navigation, headers, footers and dialogs repeat on every page, and counting
+ * them is how a keyword model ends up reporting the menu back to you. Worse,
+ * plenty of real sites mark their navigation dropdown labels as `<h2>`, so a
+ * heading extractor that reads the whole document treats "Who we help" as a
+ * section heading and, if it ends in a question mark, as a question the page
+ * answers.
+ *
+ * Two passes. If the page marks its main region, trust it. Otherwise cut the
+ * known chrome elements out and keep what is left. Either way the result is
+ * only used for text, headings and questions; links and images are still read
+ * from the whole document, because an orphan check has to see every link on
+ * the page including the ones in the footer.
+ */
+const CHROME_BLOCKS = /<(nav|header|footer|aside|dialog|template|noscript)\b[^>]*>[\s\S]*?<\/\1>/gi;
+const ROLE_CHROME = /<(div|section|ul)\b[^>]*\brole\s*=\s*["']?(navigation|banner|contentinfo|menu|menubar|dialog)["']?[^>]*>[\s\S]*?<\/\1>/gi;
+
+export function mainRegion(body: string): { html: string; usedMain: boolean } {
+  // `<main>` is unambiguous, and so is the ARIA equivalent. Take the largest
+  // when a page has more than one, because a hidden empty one is common.
+  const candidates: string[] = [];
+  const mainRe = /<main\b[^>]*>([\s\S]*?)<\/main>/gi;
+  let m: RegExpExecArray | null;
+  while ((m = mainRe.exec(body))) candidates.push(m[1]);
+  const roleRe = /<(div|section)\b[^>]*\brole\s*=\s*["']?main["']?[^>]*>([\s\S]*?)<\/\1>/gi;
+  while ((m = roleRe.exec(body))) candidates.push(m[2]);
+
+  const best = candidates.sort((a, b) => b.length - a.length)[0];
+  // A `<main>` holding almost nothing is a wrapper the framework emitted, not
+  // the content, so fall through rather than reporting an empty page.
+  if (best && best.length > 500) return { html: best, usedMain: true };
+
+  return { html: body.replace(CHROME_BLOCKS, " ").replace(ROLE_CHROME, " "), usedMain: false };
+}
+
 export function decodeEntities(text: string): string {
   return text.replace(/&(#x?[0-9a-f]+|[a-z]+);/gi, (whole, body: string) => {
     if (body[0] === "#") {
@@ -200,15 +237,34 @@ export function parseHtml(html: string, baseUrl: string): PageSignals {
     inlineScriptBytes += sm[2].length;
   }
 
+  /* ---- content region ---- */
+  // Everything that models what the page is *about* reads from here. Links
+  // and images still read from the whole document, because an orphan check
+  // has to see the footer.
+  const { html: contentHtml, usedMain } = mainRegion(body);
+
   /* ---- headings ---- */
+  // Read from the content region so navigation dropdown labels, which plenty
+  // of sites mark up as <h2>, are not mistaken for section headings or, worse,
+  // for questions the page answers.
   const headings: { level: number; text: string }[] = [];
   const headingRe = /<h([1-6])\b[^>]*>([\s\S]*?)<\/h\1>/gi;
   let hm: RegExpExecArray | null;
-  while ((hm = headingRe.exec(body))) {
+  while ((hm = headingRe.exec(contentHtml))) {
     const text = stripTags(hm[2]);
     if (text) headings.push({ level: Number(hm[1]), text });
   }
-  const h1 = headings.filter((h) => h.level === 1).map((h) => h.text);
+  // An h1 inside a header element is still the page's h1, so that one is read
+  // from the whole document when the content region yields none.
+  let h1 = headings.filter((h) => h.level === 1).map((h) => h.text);
+  if (h1.length === 0) {
+    const wholeH1 = /<h1\b[^>]*>([\s\S]*?)<\/h1>/gi;
+    let w: RegExpExecArray | null;
+    while ((w = wholeH1.exec(body))) {
+      const text = stripTags(w[1]);
+      if (text) h1.push(text);
+    }
+  }
 
   /* ---- images ---- */
   const images: ImageRef[] = allTags(body, "img").map((tag) => ({
@@ -240,7 +296,7 @@ export function parseHtml(html: string, baseUrl: string): PageSignals {
   }
 
   /* ---- visible text ---- */
-  const textSource = body.replace(VOID_TEXT_TAGS, " ");
+  const textSource = contentHtml.replace(VOID_TEXT_TAGS, " ");
   const paragraphs: string[] = [];
   const paraRe = /<p\b[^>]*>([\s\S]*?)<\/p>/gi;
   let pm: RegExpExecArray | null;
@@ -278,8 +334,17 @@ export function parseHtml(html: string, baseUrl: string): PageSignals {
     jsonLdAuthor(jsonLd) ??
     (/\b(by|written by|author)[:\s]+([A-Z][a-z]+ [A-Z][a-z]+)/.exec(text)?.[2] ?? null);
 
-  const questionHeadings = headings.filter((h) => h.text.includes("?") || QUESTION_START.test(h.text))
+  // Schema first, headings second. A page that declares its questions in
+  // FAQPage markup has told us the answer outright.
+  const faqPairs = faqPairsFrom(jsonLd);
+  const fromHeadings = headings
+    .filter((h) => h.text.includes("?") || QUESTION_START.test(h.text))
     .map((h) => h.text);
+  const asked = new Set(faqPairs.map((p) => p.question.toLowerCase()));
+  const questionHeadings = [
+    ...faqPairs.map((p) => p.question),
+    ...fromHeadings.filter((h) => !asked.has(h.toLowerCase())),
+  ];
 
   const numbers = (text.match(/\b\d[\d,.]*\s?(%|percent|million|billion|k\b|years?|months?|days?|hours?|minutes?)/gi) ?? []).length;
   const externalCitations = outLinks.filter((l) => !l.internal && !/nofollow|sponsored|ugc/.test(l.rel)).length;
@@ -320,7 +385,9 @@ export function parseHtml(html: string, baseUrl: string): PageSignals {
     analytics,
     cms,
     questionHeadings,
-    hasFaqBlock: jsonLdHasType(jsonLd, "FAQPage") || questionHeadings.length >= 3,
+    faqPairs,
+    contentRegionFound: usedMain,
+    hasFaqBlock: jsonLdHasType(jsonLd, "FAQPage") || jsonLdHasType(jsonLd, "QAPage") || faqPairs.length >= 2 || questionHeadings.length >= 3,
     numbers,
     externalCitations,
     ctaCount,
@@ -357,6 +424,50 @@ export function jsonLdTypes(blocks: unknown[]): string[] {
     else if (Array.isArray(raw)) for (const t of raw) if (typeof t === "string") types.add(t);
   }
   return [...types];
+}
+
+/**
+ * The questions a page already answers, read from its own markup.
+ *
+ * An earlier version of this inferred questions from headings alone, which on
+ * one real site found a single navigation label and missed twenty-six genuine
+ * question-and-answer pairs sitting in live FAQPage schema on the same pages.
+ * Recommending FAQ markup to a site that already has it is the fastest way to
+ * lose a reader's trust, so the schema is read first and the headings second.
+ */
+export function faqPairsFrom(blocks: unknown[]): { question: string; answer: string }[] {
+  const out: { question: string; answer: string }[] = [];
+  const seen = new Set<string>();
+
+  const takeAnswer = (value: unknown): string => {
+    if (typeof value === "string") return stripTags(value);
+    if (value && typeof value === "object") {
+      const node = value as Record<string, unknown>;
+      const text = node.text ?? node.answerText ?? node.name;
+      if (typeof text === "string") return stripTags(text);
+    }
+    return "";
+  };
+
+  for (const node of jsonLdNodes(blocks)) {
+    const type = String(node["@type"] ?? "").toLowerCase();
+    const isQuestion = type === "question";
+    const entities = node.mainEntity;
+    const list: unknown[] = isQuestion ? [node] : Array.isArray(entities) ? entities : entities ? [entities] : [];
+
+    for (const entry of list) {
+      if (!entry || typeof entry !== "object") continue;
+      const q = entry as Record<string, unknown>;
+      if (String(q["@type"] ?? "").toLowerCase() !== "question") continue;
+      const question = typeof q.name === "string" ? stripTags(q.name) : "";
+      if (!question) continue;
+      const key = question.toLowerCase();
+      if (seen.has(key)) continue;
+      seen.add(key);
+      out.push({ question, answer: takeAnswer(q.acceptedAnswer ?? q.suggestedAnswer) });
+    }
+  }
+  return out;
 }
 
 export function jsonLdHasType(blocks: unknown[], type: string): boolean {

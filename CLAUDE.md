@@ -25,6 +25,33 @@ what the person actually needs, decide the approach, and build it. Do not stop
 at the literal ask when the literal ask would ship something that does not
 work in the field, and do not wait to be told what the right answer is.
 
+### What "better" means here
+
+This is the standard every change is measured against, and it is not
+negotiable per-task. The product is a replacement for an SEO agency. A founder
+subscribes, connects Search Console, Analytics, their CMS and whatever paid
+tool they already have, and the work an agency would do happens, with results
+they can see. Better means closer to that. Specifically:
+
+1. **It does the work, or says plainly that it cannot.** A finding without a
+   fix is an audit tool. A fix that ends in "paste this into your CMS" is
+   unfinished unless no API exists, in which case say so.
+2. **Every number is measured or labelled as not measured.** A score with
+   nothing behind it does not render a number. This rule cost us a false
+   Experience 100 and a false Authority 84, and it is worth more than either.
+3. **A false positive is more expensive than a miss.** A wrong high-severity
+   finding teaches the reader to discount the severe ones, which are the only
+   ones that matter. Narrow a check rather than let it fire loosely.
+4. **Never recommend work already done.** Read what the site already has
+   before proposing it. Telling a client to claim a Business Profile they have
+   had for two years loses the room.
+5. **Coverage is stated before conclusions.** A score over 40 of 55 pages is a
+   score of those 40 pages, and the reader is told that above the number, not
+   underneath it.
+6. **Nothing ships that could damage a site.** A fix that would break an entity
+   graph, an empty schema payload, a critical change auto-approved: each is a
+   bug of the worst kind, because the user trusted us.
+
 Three things follow from that, and they decide most arguments:
 
 - **The user is the client, not the operator.** Anything that makes them do SEO
@@ -83,6 +110,8 @@ deploy/           Dockerfiles. wrangler.jsonc at the root is Cloudflare.
 | `make api` / `make worker` / `make web` | The three processes |
 | `make test` / `make lint` | 141 Python tests plus the engine suite; ruff and tsc |
 | `npm run test:engine` | The TypeScript engine tests, pinned to real measurements |
+| `docs/COMPETITORS.md` | The field, and the two facts that decide it |
+| `docs/BACKLINKS.md` | What links work can and cannot do, measured |
 | `make docs` | Regenerate `docs/reference` from the registries |
 | `make cf-preview` | The Cloudflare Worker locally on :8788 |
 | `npm run cf:setup` | Optional. Does the Cloudflare side of `docs/ACCOUNTS.md` from a terminal |
@@ -129,6 +158,24 @@ style disagreement.
   from the browser fails quietly and every screen renders without one. A
   deployment with no database still audits, still writes fixes, still works.
   That property is the product's spine, not a nicety.
+- **The keyword model never sees the template.** `detectTemplateTerms()` in
+  `strategy.ts` drops n-grams present on more than 80% of pages before tf-idf
+  runs, and policy pages are excluded from the corpus. Without this the model
+  reports the navigation back to you: one real audit produced "help overview
+  software" as a head term and resolved "services" to the terms and conditions.
+  Three surfaces read this model, so a regression here breaks keywords,
+  cannibalisation and every content brief at once.
+- **Chrome is not content.** `mainRegion()` in `parse.ts` reads text and
+  headings from `<main>` or from the document with nav, header, footer and
+  aside removed. Links and images still read from the whole document, because
+  an orphan check has to see the footer.
+- **Schema validation resolves `@id` before it complains.** A node carrying an
+  `@id` is a reference into the entity graph, not an incomplete copy of it.
+  Proposing to "complete" one writes a second conflicting definition and breaks
+  what it was fixing.
+- **An incomplete fix never reaches the queue.** `fixIsComplete()` in
+  `fixes.ts` rejects empty payloads and `REPLACE:` markers. The queue is a
+  promise that everything in it can ship as-is.
 - **`docs/reference` is generated.** Adding a tool, check, agent or mission
   means running `make docs` and committing the result. CI fails if it is stale.
 

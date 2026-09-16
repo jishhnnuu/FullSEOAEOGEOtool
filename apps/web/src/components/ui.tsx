@@ -100,12 +100,41 @@ export function Score({
   value,
   hint,
   change,
+  measured = true,
+  unmeasuredReason,
+  unmeasuredFix,
 }: {
   label: string;
   value: number | null | undefined;
   hint?: string;
   change?: number | null;
+  /** False when nothing behind this number was actually measured. */
+  measured?: boolean;
+  unmeasuredReason?: string | null;
+  unmeasuredFix?: string | null;
 }) {
+  /*
+   * An unmeasured score does not get a number, a colour or a meter.
+   *
+   * It would be easy to show the figure greyed out with an asterisk. That is
+   * exactly the mistake: at a glance a greyed 100 still reads as 100, and the
+   * reader takes away a number nobody measured. So the tile says what is
+   * missing and what would fix it, and holds the value back until something
+   * measures it.
+   */
+  if (!measured) {
+    return (
+      <div className="card score score-unmeasured">
+        <div className="label">{label}</div>
+        <div className="value faint" style={{ fontSize: "1.15rem", letterSpacing: "-0.01em" }}>
+          Not measured
+        </div>
+        {unmeasuredReason && <div className="hint">{unmeasuredReason}</div>}
+        {unmeasuredFix && <div className="hint" style={{ opacity: 0.75 }}>{unmeasuredFix}</div>}
+      </div>
+    );
+  }
+
   const band = value == null ? "" : value >= 85 ? "good" : value >= 65 ? "warn" : "bad";
   const colour = band === "good" ? "var(--ok)" : band === "warn" ? "var(--warn)" : "var(--bad)";
   return (

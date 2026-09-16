@@ -27,8 +27,113 @@ import type {
 
 /* ------------------------------------------------------------- keywords */
 
+/**
+ * The site template, subtracted.
+ *
+ * This is the single most consequential correction in the strategy layer. A
+ * tf-idf model run over raw page text does not model the site, it models the
+ * navigation, because the header, the footer and the cookie banner appear on
+ * every page and therefore dominate the term counts.
+ *
+ * The failure is not subtle once you look for it: an audit of a real site
+ * produced "help overview software", "overview software companies" and
+ * "agents automation platform" as head terms, all scoring 96.1 across exactly
+ * 40 of 40 pages. Those are n-grams sliding across the boundaries between
+ * navigation items. Read left to right they reconstruct the menu. "opens"
+ * appeared on 31 pages because of "opens in new tab". The strongest page for
+ * "services" was the terms and conditions.
+ *
+ * Three surfaces are built on this model, so all three inherited the fault:
+ * the keyword list, the cannibalisation count (every page competing with
+ * every other, by construction), and every content brief, which produced
+ * titles like "How much does agents cost?".
+ *
+ * The fix is to identify what is template and remove it before counting.
+ * Anything present on more than this share of pages is chrome, not content.
+ * The threshold is deliberately high: a genuine head term can legitimately
+ * appear on most pages of a focused site, so only near-universal presence
+ * counts as template.
+ */
+const TEMPLATE_PRESENCE = 0.8;
+
+/** Below this many pages, "on most pages" carries no information. */
+const MIN_PAGES_FOR_TEMPLATE_DETECTION = 5;
+
+/**
+ * Phrases that are chrome wherever they appear.
+ *
+ * Detected by frequency in a normal crawl, but a shallow crawl or a site with
+ * few pages will not surface them, and they are never keywords.
+ */
+const CHROME = new Set([
+  "opens in new tab", "opens in a new tab", "opens in new window", "skip to content",
+  "skip to main content", "back to top", "read more", "learn more", "find out more",
+  "get in touch", "contact us", "all rights reserved", "privacy policy", "terms conditions",
+  "terms and conditions", "cookie policy", "accept all cookies", "manage preferences",
+  "sign up", "log in", "sign in", "menu", "close menu", "toggle navigation",
+  "follow us", "share this", "next post", "previous post", "view all",
+]);
+
+/**
+ * Terms that appear on so many pages they can only be template.
+ *
+ * Returns the set to exclude. Also returns what was excluded, because a
+ * correction this large should be visible on screen rather than silent.
+ */
+export function detectTemplateTerms(
+  perPage: Map<string, Map<string, number>>,
+): { excluded: Set<string>; sample: string[] } {
+  const total = perPage.size;
+  const excluded = new Set<string>();
+  if (total < MIN_PAGES_FOR_TEMPLATE_DETECTION) return { excluded, sample: [] };
+
+  const presence = new Map<string, number>();
+  for (const counts of perPage.values()) {
+    for (const phrase of counts.keys()) presence.set(phrase, (presence.get(phrase) ?? 0) + 1);
+  }
+
+  const floor = Math.ceil(total * TEMPLATE_PRESENCE);
+  for (const [phrase, pages] of presence) {
+    if (pages >= floor) excluded.add(phrase);
+    else if (CHROME.has(phrase)) excluded.add(phrase);
+  }
+
+  // Multi-word phrases are the giveaway, so they lead the sample a person reads.
+  const sample = [...excluded]
+    .filter((p) => p.includes(" "))
+    .sort((a, b) => (presence.get(b) ?? 0) - (presence.get(a) ?? 0))
+    .slice(0, 12);
+  return { excluded, sample };
+}
+
+/** A single word that is chrome regardless of how the template scores. */
+function isChromeWord(term: string): boolean {
+  return CHROME.has(term);
+}
+
+/**
+ * Pages that are not what the site is about.
+ *
+ * A privacy policy is required to talk about personal information, and a terms
+ * page about services and liability. Counting them makes "information" a head
+ * term and resolves "services" to the terms and conditions, which is what
+ * happened on a real audit. They are excluded from the model, not from the
+ * crawl: they still get checked, they just do not get a vote on what the
+ * business sells.
+ */
+const NOT_ABOUT_THE_BUSINESS =
+  /\/(privacy|privacy-policy|terms|terms-conditions|terms-of-service|terms-and-conditions|cookie|cookies|cookie-policy|legal|disclaimer|accessibility|gdpr|imprint|impressum|refund|returns|shipping|sitemap|search|404|thank-you|thanks)(\/|$|\.)/i;
+
 export function deriveKeywords(report: CrawlReport, options: CrawlOptions, brand: string): KeywordRow[] {
-  const pages = report.pages.filter((p) => p.signals && p.status < 400);
+  const all = report.pages.filter((p) => p.signals && p.status < 400);
+  const pages = all.filter((p) => !NOT_ABOUT_THE_BUSINESS.test(p.url));
+  // Unless excluding them would leave nothing, in which case a small site of
+  // policy pages is still better modelled than not modelled at all.
+  if (!pages.length) return all.length ? deriveFrom(all, options, brand) : [];
+  return deriveFrom(pages, options, brand);
+}
+
+function deriveFrom(pages: CrawledPage[], options: CrawlOptions, brand: string): KeywordRow[] {
   if (!pages.length) return [];
 
   const brandTokens = new Set(tokenise(brand));
@@ -53,11 +158,16 @@ export function deriveKeywords(report: CrawlReport, options: CrawlOptions, brand
   }
 
   const total = pages.length;
+  // Subtract the template before anything is scored. Doing it here rather
+  // than filtering the output matters: a term that is chrome should not
+  // influence the document frequency of the terms that are not.
+  const { excluded } = detectTemplateTerms(perPage);
   const scores = new Map<string, { weight: number; best: string | null; bestScore: number; pages: string[] }>();
 
   for (const [url, counts] of perPage) {
     for (const [phrase, count] of counts) {
       if (count < 2 && phrase.includes(" ")) continue;
+      if (excluded.has(phrase) || isChromeWord(phrase)) continue;
       const df = docFrequency.get(phrase) ?? 1;
       // Classic tf-idf, with a floor so a term on every page (the brand, the
       // service) is not thrown away entirely.

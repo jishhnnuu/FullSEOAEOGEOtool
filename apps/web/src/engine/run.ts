@@ -8,8 +8,9 @@
 
 import { materialise, runChecks, type Draft } from "./checks";
 import { crawlSite, type Progress } from "./crawl";
-import { buildContext, generateFix } from "./fixes";
+import { buildContext, fixIsComplete, generateFix } from "./fixes";
 import { scoreAll } from "./score";
+import { assessCoverage } from "./coverage";
 import { assessAeo, assessLocal, briefFor, buildInventory, deriveKeywords, findGaps, findProspects } from "./strategy";
 import type { AuditResult, CrawlOptions, CrawlReport, Finding, RunStep } from "./types";
 
@@ -142,23 +143,44 @@ export async function runAudit(
   /* ---- fixes ---- */
   analysing("Generating the fixes");
   let generated = 0;
+  let withheld = 0;
   for (const finding of findings) {
     if (!finding.autoFixable) continue;
     try {
-      finding.fix = generateFix(finding, ctx);
-      if (finding.fix) generated++;
+      const fix = generateFix(finding, ctx);
+      // A fix that is not complete is not a fix. Counting it would produce
+      // the "36 fixes already written" claim over payloads that were empty.
+      if (fixIsComplete(fix)) {
+        finding.fix = fix;
+        generated++;
+      } else {
+        finding.fix = null;
+        if (fix) withheld++;
+      }
     } catch {
       // A fix generator failing must not take the audit down with it.
       finding.fix = null;
     }
   }
-  mark("fixes", "done", `${generated} fixes generated and ready to review`);
+  mark(
+    "fixes",
+    "done",
+    withheld > 0
+      ? `${generated} fixes ready to review. ${withheld} were withheld because the page did not supply enough to write a complete one.`
+      : `${generated} fixes generated and ready to review`,
+  );
 
   /* ---- scores ---- */
   analysing("Scoring");
-  const scores = scoreAll(findings, Math.max(crawl.fetched, 1));
+  // Coverage first, because a score means something different over 40 of 55
+  // pages than over all of them, and the reader has to be told which it is.
+  const coverage = assessCoverage(crawl);
+  // Nothing in a credential-free crawl times a page or reads a link graph, so
+  // Experience and Authority are computed but marked as not measured. Passing
+  // real evidence here is what a connected Search Console will change.
+  const scores = scoreAll(findings, Math.max(crawl.fetched, 1), { performance: false, links: false });
   const inventory = buildInventory(crawl, findings);
-  mark("score", "done", `Health ${Math.round(scores.health.score)}, AI readiness ${Math.round(scores.aeo.score)}`);
+  mark("score", "done", `Health ${Math.round(scores.health.score)}, AI readiness ${Math.round(scores.aeo.score)}. ${coverage.headline}`);
 
   const quickWins = findings
     .filter((f) => f.effort <= 0.3 && f.impact >= 0.3 && f.status === "open")
@@ -185,6 +207,7 @@ export async function runAudit(
     aeo,
     local,
     inventory,
+    coverage,
     steps,
     quickWins,
     estimatedAgencyHours: estimateHours(findings, briefs.length),

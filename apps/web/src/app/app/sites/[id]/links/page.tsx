@@ -5,6 +5,7 @@ import { useState } from "react";
 
 import type { LinkProspect } from "@/engine/types";
 import { useSite } from "@/lib/site-hooks";
+import { LinkLimits, LinkVerifier, TacticPlan } from "@/components/link-verify";
 import { Badge, Card, CopyButton, Empty, Notice, PageHeader } from "@/components/ui";
 
 export default function LinksPage() {
@@ -44,6 +45,12 @@ export default function LinksPage() {
           domains, or a link index for the full set.
         </Notice>
       )}
+
+      {/*
+        * Verification first, because it is the one part of link building that
+        * is nearly always done wrong and the one this can do exactly.
+        */}
+      <LinkVerifier targetDomain={site.domain} />
 
       {noAsset && (
         <Notice kind="bad">
@@ -107,6 +114,9 @@ export default function LinksPage() {
           <li>Every send waits for your approval regardless of autonomy level.</li>
         </ul>
       </Card>
+      <TacticPlan />
+
+      <LinkLimits />
     </>
   );
 }

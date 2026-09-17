@@ -294,6 +294,22 @@ Then confirm `git diff --stat docs/reference` is empty. For a change touching
 `apps/web`, also run `npx wrangler deploy --dry-run --outdir /tmp/w` so a
 broken Cloudflare build fails locally rather than on the live site.
 
+**A dry run is not enough for anything that changes `deploy/worker.js` or the
+Worker's global scope.** It bundles without ever starting the runtime, so it
+cannot see the class of error that stops a Worker booting: async I/O, a
+timeout, or a random value generated at module load are all forbidden in global
+scope, and a Worker that does one refuses to start. Cloudflare then keeps
+serving the previous version, so the symptom is a deploy that silently never
+lands rather than a failure anyone sees. Start the real runtime instead:
+
+```bash
+npx wrangler dev --port 8788 --test-scheduled
+curl "http://127.0.0.1:8788/__scheduled?cron=0+*+*+*+*"
+```
+
+The first command fails loudly if the Worker will not boot. The second fires
+the cron handler and the log line shows what the tick actually did.
+
 ## Deployment
 
 Push to `main`. Cloudflare builds from `wrangler.jsonc` at the repository root

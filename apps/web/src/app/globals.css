@@ -992,3 +992,15 @@ a.link-card h3 { color: var(--accent); }
 .decide-main { flex: 1 1 320px; min-width: 0; }
 .decide-main p { max-width: 68ch; }
 .decide-action { flex: 0 0 auto; padding-top: 0.15rem; }
+
+/* The research page. One oversized number per card, because the number is the
+   finding and everything else is context for it. */
+.research-stat {
+  font-size: 2.1rem;
+  font-weight: 650;
+  letter-spacing: -0.04em;
+  line-height: 1;
+  color: var(--accent-bright);
+}
+.research-table { font-size: 0.8rem; }
+.research-table code { font-size: 0.78rem; }

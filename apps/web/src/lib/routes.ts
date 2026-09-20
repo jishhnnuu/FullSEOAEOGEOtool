@@ -78,6 +78,15 @@ export const ROUTES: PublicRoute[] = [
     section: "company",
   },
   {
+    path: "/research/ai-crawler-access",
+    title: "AI crawler access across 100 SaaS sites",
+    answers:
+      "Original measurement: who blocks AI crawlers, who publishes llms.txt, and how many homepages are blank without JavaScript.",
+    priority: 0.9,
+    changeFrequency: "monthly",
+    section: "learn",
+  },
+  {
     path: "/vs-agency",
     title: "Against an SEO agency",
     answers: "What an agency does that software cannot, and what it charges for work that is now automatic.",

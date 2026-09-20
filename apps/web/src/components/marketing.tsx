@@ -77,6 +77,7 @@ export function SiteFooter() {
           <Link href="/tools">Free tools</Link>
           <Link href="/glossary">Glossary</Link>
           <Link href="/ai-crawlers-and-javascript">AI crawlers and JavaScript</Link>
+          <Link href="/research/ai-crawler-access">The 100-site study</Link>
           <Link href="/proof">Our own audit</Link>
         </div>
         <div>

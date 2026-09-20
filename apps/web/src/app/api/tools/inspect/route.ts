@@ -74,6 +74,27 @@ export async function POST(request: NextRequest) {
   const origin = check.url.origin;
   const scope: InspectScope = body.scope === "site" ? "site" : "page";
 
+  /*
+   * A Worker cannot fetch its own hostname.
+   *
+   * The subrequest does not loop back into the Worker: it leaves the isolate,
+   * finds no origin server behind the route, and returns a 404 with an empty
+   * body. That looked like a broken site rather than an unsupported operation,
+   * which cost an afternoon, so it is named here rather than left to be
+   * rediscovered.
+   *
+   * Nothing is lost by refusing. A browser can read its own origin without any
+   * help from us, which is what /proof does.
+   */
+  if (origin === new URL(request.url).origin) {
+    return bad(
+      "This tool cannot be pointed at the site it is running on. A Worker's request to its own hostname " +
+        "does not reach the Worker, so the answer would be a 404 rather than a reading. The audit on /proof " +
+        "reads this origin directly from your browser instead.",
+      409,
+    );
+  }
+
   try {
     // The page always. The site files only when a tool needs them, because
     // robots plus up to four sitemaps is several more round trips and most

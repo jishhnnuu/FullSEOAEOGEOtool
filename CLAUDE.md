@@ -12,7 +12,7 @@ It is not an audit tool. Audit tools say what is wrong and leave the fixing to
 someone else. Anything added here should do the work, not describe it.
 
 ```
-53 agents · 8 missions · 60 tools · 21 connectors · 71 checks · 43 tables · 141 tests
+53 agents · 8 missions · 60 tools · 21 connectors · 90 checks · 43 tables · 149 tests
 ```
 
 ## How to work on this

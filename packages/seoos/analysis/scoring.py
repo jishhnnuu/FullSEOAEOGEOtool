@@ -29,11 +29,33 @@ AUTHORITY_WEIGHTS = {"offpage": 0.75, "local": 0.25}
 
 @dataclass
 class ScoreBreakdown:
+    """A score, and whether anything actually measured it.
+
+    `measured` is not decoration. Authority without link data is a guess about
+    the one input that defines it, and Experience without a timing run is HTML
+    heuristics wearing the clothes of a performance score. Rendering either as
+    a number is the failure this flag exists to prevent: it is what produced a
+    false Experience 100 and a false Authority 84 before the rule existed, and
+    what printed "authority 100.0" from the CLI for a site with no backlink
+    source connected. The browser engine has carried this since `score.ts` was
+    written; this is the server engine catching up so the two agree.
+    """
+
     score: float
     components: dict[str, float] = field(default_factory=dict)
     penalties: dict[str, float] = field(default_factory=dict)
     counts: dict[str, int] = field(default_factory=dict)
     top_issues: list[dict] = field(default_factory=list)
+    measured: bool = True
+    unmeasured_reason: str | None = None
+    unmeasured_fix: str | None = None
+
+    def as_unmeasured(self, reason: str, fix: str) -> ScoreBreakdown:
+        """Mark the score asserted rather than measured, and say why."""
+        self.measured = False
+        self.unmeasured_reason = reason
+        self.unmeasured_fix = fix
+        return self
 
     def to_dict(self) -> dict:
         return {
@@ -42,6 +64,9 @@ class ScoreBreakdown:
             "penalties": self.penalties,
             "counts": self.counts,
             "top_issues": self.top_issues,
+            "measured": self.measured,
+            "unmeasured_reason": self.unmeasured_reason,
+            "unmeasured_fix": self.unmeasured_fix,
         }
 
 
@@ -152,6 +177,14 @@ def authority_score(
         absolute = min(100.0, 20 * (referring_domains ** 0.35))
         breakdown.components["absolute_domains_curve"] = round(absolute, 1)
         breakdown.score = round(breakdown.score * 0.4 + absolute * 0.6, 1)
+    else:
+        # Nothing here measured the link profile, and links are most of what
+        # authority means. The findings still produce a number; it just has to
+        # travel with the fact that its main input is missing.
+        return breakdown.as_unmeasured(
+            "Nothing here measured your backlink profile, and links are most of what authority means.",
+            "Connect Search Console for its referring-domain sample, or a backlink provider for the full picture.",
+        )
     return breakdown
 
 

@@ -8,6 +8,7 @@ export const metadata = {
   title: "How it works",
   description:
     "What happens between entering a URL and a change going live: the crawl, the checks, the fixes, the approval queue, publishing and the report that compares this run to the last.",
+  alternates: { canonical: "/how-it-works" },
 };
 
 export default function HowItWorksPage() {

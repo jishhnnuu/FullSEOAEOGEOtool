@@ -6,6 +6,7 @@ export const metadata = {
   title: "Pricing",
   description:
     "Per site, per month, with the audit free forever. Priced against what an agency retainer costs, because that is what it replaces.",
+  alternates: { canonical: "/pricing" },
 };
 
 /**

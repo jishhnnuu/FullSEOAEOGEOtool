@@ -10,7 +10,7 @@ from seoos.analysis.checks.schema import generate_jsonld, validate_jsonld
 from seoos.analysis.findings import CATALOG, FindingDraft
 from seoos.analysis.http import validate_url
 from seoos.analysis.parser import parse_html
-from seoos.analysis.scoring import expected_ctr, health_score, opportunity_score
+from seoos.analysis.scoring import authority_score, expected_ctr, health_score, opportunity_score
 from seoos.core.errors import ValidationFailed
 
 GOOD_PAGE = """
@@ -228,3 +228,71 @@ class TestLinkGraph:
         ranks = graph.pagerank()
         assert ranks["/b"] > ranks["/a"]
         assert abs(sum(ranks.values()) - 1.0) < 0.01
+
+
+class TestSchemaContradictionIsNarrow:
+    """Regression: this check once fired on every page of every site.
+
+    The rule compared `description` on any type, so a site-wide Organization
+    block, whose description is an entity fact and was never body copy, marked
+    forty of forty crawled pages with a high-severity finding. A wrong
+    high-severity finding teaches the reader to discount the severe ones, so
+    the narrowing is load-bearing rather than cosmetic.
+    """
+
+    ORG = {
+        "@type": "Organization",
+        "name": "Example Co",
+        "description": "A long organisation description that is deliberately absent from the body copy.",
+    }
+
+    def test_organization_description_absent_from_page_is_not_a_contradiction(self):
+        result = validate_jsonld([self.ORG], page_text="Totally unrelated page copy about pricing.")
+        codes = [i["code"] for i in result["issues"]]
+        assert "schema_contradicts_page" not in codes
+
+    def test_article_headline_absent_from_page_is_a_contradiction(self):
+        block = {"@type": "Article", "headline": "How to migrate a Postgres database safely"}
+        result = validate_jsonld([block], page_text="This page is about kitchen furniture.")
+        assert "schema_contradicts_page" in [i["code"] for i in result["issues"]]
+
+    def test_article_headline_present_on_page_is_fine(self):
+        headline = "How to migrate a Postgres database safely"
+        result = validate_jsonld(
+            [{"@type": "Article", "headline": headline}],
+            page_text=f"{headline}. Here is the guide.",
+        )
+        assert "schema_contradicts_page" not in [i["code"] for i in result["issues"]]
+
+    def test_faq_markup_without_questions_is_a_contradiction(self):
+        block = {"@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "Q", "acceptedAnswer": {"text": "A"}}]}
+        result = validate_jsonld([block], page_text="A page with no question marks at all.")
+        assert "schema_contradicts_page" in [i["code"] for i in result["issues"]]
+
+
+class TestScoresSayWhenTheyAreNotMeasured:
+    """Regression: the CLI printed `authority 100.0` with no link data.
+
+    Authority without a backlink source is a guess about the one input that
+    defines it. The browser engine has refused to render that as a number
+    since `score.ts` was written; this is the server engine agreeing.
+    """
+
+    def test_authority_without_link_data_is_unmeasured(self):
+        breakdown = authority_score([], page_count=5)
+        assert breakdown.measured is False
+        assert breakdown.unmeasured_reason
+        assert breakdown.unmeasured_fix
+
+    def test_authority_with_link_data_is_measured(self):
+        breakdown = authority_score([], referring_domains=120, competitor_median_domains=200, page_count=5)
+        assert breakdown.measured is True
+        assert breakdown.unmeasured_reason is None
+
+    def test_the_flag_survives_serialisation(self):
+        payload = authority_score([], page_count=5).to_dict()
+        assert payload["measured"] is False
+        assert payload["unmeasured_reason"]
+
+    def test_health_is_always_measured_because_the_crawl_measures_it(self):
+        assert health_score([], page_count=3).measured is True

@@ -1,9 +1,12 @@
 import { CtaBand, MarketingChrome } from "@/components/marketing";
 
+import { BRAND } from "@/lib/brand";
+
 export const metadata = {
   title: "Against an agency, a suite, and an AI writer",
   description:
     "An honest comparison: where an agency still wins, where enterprise suites stop, and why volume content tools create a problem rather than solving one.",
+  alternates: { canonical: "/vs-agency" },
 };
 
 type Row = [string, string, string, string, string];
@@ -30,7 +33,7 @@ const ROWS: Row[] = [
   ["Takes the blame in a board meeting", "no", "yes", "no", "no"],
 ];
 
-const COLS = ["SEO OS", "An agency", "An enterprise suite", "An AI writer"];
+const COLS = [BRAND, "An agency", "An enterprise suite", "An AI writer"];
 
 function cell(value: string) {
   if (value === "yes") return <span className="yes">Yes</span>;

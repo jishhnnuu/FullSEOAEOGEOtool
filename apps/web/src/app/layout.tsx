@@ -1,29 +1,73 @@
 import type { Metadata } from "next";
 
+import { BRAND, DESCRIPTION, IS_LAUNCHED, OG_IMAGE, SITE_URL, TAGLINE } from "@/lib/brand";
+import { graph, organizationNode, softwareNode, websiteNode } from "@/lib/schema";
+
 import "./globals.css";
 
+/**
+ * Nothing here names the product directly.
+ *
+ * Everything reads from `lib/brand.ts`, so launching on a real domain is two
+ * environment variables and a redeploy rather than a search and replace across
+ * the codebase. `IS_LAUNCHED` also decides indexing: a pre-launch subdomain
+ * that later moves leaves a full duplicate of the site in the index competing
+ * with the real one, so until the domain is set this is noindex everywhere.
+ */
 export const metadata: Metadata = {
-  metadataBase: new URL("https://fullseoaeogeotool.jishhnnuu.workers.dev"),
+  metadataBase: new URL(SITE_URL),
   title: {
-    default: "SEO OS: the search agency, as software",
-    template: "%s | SEO OS",
+    default: `${BRAND}: ${TAGLINE}`,
+    template: `%s | ${BRAND}`,
   },
-  description:
-    "Connect a site and the work an SEO agency would do happens without them: technical fixes, content, structured data, internal linking, local listings, link prospecting and the reporting that explains what changed. Built for search, AI answers and generative engines.",
+  description: DESCRIPTION,
+  applicationName: BRAND,
+  /*
+   * No canonical here on purpose.
+   *
+   * `alternates.canonical` in the root layout cascades to every page that
+   * does not override it, which pointed eleven pages at the homepage the
+   * first time this file was written. That is `canonical_mismatch`, a high
+   * severity finding in our own catalogue, and it is worse than a missing
+   * canonical because it actively tells the engine to drop the page. Each
+   * route declares its own, and `npm run seo:check` fails the build if one
+   * forgets.
+   */
   openGraph: {
     type: "website",
-    siteName: "SEO OS",
-    title: "SEO OS: the search agency, as software",
-    description:
-      "Audit, fix, write, publish and report. One platform covering SEO, AEO and GEO, with you approving the work rather than doing it.",
+    siteName: BRAND,
+    url: SITE_URL,
+    title: `${BRAND}: ${TAGLINE}`,
+    description: DESCRIPTION,
+    images: [{ url: OG_IMAGE, width: 1200, height: 630, alt: `${BRAND}: ${TAGLINE}` }],
   },
-  twitter: { card: "summary_large_image" },
-  robots: { index: true, follow: true },
+  twitter: {
+    card: "summary_large_image",
+    title: `${BRAND}: ${TAGLINE}`,
+    description: DESCRIPTION,
+    images: [OG_IMAGE],
+  },
+  robots: IS_LAUNCHED
+    ? { index: true, follow: true, googleBot: { index: true, follow: true, "max-snippet": -1, "max-image-preview": "large" } }
+    : { index: false, follow: false },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
+      <head>
+        {/*
+          One graph, not three script tags. Defining the organisation once and
+          referencing it by @id everywhere else is the rule the schema
+          validator enforces against other people's sites, and a second copy of
+          an entity is how an entity graph gets broken by the tool meant to be
+          fixing it.
+        */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: graph(organizationNode(), websiteNode(), softwareNode()) }}
+        />
+      </head>
       <body>{children}</body>
     </html>
   );

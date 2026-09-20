@@ -737,6 +737,17 @@ function hasDirectAnswer(opening: string): boolean {
   return /\b(is|are|means|refers to|costs?|takes?|requires?|you (can|should|need)|the answer)\b/i.test(sentences);
 }
 
+/*
+ * Types whose headline is a claim about this page's content. Mirrors
+ * CONTENT_BEARING_TYPES in analysis/checks/schema.py; the two must not drift,
+ * because a code that exists in both engines must never disagree about when
+ * it fires.
+ */
+const CONTENT_BEARING_TYPES = new Set([
+  "Article", "BlogPosting", "NewsArticle", "Product", "Recipe",
+  "HowTo", "Event", "JobPosting", "VideoObject", "QAPage",
+]);
+
 const SCHEMA_REQUIRED: Record<string, string[]> = {
   Product: ["name", "image", "offers"],
   Article: ["headline", "datePublished"],
@@ -816,6 +827,38 @@ function schemaRequirements(page: CrawledPage, types: string[], graph?: SchemaGr
   // risk, and the cheapest version of that check is the FAQ one.
   if (types.includes("FAQPage") && s.questionHeadings.length === 0 && !/\?/.test(s.text)) {
     out.push({ code: "schema_contradicts_page", url: page.url, detail: "FAQPage markup on a page with no visible questions" });
+  }
+
+  /*
+   * The same contradiction, one level up: a headline claiming to be this page
+   * when the page says something else.
+   *
+   * Only types that *are* the page are compared. Organization, WebSite,
+   * LocalBusiness and SoftwareApplication are entity facts, usually emitted
+   * site wide, and their name and description are legitimately absent from
+   * body copy. Comparing those fires on every page of the site at once, which
+   * is how the Python engine shipped 40 high-severity false positives on a
+   * 40-page crawl before both engines were brought back into step.
+   */
+  if (s.text.length > 0) {
+    const lowered = s.text.toLowerCase();
+    for (const node of jsonLdNodes(s.jsonLd)) {
+      const raw = node["@type"];
+      const nodeTypes = typeof raw === "string" ? [raw] : Array.isArray(raw) ? raw.filter((t): t is string => typeof t === "string") : [];
+      const contentType = nodeTypes.find((t) => CONTENT_BEARING_TYPES.has(t));
+      if (!contentType) continue;
+      const claim = ["headline", "name"].map((k) => node[k]).find((v): v is string => typeof v === "string" && v.length > 25);
+      if (!claim) continue;
+      if (!lowered.includes(claim.slice(0, 60).toLowerCase())) {
+        out.push({
+          code: "schema_contradicts_page",
+          url: page.url,
+          detail: `${contentType} markup claims a headline the page does not carry`,
+          evidence: { type: contentType, claim: claim.slice(0, 120) },
+        });
+      }
+      break;
+    }
   }
   return out;
 }

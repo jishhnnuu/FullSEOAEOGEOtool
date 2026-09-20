@@ -205,7 +205,18 @@ async def _demo(args) -> int:
     print(f"\n{run.summary}\n")
     if crawl.get("scores"):
         for name, score in crawl["scores"].items():
-            print(f"  {name:10} {score}")
+            # A score whose main input was never read does not get to render as
+            # a number. Printing "authority 100.0" for a site with no backlink
+            # source connected is the exact failure the measured flag exists to
+            # stop, and it is worse on a terminal than on a screen because
+            # there is no room for a footnote.
+            if isinstance(score, dict) and not score.get("measured", True):
+                print(f"  {name:10} not measured  ({score.get('unmeasured_reason', '')})")
+                if score.get("unmeasured_fix"):
+                    print(f"  {'':10} {score['unmeasured_fix']}")
+                continue
+            value = score.get("score") if isinstance(score, dict) else score
+            print(f"  {name:10} {value}")
     findings = (state.get("findings") or {}).get("findings", [])
     if findings:
         print(f"\ntop findings ({len(findings)} shown):")

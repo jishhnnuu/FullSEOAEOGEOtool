@@ -816,3 +816,162 @@ a.button.disabled {
   pointer-events: none;
   cursor: not-allowed;
 }
+
+/* ── Content pages: comparisons, glossary, tools ────────────────────────────
+   Added with the content programme. Everything reuses the existing tokens
+   rather than introducing a second palette, because two palettes is how a
+   design system stops being one. */
+
+.section .section-title.small-title { font-size: clamp(1.2rem, 2.2vw, 1.5rem); max-width: 32ch; }
+.section p { max-width: 72ch; margin-bottom: 0.9rem; }
+
+.card-grid { display: grid; gap: 1.1rem; grid-template-columns: repeat(auto-fit, minmax(270px, 1fr)); }
+.card {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 1.3rem;
+  background: var(--surface);
+}
+.card h3 { font-size: 1rem; margin-bottom: 0.4rem; }
+.card p { margin: 0 0 0.5rem; font-size: 0.89rem; }
+.card > span.small { color: var(--text-faint); font-size: 0.78rem; }
+.card.muted-card { background: var(--bg-alt); }
+a.link-card { display: block; color: inherit; text-decoration: none; transition: border-color 0.15s ease; }
+a.link-card:hover { border-color: var(--border-strong); }
+a.link-card h3 { color: var(--accent); }
+
+.prose-list { margin: 0 0 1rem 1.1rem; max-width: 72ch; }
+.prose-list li { margin-bottom: 0.6rem; font-size: 0.93rem; color: var(--text-muted); }
+.prose-list li strong { color: var(--text); }
+
+.code-block, .tool-output pre {
+  background: var(--bg-alt);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 0.9rem 1rem;
+  overflow-x: auto;
+  font-family: var(--mono);
+  font-size: 0.8rem;
+  line-height: 1.55;
+  white-space: pre-wrap;
+  word-break: break-word;
+  max-width: 100%;
+}
+
+.faq details {
+  border-bottom: 1px solid var(--border);
+  padding: 0.85rem 0;
+}
+.faq details:last-child { border-bottom: none; }
+.faq summary { cursor: pointer; font-weight: 600; font-size: 0.95rem; }
+.faq details p { color: var(--text-muted); font-size: 0.9rem; margin: 0.6rem 0 0; }
+
+.glossary-list > div { border-bottom: 1px solid var(--border); padding: 0.9rem 0; }
+.glossary-list > div:last-child { border-bottom: none; }
+.glossary-list dt { font-weight: 650; margin-bottom: 0.25rem; }
+.glossary-list dd { margin: 0; font-size: 0.89rem; max-width: 76ch; }
+
+/* ── Free tools ─────────────────────────────────────────────────────────── */
+
+.tool-form { display: flex; gap: 0.6rem; flex-wrap: wrap; margin-bottom: 1.2rem; }
+.tool-form input {
+  flex: 1 1 320px;
+  padding: 0.65rem 0.85rem;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius);
+  font-size: 0.95rem;
+  background: var(--surface);
+  color: var(--text);
+}
+.tool-form input:focus { outline: 2px solid var(--accent-bright); outline-offset: 1px; }
+
+.tool-result { border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 1.3rem; background: var(--surface); }
+.tool-result-head { display: flex; justify-content: space-between; gap: 1rem; align-items: flex-start; flex-wrap: wrap; margin-bottom: 1.1rem; }
+.tool-result-head strong { font-family: var(--mono); font-size: 0.85rem; word-break: break-all; }
+.tool-result-head p { margin: 0.2rem 0 0; }
+
+.tool-verdict { font-weight: 600; padding: 0.7rem 0.9rem; border-radius: var(--radius); margin-bottom: 1rem; font-size: 0.92rem; }
+.tool-verdict.good { background: var(--ok-soft); color: var(--ok); }
+.tool-verdict.bad { background: var(--bad-soft); color: var(--bad); }
+
+.tool-note { font-size: 0.85rem; color: var(--text-muted); max-width: 72ch; margin: 0.9rem 0; }
+.tool-clear { font-size: 0.9rem; color: var(--ok); background: var(--ok-soft); padding: 0.7rem 0.9rem; border-radius: var(--radius); }
+.tool-error { background: var(--bad-soft); color: var(--bad); padding: 1rem; border-radius: var(--radius); }
+.tool-error p { margin: 0 0 0.6rem; }
+
+.tool-stats { display: grid; gap: 0.7rem; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); margin-bottom: 1.1rem; }
+.tool-stat { border: 1px solid var(--border); border-radius: var(--radius); padding: 0.75rem 0.85rem; background: var(--bg-alt); }
+.tool-stat-value { font-size: 1.35rem; font-weight: 650; letter-spacing: -0.02em; line-height: 1.1; }
+.tool-stat-label { font-size: 0.76rem; color: var(--text-muted); margin-top: 0.25rem; }
+.tool-stat.good .tool-stat-value { color: var(--ok); }
+.tool-stat.warn .tool-stat-value { color: var(--warn); }
+.tool-stat.bad .tool-stat-value { color: var(--bad); }
+
+.tool-score { display: flex; gap: 1.1rem; align-items: center; margin-bottom: 1.2rem; flex-wrap: wrap; }
+.tool-score-value { font-size: 3rem; font-weight: 650; letter-spacing: -0.04em; line-height: 1; }
+.tool-score-value.good { color: var(--ok); }
+.tool-score-value.warn { color: var(--warn); }
+.tool-score-value.bad { color: var(--bad); }
+.tool-score p { margin: 0.25rem 0 0; max-width: 60ch; }
+
+.tool-findings { list-style: none; margin: 0 0 1rem; padding: 0; }
+.tool-findings li { border-top: 1px solid var(--border); padding: 0.85rem 0; }
+.tool-findings li:first-child { border-top: none; }
+.tool-finding-head { display: flex; gap: 0.6rem; align-items: center; margin-bottom: 0.35rem; flex-wrap: wrap; }
+.tool-findings p { margin: 0.25rem 0 0; font-size: 0.86rem; }
+.tool-fix { color: var(--accent-bright); }
+
+.pill {
+  font-size: 0.66rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em;
+  padding: 0.15rem 0.45rem; border-radius: 999px; background: var(--bg-alt); color: var(--text-muted);
+}
+.pill.critical { background: var(--bad-soft); color: var(--critical); }
+.pill.high { background: var(--bad-soft); color: var(--bad); }
+.pill.medium { background: var(--warn-soft); color: var(--warn); }
+.pill.low { background: var(--accent-soft); color: var(--accent); }
+
+.tool-table { width: 100%; border-collapse: collapse; margin-bottom: 1rem; }
+.tool-table th, .tool-table td { text-align: left; padding: 0.5rem 0.6rem; border-bottom: 1px solid var(--border); font-size: 0.85rem; }
+.tool-table thead th { font-size: 0.74rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-muted); }
+.tool-table .yes { color: var(--ok); font-weight: 650; }
+.tool-table .no { color: var(--bad); font-weight: 650; }
+
+.tool-output { margin: 1rem 0; }
+.tool-output-head { display: flex; justify-content: space-between; align-items: center; gap: 0.8rem; margin-bottom: 0.4rem; }
+.tool-output-head code { font-size: 0.78rem; color: var(--text-muted); }
+
+.tool-toggle { margin-bottom: 1rem; }
+.tool-toggle label { font-size: 0.9rem; font-weight: 600; display: flex; gap: 0.4rem; align-items: center; }
+.tool-toggle p { margin: 0.4rem 0 0; }
+
+.tool-subhead { font-size: 0.95rem; margin: 1.2rem 0 0.4rem; }
+.tool-quote { border-left: 3px solid var(--accent-soft); margin: 0 0 1rem; padding: 0.4rem 0 0.4rem 0.9rem; color: var(--text-muted); font-size: 0.9rem; }
+.tool-list { margin: 0 0 1rem 1.1rem; }
+.tool-list li { font-size: 0.83rem; font-family: var(--mono); word-break: break-all; margin-bottom: 0.25rem; }
+
+.tool-upsell {
+  margin-top: 1.4rem; padding-top: 1.1rem; border-top: 1px solid var(--border);
+  display: flex; gap: 1rem; align-items: center; justify-content: space-between; flex-wrap: wrap;
+}
+.tool-upsell p { margin: 0; max-width: 52ch; }
+
+.tool-check-list { list-style: none; margin: 0; padding: 0; }
+.tool-check-list li { display: flex; gap: 0.7rem; align-items: flex-start; border-top: 1px solid var(--border); padding: 0.75rem 0; }
+.tool-check-list li:first-child { border-top: none; }
+.tool-check-list p { margin: 0.2rem 0 0; }
+
+.serp-preview { border: 1px solid var(--border); border-radius: var(--radius); padding: 1rem; background: var(--surface); margin-bottom: 1rem; max-width: 600px; }
+.serp-url { font-size: 0.78rem; color: var(--text-muted); margin-bottom: 0.2rem; word-break: break-all; }
+.serp-title { color: var(--accent-bright); font-size: 1.15rem; line-height: 1.3; margin-bottom: 0.25rem; }
+.serp-desc { font-size: 0.85rem; color: var(--text-muted); line-height: 1.5; }
+
+.heading-outline { list-style: none; margin: 0 0 1rem; padding: 0; }
+.heading-outline li { display: flex; gap: 0.6rem; align-items: baseline; padding: 0.3rem 0; font-size: 0.88rem; flex-wrap: wrap; }
+.heading-outline li.has-issue { color: var(--warn); }
+.heading-level { font-family: var(--mono); font-size: 0.72rem; color: var(--text-faint); min-width: 2rem; }
+.heading-issue { font-size: 0.75rem; color: var(--warn); background: var(--warn-soft); padding: 0.1rem 0.4rem; border-radius: 999px; }
+
+.sr-only {
+  position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0;
+}

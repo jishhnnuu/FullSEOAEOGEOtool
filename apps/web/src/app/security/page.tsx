@@ -4,6 +4,7 @@ export const metadata = {
   title: "Security, data and independence",
   description:
     "Where your data lives, how credentials are handled, what the crawler will and will not fetch, and why the platform keeps working with no connection to us at all.",
+  alternates: { canonical: "/security" },
 };
 
 export default function SecurityPage() {

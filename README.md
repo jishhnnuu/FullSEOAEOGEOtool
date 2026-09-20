@@ -16,7 +16,7 @@ against live websites: crawl, analyse, score, persist, reconcile, report,
 through the API and through the dashboard.
 
 ```
-53 agents · 8 missions · 60 tools · 21 connectors · 71 checks · 43 tables · 141 tests
+53 agents · 8 missions · 60 tools · 21 connectors · 90 checks · 43 tables · 149 tests
 ```
 
 ## Try it without installing anything
@@ -145,7 +145,7 @@ platform/
   packages/seoos/
     core/         config, database, tenancy, encryption, 43 models
     llm/          provider-agnostic model access, pricing, embeddings
-    analysis/     crawler, parser, 71 checks, scoring   (no model needed)
+    analysis/     crawler, parser, 74 checks, scoring   (no model needed)
     connectors/   21 integrations behind one contract
     tools/        60 capabilities agents may invoke
     agents/       runtime, policy engine, resolver, 53 markdown specs
@@ -154,7 +154,7 @@ platform/
     api/          FastAPI routes and security
   apps/web/       Next.js: the public site, the dashboard, and the
                   TypeScript audit engine the hosted Worker runs
-  tests/          141 tests
+  tests/          149 Python tests, plus 57 in the engine suite
   docs/           architecture, agents, market analysis, operations
 ```
 

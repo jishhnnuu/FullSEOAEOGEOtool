@@ -841,7 +841,19 @@ function schemaRequirements(page: CrawledPage, types: string[], graph?: SchemaGr
    * 40-page crawl before both engines were brought back into step.
    */
   if (s.text.length > 0) {
-    const lowered = s.text.toLowerCase();
+    /*
+     * Title and headings count as the page saying it, not just body copy.
+     *
+     * `s.text` is chrome-stripped, and an Article headline lives in the page
+     * header that `mainRegion()` deliberately removes. Comparing a headline
+     * against body copy alone marks every correctly built blog post as
+     * contradicting itself: one real audit produced 45 high-severity findings
+     * that way, on a site whose h1 matched its schema headline exactly.
+     */
+    const lowered = [s.text, s.title ?? "", ...s.h1, ...s.headings.map((h) => h.text)]
+      .filter(Boolean)
+      .join(" \n ")
+      .toLowerCase();
     for (const node of jsonLdNodes(s.jsonLd)) {
       const raw = node["@type"];
       const nodeTypes = typeof raw === "string" ? [raw] : Array.isArray(raw) ? raw.filter((t): t is string => typeof t === "string") : [];

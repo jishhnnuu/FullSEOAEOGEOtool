@@ -296,3 +296,44 @@ class TestScoresSayWhenTheyAreNotMeasured:
 
     def test_health_is_always_measured_because_the_crawl_measures_it(self):
         assert health_score([], page_count=3).measured is True
+
+
+class TestHeadlineIsCheckedAgainstTheWholePage:
+    """Regression: 45 high-severity false positives on one real audit.
+
+    The contradiction check compared an Article headline against `main_text`,
+    which is chrome-stripped. An article's headline lives in the page header,
+    exactly the region `mainRegion` removes, so every correctly built blog post
+    on the site was marked as contradicting its own markup. The h1 matched the
+    schema headline character for character.
+    """
+
+    HEADLINE = "10 Best Ahrefs Alternatives in 2026 (Ranked and Reviewed)"
+
+    def _block(self):
+        return {"@type": "Article", "headline": self.HEADLINE}
+
+    def test_headline_in_the_title_alone_is_not_a_contradiction(self):
+        result = validate_jsonld(
+            [self._block()],
+            page_text="Body copy that never repeats the headline verbatim.",
+            title=self.HEADLINE,
+        )
+        assert "schema_contradicts_page" not in [i["code"] for i in result["issues"]]
+
+    def test_headline_in_a_heading_alone_is_not_a_contradiction(self):
+        result = validate_jsonld(
+            [self._block()],
+            page_text="Body copy that never repeats the headline verbatim.",
+            headings=[self.HEADLINE],
+        )
+        assert "schema_contradicts_page" not in [i["code"] for i in result["issues"]]
+
+    def test_headline_nowhere_on_the_page_is_still_a_contradiction(self):
+        result = validate_jsonld(
+            [self._block()],
+            page_text="This page is about kitchen furniture and nothing else.",
+            title="Kitchen furniture",
+            headings=["Kitchen furniture"],
+        )
+        assert "schema_contradicts_page" in [i["code"] for i in result["issues"]]

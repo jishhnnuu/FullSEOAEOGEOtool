@@ -138,9 +138,19 @@ def check_site_technical(report: CrawlReport) -> list[FindingDraft]:
             )
 
     # Broken internal links, attributed to the pages that contain them.
+    #
+    # Only a real 4xx counts. A status of 0 means the fetch itself failed:
+    # a timeout, a reset connection, an SSL error, a rate limit that dropped
+    # the request. That says something about our crawl, not about their site,
+    # and reporting it as a broken internal link at high severity is a false
+    # positive. Two of them showed up on a real audit of a site whose pages
+    # both returned 200 on the very next request.
+    #
+    # The TypeScript engine has always been right here, firing on 404 and 410
+    # alone. This brings the two back into step.
     broken: dict[str, list[str]] = {}
     for page in report.pages.values():
-        if page.status == 404 or (page.error and page.status == 0):
+        if page.status in (404, 410):
             for source, targets in report.inlinks.items():
                 if page.url in targets:
                     broken.setdefault(page.url, []).append(source)

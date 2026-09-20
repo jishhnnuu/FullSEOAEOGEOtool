@@ -20,6 +20,7 @@
 import { useEffect, useState } from "react";
 
 import type { InspectResult } from "@/app/api/tools/inspect/route";
+import { SITE_URL } from "@/lib/brand";
 import { CATALOG } from "@/engine/catalog";
 import { materialise, runChecks } from "@/engine/checks";
 import type { CrawlReport, Finding } from "@/engine/types";
@@ -58,7 +59,16 @@ export function SelfAudit() {
         const response = await fetch("/api/tools/inspect", {
           method: "POST",
           headers: { "content-type": "application/json" },
-          body: JSON.stringify({ url: window.location.origin, scope: "site" }),
+          /*
+           * The canonical origin, not `window.location.origin`.
+           *
+           * Two reasons. A local dev server is loopback, which the SSRF guard
+           * refuses, so reading the browser's origin makes this page fail on
+           * the one machine where it would be most useful. And the claim this
+           * page makes is about the deployment people actually visit, so the
+           * audit should be pointed there whoever is looking at it.
+           */
+          body: JSON.stringify({ url: SITE_URL, scope: "site" }),
         });
         const payload = (await response.json()) as { ok?: boolean; reason?: string };
         if (cancelled) return;

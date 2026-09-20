@@ -90,10 +90,11 @@ packages/seoos/
   services/       Approvals, content, findings, credentials, audit log
 apps/web/         Next.js: the public site and the dashboard. Plain CSS.
   src/app/        The public pages at the top level, the workspace under /app
-  src/app/api/    Engine endpoints, plus auth, connections, runs and publishing
+  src/app/api/    Engine endpoints, plus auth, connections, runs, billing, tools
   src/engine/     The TypeScript audit engine: crawl, checks, fixes, strategy
-  src/server/     Sessions, D1, envelope sealing, Google OAuth, GSC, GA4, WordPress
-  src/lib/        The browser-held workspace store, the connector catalogue, sync
+  src/server/     Sessions, D1, envelope sealing, OAuth, GSC, GA4, billing, quota
+  src/lib/        Workspace store, connector catalogue, brand, plans, schema
+  src/content/    The marketing content: comparisons, glossary, free tools
 deploy/d1/        The D1 schema. Applied by `npm run cf:setup`.
 scripts/          Reference generator, demo seeder
 docs/reference/   Generated from the registries. Never edit by hand.
@@ -117,6 +118,10 @@ deploy/           Dockerfiles. wrangler.jsonc at the root is Cloudflare.
 | `make cf-preview` | The Cloudflare Worker locally on :8788 |
 | `npm run cf:setup` | Optional. Does the Cloudflare side of `docs/ACCOUNTS.md` from a terminal |
 | `npm run d1:sql` | Regenerate `deploy/d1/migrations` from `src/server/schema.ts` |
+| `npm run brand:check` | Fail if anything outside `lib/brand.ts` hard-codes the name or origin |
+| `npm run seo:check` | Fail if a public page lacks one h1, a description or its own canonical |
+| `docs/LAUNCH.md` | The five minutes between buying a domain and being live |
+| `docs/BILLING.md` | The four values that turn on payments, and what the webhook may do |
 | `make docker` | Whole stack with Postgres |
 
 ## Invariants
@@ -225,6 +230,33 @@ style disagreement.
   `compareRuns()` drops any score whose `measured` flag is false, and
   `measurementMissing` makes the report say so in its first paragraph rather
   than filling the space. `report.ts` reads flat as flat.
+- **The product is not named in the code.** `apps/web/src/lib/brand.ts` holds
+  the name and the origin, read from `NEXT_PUBLIC_BRAND_NAME` and
+  `NEXT_PUBLIC_SITE_URL`. Every title, canonical, sitemap entry, JSON-LD node
+  and llms.txt line reads from it, so launching on a real domain is two
+  variables and a redeploy. `npm run brand:check` fails the build on a literal.
+  Until the domain is set, `IS_LAUNCHED` is false and the whole site is
+  noindex with an empty sitemap, on purpose: a subdomain that gets indexed and
+  then moves leaves a duplicate competing with the real domain for its own
+  terms.
+- **Our own site passes our own checks.** `npm run seo:check` requires one h1,
+  a meta description and a self-referential canonical on every public page, and
+  `/proof` runs the real audit against this deployment and publishes what it
+  finds. This exists because the engine scored our own site at AEO 51.5 against
+  a competitor's 62.6 while we were auditing other people. A canonical set in
+  the root layout cascades to every page that does not override it, which is
+  how eleven pages once declared the homepage as their canonical; check the
+  rendered value, never the presence of the tag.
+- **One plan definition.** `apps/web/src/lib/plans.ts` describes every plan.
+  The pricing page derives from it and `server/quota.ts` enforces it, so a grid
+  cannot tick something the product gates elsewhere. Page ceilings are enforced
+  in the Worker at `/api/engine/fetch`, because the browser drives the crawl. A
+  capped run states its coverage above the score rather than stopping silently.
+- **A billing failure never locks the audit.** A cancellation, an unpaid
+  subscription or an unreadable account layer drops to the free tier with the
+  audit working. The webhook verifies its signature before parsing the body,
+  refuses anything older than five minutes, and reads the workspace from
+  subscription metadata rather than from the request body.
 - **`docs/reference` is generated.** Adding a tool, check, agent or mission
   means running `make docs` and committing the result. CI fails if it is stale.
 

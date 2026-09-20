@@ -975,3 +975,20 @@ a.link-card h3 { color: var(--accent); }
   position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
   overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0;
 }
+
+/* The decision panel. One row per decision, with the action on the right and
+   the reasoning under the title, because the reasoning is the thing that makes
+   a batch approvable rather than a rubber stamp. */
+.decide-row {
+  display: flex;
+  gap: 1rem;
+  align-items: flex-start;
+  justify-content: space-between;
+  padding: 0.85rem 0;
+  border-top: 1px solid var(--border);
+  flex-wrap: wrap;
+}
+.decide-row:first-child { border-top: none; }
+.decide-main { flex: 1 1 320px; min-width: 0; }
+.decide-main p { max-width: 68ch; }
+.decide-action { flex: 0 0 auto; padding-top: 0.15rem; }

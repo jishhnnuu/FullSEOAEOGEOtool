@@ -381,6 +381,41 @@ not a code rule. It is the brand.
 
 ---
 
+## Progress against this plan
+
+Updated 20 September 2026. This section is appended to rather than rewritten,
+so the gap between what was planned and what shipped stays visible.
+
+**Phase 0, done.** The three engine defects are fixed with regression tests.
+The site passes its own checks: sitemap, llms.txt, robots naming every search
+and AI agent, an entity graph defined once, canonicals, an edge-rendered OG
+card. `/proof` runs the audit against this deployment live and publishes the
+findings still outstanding. Two new guards gate the build, `brand:check` and
+`seo:check`, the second of which exists because fixing the SEO layer
+introduced a cascading canonical that pointed eleven pages at the homepage.
+
+**Phase 1, partly done.** Billing exists and is provider-agnostic, quotas are
+enforced in the Worker, and the plan definition is single-sourced so the
+pricing page cannot drift from enforcement. What remains is external: the
+domain, the four billing values, the D1 binding and the Google OAuth client.
+`docs/LAUNCH.md` is the checklist.
+
+Two Phase 1 items are untouched and both are real. **The headless crawl** has
+not been built, so a scheduled audit still waits for a browser tab and
+"retainer" is not yet an honest word. **The approval queue** is still a queue
+of 150 decisions rather than six, which Opinion 001 named as the thing
+founders bounce off.
+
+**Phase 3, started.** Ten free tools, five comparison pages, sixteen glossary
+entries and the JavaScript crawler essay. That is roughly 45 indexable pages
+against the competitor's 141, but the tools are a different class of asset:
+theirs are word counters, ours run the real catalogue against the visitor's
+real page. The original research dataset, which is the actual moat, is not
+started.
+
+**Phases 4 and 5, untouched.** No distribution, no launch posts, no
+directories, no funnel beyond the free audit itself.
+
 ## The sequence, compressed
 
 | When | What | Why it is in this slot |

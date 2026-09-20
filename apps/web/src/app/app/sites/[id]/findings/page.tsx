@@ -7,6 +7,7 @@ import { CATALOG, CATEGORY_LABEL } from "@/engine/catalog";
 import type { Finding, Severity } from "@/engine/types";
 import { approvalsFromResult, agentFor, id, logActivity } from "@/lib/store";
 import { useSite } from "@/lib/site-hooks";
+import { DecidePanel } from "@/components/decide";
 import { Gate } from "@/components/gate";
 import {
   Badge,
@@ -122,6 +123,15 @@ export default function FindingsPage() {
         description={`${result.findings.length} open across ${result.crawl.fetched} crawled pages, ordered by what is worth doing rather than by severity alone.`}
         action={<Link href={`/app/sites/${site.id}/approvals`} className="button small">Approval queue</Link>}
       />
+
+      {/*
+        The decision panel, above the list. Opinion 001 named the approval
+        queue as the thing founders bounce off: 150 findings, three decisions
+        made, tab closed. This collapses the same work into a handful of
+        decisions without collapsing the gate, so a site-wide change is still
+        read on its own.
+      */}
+      <DecidePanel findings={result.findings} queuedIds={queued} onQueue={queue} />
 
       <Tabs tabs={counts} active={severity} onChange={setSeverity} />
 

@@ -1,6 +1,7 @@
 import Link from "next/link";
 
 import { CtaBand, MarketingChrome } from "@/components/marketing";
+import { EXCLUDED_FOR, PLANS, PLAN_ORDER, priceLabel } from "@/lib/plans";
 
 export const metadata = {
   title: "Pricing",
@@ -10,88 +11,45 @@ export const metadata = {
 };
 
 /**
- * The plans.
+ * The plans, derived from the single definition in `lib/plans.ts`.
  *
- * Kept as one array at the top of the file on purpose: pricing changes more
- * often than anything else on a marketing site, and it should be one edit.
+ * This page used to hold its own array. That is the arrangement that produces
+ * a pricing grid ticking a capability the product gates somewhere else, which
+ * is the most common dishonesty in this category and the one thing our own
+ * comparison pages criticise competitors for. Now there is exactly one
+ * definition, the server enforces it, and this page reads it.
  */
-const PLANS = [
-  {
-    name: "Free",
-    amount: "£0",
-    per: "forever, one site",
-    who: "Anyone who wants to see what is actually wrong before deciding anything.",
-    cta: { href: "/app/new", label: "Run an audit" },
-    featured: false,
-    includes: [
-      "The full check catalogue on every run",
-      "Up to 40 pages crawled per run",
-      "Every fix that can be generated, generated",
-      "AI crawler access and extractability check",
-      "Content gaps and three briefs",
-      "Export everything as JSON",
-    ],
-    excludes: ["Scheduled runs", "Publishing to your CMS", "Run history and change reporting"],
-  },
-  {
-    name: "Starter",
-    amount: "£79",
-    per: "per site, per month",
-    who: "A single site that wants the work done rather than described.",
-    cta: { href: "/app/new", label: "Start with a free audit" },
-    featured: false,
-    includes: [
-      "Everything in Free",
-      "Up to 250 pages crawled per run",
-      "Weekly scheduled runs",
-      "Full run history and change reporting",
-      "Search Console and analytics connected",
-      "Approval queue with autonomy levels",
-      "Publishing to WordPress, Shopify, Webflow or a webhook",
-    ],
-    excludes: ["Local cycle", "Outreach sending"],
-  },
-  {
-    name: "Growth",
-    amount: "£249",
-    per: "per site, per month",
-    who: "The plan that actually replaces a retainer. Content, local and links included.",
-    cta: { href: "/app/new", label: "Start with a free audit" },
-    featured: true,
-    includes: [
-      "Everything in Starter",
-      "Up to 2,000 pages crawled per run",
-      "Content production on your cadence, with the quality gates",
-      "Local cycle: profile, posts, review replies, citations",
-      "Link prospecting and outreach from your own domain",
-      "AI answer tracking across the twelve engines",
-      "Monthly narrative report with the trace behind every claim",
-    ],
-    excludes: [],
-  },
-  {
-    name: "Agency",
-    amount: "Talk to us",
-    per: "multi-site and white label",
-    who: "Agencies running this for their own clients, and companies with a portfolio of sites.",
-    cta: { href: "/app/new", label: "Try it on one site first" },
-    featured: false,
-    includes: [
-      "Everything in Growth, across every site",
-      "Unlimited sites and seats",
-      "Client-facing reports under your own brand",
-      "Self-hosted deployment, or we run it",
-      "Priority on connector work you need",
-    ],
-    excludes: [],
-  },
-];
+const CARDS = PLAN_ORDER.map((id) => {
+  const plan = PLANS[id];
+  return {
+    plan,
+    featured: id === "growth",
+    // What the *next* plan up adds, shown as the things this tier does not
+    // include. Derived rather than written, so it cannot go stale.
+    excludes: EXCLUDED_FOR[id],
+    cta:
+      id === "free"
+        ? { href: "/app/new", label: "Run an audit" }
+        : id === "scale"
+          ? { href: "/app/new", label: "Try it on one site first" }
+          : { href: "/app/new", label: "Start with a free audit" },
+  };
+});
+
+const CAPABILITY_LABEL: Record<string, string> = {
+  scheduling: "Scheduled runs, with nobody watching",
+  publishing: "Publishing to your CMS",
+  answerVisibility: "AI answer visibility measurement",
+  linkProgramme: "Link prospecting and outreach",
+  local: "Local: profile, posts, review replies",
+  whiteLabel: "Client-facing reports under your brand",
+};
 
 const COMPARISON = [
   ["A mid-market SEO agency retainer", "£2,500 to £15,000", "per month"],
   ["An enterprise SEO suite licence", "£350 to £8,000", "per month, and somebody still does the work"],
   ["A freelance SEO on two days a month", "£800 to £2,000", "per month"],
-  ["SEO OS, Growth", "£249", "per site, per month"],
+  [`${PLANS.growth.name}, this platform`, priceLabel(PLANS.growth), PLANS.growth.per],
 ];
 
 export default function PricingPage() {
@@ -111,27 +69,27 @@ export default function PricingPage() {
 
       <section className="section section-tight">
         <div className="price-grid">
-          {PLANS.map((plan) => (
-            <div className={`price${plan.featured ? " featured" : ""}`} key={plan.name}>
-              {plan.featured && (
+          {CARDS.map(({ plan, featured, excludes, cta }) => (
+            <div className={`price${featured ? " featured" : ""}`} key={plan.id}>
+              {featured && (
                 <span className="badge badge-accent" style={{ marginBottom: "0.7rem", alignSelf: "flex-start" }}>
                   Replaces the retainer
                 </span>
               )}
               <div className="name">{plan.name}</div>
-              <div className="who">{plan.who}</div>
-              <div className="amount">{plan.amount}</div>
+              <div className="who">{plan.blurb}</div>
+              <div className="amount">{priceLabel(plan)}</div>
               <div className="per">{plan.per}</div>
               <ul>
-                {plan.includes.map((item) => (
+                {plan.features.map((item) => (
                   <li key={item}>{item}</li>
                 ))}
-                {plan.excludes.map((item) => (
-                  <li className="off" key={item}>{item}</li>
+                {excludes.map((item) => (
+                  <li className="off" key={item}>{CAPABILITY_LABEL[item] ?? item}</li>
                 ))}
               </ul>
-              <Link href={plan.cta.href} className={`button ${plan.featured ? "primary" : ""}`}>
-                {plan.cta.label}
+              <Link href={cta.href} className={`button ${featured ? "primary" : ""}`}>
+                {cta.label}
               </Link>
             </div>
           ))}

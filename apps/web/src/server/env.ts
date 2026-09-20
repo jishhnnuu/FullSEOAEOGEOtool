@@ -20,6 +20,14 @@ export type Env = {
   RESEND_API_KEY?: string;
   MAIL_FROM?: string;
   SEOOS_API_URL?: string;
+  /* Billing. Absent on a deployment that does not sell anything, which is a
+     supported state: every workspace stays on the free tier and the audit is
+     unaffected. See server/billing.ts. */
+  BILLING_SECRET_KEY?: string;
+  BILLING_WEBHOOK_SECRET?: string;
+  BILLING_PRICE_STARTER?: string;
+  BILLING_PRICE_GROWTH?: string;
+  BILLING_PORTAL_URL?: string;
 };
 
 export async function env(): Promise<Env> {
@@ -112,3 +120,6 @@ export async function authMethods(): Promise<{
   const email = Boolean(e.RESEND_API_KEY);
   return { google: google && Boolean(e.DB), email: email && Boolean(e.DB), ready: Boolean(e.DB), gaps };
 }
+
+/** Alias for `env()`, for call sites where the bare name reads as a variable. */
+export const readEnv = env;

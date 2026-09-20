@@ -201,12 +201,29 @@ export async function crawlSite(
     const results = await Promise.all(
       allowedBatches
         .filter((batch) => batch.length)
-        .map((batch) => post<{ pages: CrawledPage[] }>("/api/engine/fetch", { targets: batch }).catch((err) => ({
-          pages: batch.map((item) => failedPage(item.url, item.depth, err instanceof Error ? err.message : "Fetch failed")),
-        }))),
+        // `fetched` lets the Worker enforce the plan's page ceiling where the
+        // fetching actually happens. The browser drives this crawl, so a
+        // ceiling the browser alone respected would not be a ceiling.
+        .map((batch) =>
+          post<{ pages: CrawledPage[]; capped?: boolean; reason?: string }>("/api/engine/fetch", {
+            targets: batch,
+            fetched: pages.length,
+          }).catch((err) => ({
+            pages: batch.map((item) => failedPage(item.url, item.depth, err instanceof Error ? err.message : "Fetch failed")),
+          })),
+        ),
     );
 
     for (const result of results) {
+      // The plan ceiling was reached. Say so in the notes rather than
+      // stopping silently: a score over a partial crawl is a score of those
+      // pages, and the reader is told that above the number.
+      if ("capped" in result && result.capped && "reason" in result && result.reason) {
+        capped = true;
+        if (!notes.includes(result.reason)) notes.push(result.reason);
+        frontier.length = 0;
+        break;
+      }
       for (const fetched of result.pages) {
         record(fetched);
         if (fetched.depth >= maxDepth) continue;

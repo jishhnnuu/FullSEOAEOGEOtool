@@ -400,18 +400,28 @@ pricing page cannot drift from enforcement. What remains is external: the
 domain, the four billing values, the D1 binding and the Google OAuth client.
 `docs/LAUNCH.md` is the checklist.
 
-Two Phase 1 items are untouched and both are real. **The headless crawl** has
+One Phase 1 item is untouched and it is the big one. **The headless crawl** has
 not been built, so a scheduled audit still waits for a browser tab and
-"retainer" is not yet an honest word. **The approval queue** is still a queue
-of 150 decisions rather than six, which Opinion 001 named as the thing
-founders bounce off.
+"retainer" is not yet an honest word.
+
+**The approval queue is done on the findings screen.** `batches.ts` collapses
+findings into decisions by decision character, with site-wide changes and
+anything writing prose deliberately left out of the batches. The approvals
+screen itself has not had the same treatment.
 
 **Phase 3, started.** Ten free tools, five comparison pages, sixteen glossary
-entries and the JavaScript crawler essay. That is roughly 45 indexable pages
+entries and the JavaScript crawler essay. That is roughly 46 indexable pages
 against the competitor's 141, but the tools are a different class of asset:
 theirs are word counters, ours run the real catalogue against the visitor's
-real page. The original research dataset, which is the actual moat, is not
-started.
+real page.
+
+**The original research dataset is done and it is the best asset on the site.**
+A hundred SaaS sites measured for crawler access, llms.txt adoption, structured
+data and extractability, published with the method, the denominators, the
+refused sites and all hundred rows. It exists because the audit costs nothing
+per run, which is an architecture difference before it is a marketing one. It
+should be refreshed quarterly so it becomes a cited series rather than one
+post.
 
 **Phases 4 and 5, untouched.** No distribution, no launch posts, no
 directories, no funnel beyond the free audit itself.

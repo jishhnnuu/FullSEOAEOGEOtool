@@ -1,9 +1,8 @@
 /**
  * Comparison pages.
  *
- * Every claim here is traceable to `docs/COMPETITORS.md` or
- * `docs/COMPARISON-MAVEK.md`, both of which record where the number came from
- * and when it was checked. Two rules hold and they are not style preferences:
+ * Every claim here is traceable to `docs/COMPETITORS.md`, which records where
+ * the number came from and when it was checked. Two rules hold and they are not style preferences:
  *
  * 1. **Every page says when to buy theirs instead, and means it.** A comparison
  *    page with no losing column is an advert, and readers know it. The section
@@ -282,76 +281,6 @@ const COMPARISONS: Comparison[] = [
       {
         q: "Is your visibility tracking live or in beta?",
         a: "Live. It runs on whichever providers you have supplied a key for, and it reports only on engines it actually asked. Nothing is inferred about an engine that was not queried.",
-      },
-    ],
-  },
-  {
-    slug: "mavek",
-    name: "Mavek",
-    title: "Mavek alternative: a search platform, not a marketing department",
-    description:
-      "Mavek runs ads, social, CRM and search with six named agents. This does one lane and goes several layers deeper into it. Which you want depends on whether your problem is marketing or search.",
-    asOf: "September 2026",
-    oneLine:
-      "Mavek is a marketing department sold as software and search is one of six lanes; this is a search platform and search is the only lane, which is why the check catalogue, the fix generation and the measurement discipline go much deeper.",
-    context: [
-      "Mavek covers paid ads, SEO, content, social, outreach and analytics through six named agents, with human marketers reviewing the plan. If your problem is that nobody is doing your marketing, that is a coherent and well-argued answer, and their pricing page makes the cost case cleanly.",
-      "This platform does not touch paid media, social or CRM and has no plans to. It crawls, runs 90 checks, generates the fix as a shippable artefact, writes briefs and drafts, publishes into your CMS, runs a link programme with a two-number risk model, and measures whether answer engines actually name you.",
-      "Their own SEO pages are worth reading and are unusually honest: the AI SEO page carries a section on what AI cannot do, and the rank tracker page lists what it does not track before you buy. We would rather compete with that than with marketing that hides its limits.",
-    ],
-    points: [
-      { category: "Scope", them: "Ads, social, CRM, email, content and search", us: "Search, answer engines, local and links. Nothing else" },
-      { category: "Technical checks", them: "Not enumerated publicly", us: "90, published with impact, effort, confidence and the fix" },
-      { category: "Fixes", them: "Drafted and staged for approval", us: "Generated as meta, HTML, JSON-LD, files, redirects and link plans. Incomplete ones cannot reach the queue" },
-      { category: "Measurement honesty", them: "Not addressed", us: "A score whose main input is missing renders as not measured, with the reason and the fix" },
-      { category: "Free tier", them: "14-day trial, account required", us: "Full audit, no account, no card, no key, no time limit" },
-      { category: "Human layer", them: "Real marketers review the plan", us: "Software only. We do not pretend otherwise" },
-      { category: "Self-hosting", them: "No", us: "Yes. Apache-2.0, Docker Compose, your own database" },
-    ],
-    ours: [
-      {
-        heading: "Depth in one lane beats breadth across six",
-        body: "Six lanes across one team means each lane gets a fraction of the attention. If search is the channel you are betting on, the difference shows up in the check catalogue, in whether a fix arrives written, and in whether a score with no data behind it still renders as a number.",
-      },
-      {
-        heading: "Nothing is gated behind a sales call",
-        body: "The audit runs on a URL. No onboarding call, no OAuth consent screen, no card. You see the findings and the written fixes before you decide anything.",
-      },
-      {
-        heading: "You can run it yourself, forever",
-        body: "Apache-2.0, self-hostable, with a database you own. If we disappear, your installation does not.",
-      },
-    ],
-    theirs: [
-      {
-        heading: "Your problem is marketing, not search",
-        body: "If you need Google Ads and Meta campaigns managed, social posted, a CRM synced and email sequences sent, we do none of that and building it would be four more products with stronger incumbents. Buy theirs.",
-      },
-      {
-        heading: "You want people, not only software",
-        body: "Their plans include real marketers reviewing the strategy. That is roughly the 70% of an agency's value that software does not replace, and we do not offer it.",
-      },
-      {
-        heading: "You want one bill for every channel",
-        body: "A single subscription covering six lanes is genuinely simpler than assembling a stack, and simplicity has real value when nobody on the team is a specialist.",
-      },
-      {
-        heading: "You want an onboarding call and a person to ask",
-        body: "They do onboarding calls and sell a live audit session with the founder. If being walked through it matters more than depth, that is a reasonable way to choose.",
-      },
-    ],
-    switching: [
-      "There is no migration. Run the audit on your site, compare what it finds against what you were told was already done, and decide from there.",
-      "If you keep Mavek for ads and social, nothing here conflicts. We read Search Console and GA4 read-only and publish into your CMS, which is a different surface from the one their ad agents touch.",
-    ],
-    faq: [
-      {
-        q: "Is this a full marketing platform?",
-        a: "No, and it will not become one. It covers search, answer engines, local and links. Paid media, social and CRM are out of scope on purpose.",
-      },
-      {
-        q: "What does Mavek do better?",
-        a: "Breadth, a human review layer, and being a company you can phone. Those are real advantages and they are the reason the comparison table above has a column that is not ours.",
       },
     ],
   },

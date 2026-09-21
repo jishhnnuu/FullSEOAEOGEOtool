@@ -100,9 +100,9 @@ cross-border VAT by hand.
   and publishes what it finds. Launching with high-severity findings on it
   would be the first dishonest thing on the site, and the page exists precisely
   so that cannot happen quietly.
-- **Do not tick a capability that is not shipping.** The competitor teardown in
-  `docs/COMPARISON-MAVEK.md` is built on exactly that failure, and the moment we
-  do it we lose the only asset a better-funded rival cannot buy.
+- **Do not tick a capability that is not shipping.** It is the most common
+  failure in this category, and the moment we do it we lose the one asset a
+  better-funded rival cannot buy.
 - **Do not publish a traffic chart.** There is no traffic yet. Say so.
 
 ## The checklist as a table

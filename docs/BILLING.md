@@ -24,9 +24,8 @@ derived from the limits rather than written by hand.
 
 That arrangement is deliberate and it is the thing to preserve. A pricing grid
 that ticks a capability the product gates somewhere else is the most common
-dishonesty in this category, it is what `docs/COMPARISON-MAVEK.md` criticises a
-competitor for, and the only defence against doing it ourselves is having
-exactly one definition. If you add a capability, add it to the `limits` type
+dishonesty in this category, and the only defence against doing it ourselves
+is having exactly one definition. If you add a capability, add it to the `limits` type
 and every surface updates together.
 
 ## Choosing a provider

@@ -8,7 +8,7 @@ import { breadcrumbNode, graph } from "@/lib/schema";
 export const metadata = {
   title: "Compare",
   description:
-    "Honest comparisons against Search Atlas, Semrush, Profound, Mavek and an SEO agency. Every page says when to buy theirs instead.",
+    "Honest comparisons against Search Atlas, Semrush, Profound and an SEO agency. Every page says when to buy theirs instead.",
   alternates: { canonical: "/compare" },
 };
 

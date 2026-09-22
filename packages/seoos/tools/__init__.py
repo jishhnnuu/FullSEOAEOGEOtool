@@ -27,6 +27,7 @@ def load_all_tools() -> ToolRegistry:
         offpage_tools,
         publish_tools,
         reporting_tools,
+        research_tools,
         workflow_tools,
     )
 

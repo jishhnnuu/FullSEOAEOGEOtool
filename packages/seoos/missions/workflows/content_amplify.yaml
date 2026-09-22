@@ -1,0 +1,101 @@
+key: content_amplify
+name: Get the work in front of people, then find out what it did
+description: >
+  Runs after a piece is live. Pulls the derived assets out of it, works the
+  warm mentions, and eight weeks later reports honestly on whether any of it
+  mattered.
+budget_usd: 12.0
+timeout_minutes: 40
+concurrency: 2
+tags: [content, distribution]
+
+steps:
+  - id: state
+    type: tool
+    tool: report.site_state
+
+  - id: queue
+    type: tool
+    tool: content.queue
+    needs: [state]
+
+  - id: derive
+    type: agent
+    agent: repurposer
+    label: Pull the assets out
+    needs: [queue]
+    context: [state, queue, input]
+    budget_usd: 2.5
+    task: >
+      Take the published piece and produce at least four derived assets: the
+      single finding on its own with its method, the short version, the
+      practical version, and the email for an audience that already trusts
+      the sender.
+
+      Rewrite for each format. An asset made by deleting paragraphs reads
+      like a thing with paragraphs missing.
+
+      Every figure carries across exactly, with its sample size. Anything
+      syndicated off-domain needs a canonical or a substantial rewrite.
+
+  - id: warm
+    type: tool
+    tool: offpage.find_unlinked_mentions
+    needs: [queue]
+
+  - id: plan
+    type: agent
+    agent: distribution-planner
+    label: Work the warm list
+    needs: [derive, warm]
+    context: [derive, warm]
+    budget_usd: 2.5
+    task: >
+      Take the unlinked mentions and the derived assets and decide what goes
+      where.
+
+      A mention without a link is already most of the value for AI
+      visibility, so do not chase the link at the cost of the relationship.
+      Where an ask is worth making, draft it specifically to that publication
+      and what they cover.
+
+      Name every destination. Nothing in this plan should say "social".
+
+  - id: measure
+    type: agent
+    agent: content-analyst
+    label: What did it actually do
+    needs: [plan]
+    context: [state, queue, plan]
+    budget_usd: 2.5
+    task: >
+      Measure the live pieces against the job each was commissioned to do,
+      not against traffic in general.
+
+      Anything under eight weeks old: say too early rather than producing a
+      number.
+
+      Name the losers as clearly as the winners. Check the run history before
+      claiming any rise: if it started before the work went live, it is not
+      ours.
+
+      End with one thing the next cycle should do differently, and the data
+      behind it. One, not five.
+
+  - id: report
+    type: agent
+    agent: content-director
+    label: Tell the client the truth
+    needs: [measure]
+    context: [measure, plan]
+    budget_usd: 2.0
+    task: >
+      Write what the client sees.
+
+      If the numbers went down or did not move, that is the first line. No
+      explanation before the fact.
+
+      Report activity separately from results and never let one stand in for
+      the other. Where an effect cannot be attributed, say so.
+
+      One recommendation, with the evidence. Then stop.

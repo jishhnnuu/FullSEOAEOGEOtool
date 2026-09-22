@@ -11,6 +11,7 @@ from seoos.analysis.findings import CATALOG, FindingDraft
 from seoos.analysis.http import validate_url
 from seoos.analysis.parser import parse_html
 from seoos.analysis.scoring import expected_ctr, health_score, opportunity_score
+from seoos.analysis.voice import compare, fingerprint
 from seoos.core.errors import ValidationFailed
 
 GOOD_PAGE = """
@@ -228,3 +229,102 @@ class TestLinkGraph:
         ranks = graph.pagerank()
         assert ranks["/b"] > ranks["/a"]
         assert abs(sum(ranks.values()) - 1.0) < 0.01
+
+
+# --- Voice measurement -------------------------------------------------------
+#
+# The product's claim on tone is that a recommendation arrives with evidence.
+# These tests pin the two halves of that: the fingerprint refuses to report on
+# a sample too small to mean anything, and the comparison refuses a verdict on
+# too few rivals rather than producing a soft one.
+
+
+_COMPANY_VOICE = (
+    "We are a leading provider of holistic solutions. We leverage our robust "
+    "platform to empower businesses. We believe our seamless offering is "
+    "best-in-class. We have delivered transformative outcomes for our clients "
+    "across the landscape. Our team utilises cutting-edge methods to unlock "
+    "value. We are passionate about our mission and our people. We work with "
+    "organisations who want to elevate their presence and streamline their "
+    "operations across the ecosystem. Our journey began when we realised the "
+    "industry needed a partner who could facilitate real change at scale for "
+    "every single one of the companies that we choose to serve each year. "
+    "We are proud of our heritage and we remain committed to our values. Our "
+    "approach is holistic and our methodology is proprietary. We have built a "
+    "reputation for excellence and we continue to invest in our capability so "
+    "that we can serve our partners better than anybody else in this space."
+)
+
+_READER_VOICE = (
+    "You are probably here because a page stopped ranking. Start with the "
+    "title. Check it in Search Console. If impressions held and clicks fell, "
+    "the title is the problem and you can fix it in an hour. That is the "
+    "cheapest win available to you. Most people skip it. They rewrite the "
+    "whole page instead, which takes a week and usually changes nothing at "
+    "all. Look at position four to twenty first. Those pages already rank. "
+    "A page at position six needs one good edit. A new page needs six months "
+    "and a great deal of luck. Pick the edit. Then measure what happened, "
+    "and write down what you learned so the next person does not repeat it. "
+    "Do the same for the next page. Then the one after that. Nothing here is "
+    "clever. It works because almost nobody bothers to do it in the right "
+    "order, and order is the whole trick. Start where the traffic already is."
+)
+
+
+def test_fingerprint_refuses_short_samples():
+    fp = fingerprint("Too short to mean anything at all.")
+    assert fp.measured is False
+    assert "120" in fp.notes[0]
+
+
+def test_fingerprint_separates_company_voice_from_reader_voice():
+    company = fingerprint(_COMPANY_VOICE)
+    reader = fingerprint(_READER_VOICE)
+
+    assert company.address == "company-facing"
+    assert reader.address == "reader-facing"
+    # The filler vocabulary is the visible difference and should be measured,
+    # not inferred.
+    assert company.filler_per_1k > reader.filler_per_1k
+
+
+def test_fingerprint_counts_rhythm_and_specifics():
+    reader = fingerprint(_READER_VOICE)
+    assert reader.words > 120
+    assert reader.measured is True
+    # Varied sentence length is the whole point of the rhythm measure.
+    assert reader.rhythm > 0.2
+    assert reader.sentence_len_max > reader.sentence_len_mean
+
+
+def test_compare_refuses_a_verdict_on_too_few_rivals():
+    site = fingerprint(_COMPANY_VOICE)
+    verdict = compare(site, [fingerprint(_READER_VOICE)])
+    assert verdict["measured"] is False
+    assert "Three" in verdict["reason"] or "three" in verdict["reason"]
+    assert verdict["differences"] == []
+
+
+def test_compare_reports_differences_with_both_numbers():
+    site = fingerprint(_COMPANY_VOICE)
+    rivals = [fingerprint(_READER_VOICE) for _ in range(3)]
+    verdict = compare(site, rivals)
+
+    assert verdict["measured"] is True
+    assert verdict["sample_size"] == 3
+    assert verdict["differences"], "a brochure and a manual should differ measurably"
+    for diff in verdict["differences"]:
+        # Every reported difference must carry the evidence behind it, or the
+        # recommendation is just an opinion with a number attached.
+        assert "site" in diff and "rival_median" in diff
+        assert diff["reads_as"]
+        assert diff["direction"] in ("higher", "lower")
+
+
+def test_compare_stays_silent_when_the_voices_match():
+    site = fingerprint(_READER_VOICE)
+    rivals = [fingerprint(_READER_VOICE) for _ in range(4)]
+    verdict = compare(site, rivals)
+    assert verdict["measured"] is True
+    assert verdict["differences"] == []
+    assert "No material difference" in verdict["verdict"]

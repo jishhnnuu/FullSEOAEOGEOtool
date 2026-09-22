@@ -5,7 +5,7 @@
 A tool is the only way an agent touches the world. Everything an agent
 can do is in this list; nothing outside it is reachable.
 
-**60 tools** across 10 categories. 21 of them change state.
+**65 tools** across 11 categories. 21 of them change state.
 
 ## How to read this
 
@@ -764,6 +764,69 @@ movement and connected integrations.
 **Mutates:** no · **Risk:** `none`
 
 Takes no parameters.
+
+## research
+
+### `research.company_profile`
+
+Read a company's own pages and report what it actually sells, who to,
+and what it can prove. Use this before any content decision: a brief
+written without it is a guess about someone else's business.
+
+**Mutates:** no · **Risk:** `none`
+
+| Parameter | Type | Required | Description |
+|---|---|---|---|
+| `url` | string | no | Site to profile. Defaults to the site in context. |
+| `max_pages` | integer | no | How many pages to read |
+
+### `research.rival_content`
+
+Read the pages you are competing with and measure how they are built:
+length, heading depth, format, schema, author attribution, freshness, and
+the same voice fingerprint used on the client.
+
+**Mutates:** no · **Risk:** `none`
+
+| Parameter | Type | Required | Description |
+|---|---|---|---|
+| `urls` | array | yes | Competitor page URLs to read |
+
+### `research.story_seeds`
+
+Find the things this business can write about that nobody else can:
+its own numbers, its own customers, its own process, its own refusals.
+
+**Mutates:** no · **Risk:** `none`
+
+| Parameter | Type | Required | Description |
+|---|---|---|---|
+| `url` | string | no | Site to mine. Defaults to the site in context. |
+
+### `research.voice_fingerprint`
+
+Measure how a page or a site actually writes: sentence length and its
+variance, reading grade, how often it says "we" against "you", hedging,
+marketing filler, how many specifics it carries, passive voice.
+
+**Mutates:** no · **Risk:** `none`
+
+| Parameter | Type | Required | Description |
+|---|---|---|---|
+| `url` | string | no | Page to measure. Defaults to the site's home page. |
+| `text` | string | no | Measure this text directly instead of fetching a URL. |
+
+### `research.voice_gap`
+
+Compare how the client writes against how the pages they compete with
+write, and say whether the tone should change.
+
+**Mutates:** no · **Risk:** `none`
+
+| Parameter | Type | Required | Description |
+|---|---|---|---|
+| `site_url` | string | no | Client page to measure. Defaults to the site in context. |
+| `rival_urls` | array | yes | Competitor pages to compare against |
 
 ## workflow
 

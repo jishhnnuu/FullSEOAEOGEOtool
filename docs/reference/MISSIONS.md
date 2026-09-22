@@ -2,7 +2,7 @@
 
 # Mission reference
 
-**8 missions.** A mission is a declarative workflow in
+**11 missions.** A mission is a declarative workflow in
 `packages/seoos/missions/workflows/`. Its steps are either deterministic
 tool calls or agents, arranged by dependency. Steps whose dependencies
 are all satisfied run concurrently, in waves.
@@ -16,6 +16,9 @@ rather than restarting.
 | Mission | Steps | Waves | Budget | Schedule | Applies to |
 |---|---|---|---|---|---|
 | `aeo_tracking` | 7 | 4 | $8 | `0 7 * * 3` | any business |
+| `content_amplify` | 7 | 6 | $12 | on demand | any business |
+| `content_discovery` | 10 | 9 | $22 | on demand | any business |
+| `content_engine` | 12 | 12 | $24 | on demand | any business |
 | `content_production` | 8 | 8 | $14 | on demand | any business |
 | `fix_and_publish` | 4 | 4 | $4 | `0 */6 * * *` | any business |
 | `link_building` | 8 | 4 | $10 | `0 9 * * 4` | any business |
@@ -48,6 +51,104 @@ Runs the prompt set across answer engines, records mention and citation rates, f
 | `accuracy` | agent | `compliance-officer` | `measure` | `measure.summary.accuracy_issues not_empty` | resolve |
 | `improve` | agent | `citation-engineer` | `measure` | - | resolve |
 | `report` | agent | `aeo-strategist` | `measure`, `improve`, `accuracy` | - | resolve |
+
+## `content_amplify` — Get the work in front of people, then find out what it did
+
+Runs after a piece is live. Pulls the derived assets out of it, works the warm mentions, and eight weeks later reports honestly on whether any of it mattered.
+
+**Budget:** $12.00 · **Timeout:** 40 min · **Concurrency:** 2
+
+### Execution order
+
+1. `state`
+2. `queue`
+3. `derive`, `warm` (concurrent)
+4. `plan`
+5. `measure`
+6. `report`
+
+### Steps
+
+| Step | Type | Runs | Depends on | Condition | On error |
+|---|---|---|---|---|---|
+| `state` | tool | `report.site_state` | - | - | resolve |
+| `queue` | tool | `content.queue` | `state` | - | resolve |
+| `derive` | agent | `repurposer` | `queue` | - | resolve |
+| `warm` | tool | `offpage.find_unlinked_mentions` | `queue` | - | resolve |
+| `plan` | agent | `distribution-planner` | `derive`, `warm` | - | resolve |
+| `measure` | agent | `content-analyst` | `plan` | - | resolve |
+| `report` | agent | `content-director` | `measure` | - | resolve |
+
+## `content_discovery` — Understand the business before writing anything
+
+The first mission of the content offering. Reads the company, the buyer and the field, measures how everyone writes, and produces a point of view the client approves once. Nothing else in the offering runs until this has.
+
+**Budget:** $22.00 · **Timeout:** 60 min · **Concurrency:** 3
+
+### Execution order
+
+1. `state`
+2. `profile`
+3. `business`
+4. `audience`
+5. `rivals`
+6. `voice`, `concepts` (concurrent)
+7. `pov`
+8. `brief_the_client`
+9. `gate`
+
+### Steps
+
+| Step | Type | Runs | Depends on | Condition | On error |
+|---|---|---|---|---|---|
+| `state` | tool | `report.site_state` | - | - | resolve |
+| `profile` | tool | `research.company_profile` | `state` | - | resolve |
+| `business` | agent | `content-researcher` | `profile` | - | resolve |
+| `audience` | agent | `audience-analyst` | `business` | - | resolve |
+| `rivals` | agent | `rival-reader` | `audience` | - | resolve |
+| `voice` | agent | `voice-analyst` | `rivals` | - | resolve |
+| `concepts` | agent | `concept-lab` | `business`, `audience`, `rivals` | - | resolve |
+| `pov` | agent | `narrative-architect` | `voice`, `concepts` | - | resolve |
+| `brief_the_client` | agent | `content-director` | `pov` | - | resolve |
+| `gate` | gate | - | `brief_the_client` | `brief_the_client exists` | resolve |
+
+## `content_engine` — Produce one piece, from angle to review queue
+
+The content offering's production run. Finds the angle nobody took, writes the hook, drafts, verifies, edits for accuracy and then for whether anyone would finish it. The client sees it once, at the end.
+
+**Budget:** $24.00 · **Timeout:** 70 min · **Concurrency:** 2
+
+### Execution order
+
+1. `state`
+2. `brand`
+3. `angle`
+4. `brief`
+5. `hook`
+6. `draft`
+7. `facts`
+8. `polish`
+9. `story`
+10. `edit`
+11. `distribute`
+12. `gate`
+
+### Steps
+
+| Step | Type | Runs | Depends on | Condition | On error |
+|---|---|---|---|---|---|
+| `state` | tool | `report.site_state` | - | - | resolve |
+| `brand` | tool | `brand.profile` | `state` | - | resolve |
+| `angle` | agent | `angle-finder` | `state`, `brand` | - | resolve |
+| `brief` | agent | `brief-writer` | `angle` | - | resolve |
+| `hook` | agent | `hook-writer` | `brief` | - | resolve |
+| `draft` | agent | `writer` | `hook` | - | resolve |
+| `facts` | agent | `fact-checker` | `draft` | - | resolve |
+| `polish` | agent | `humanizer` | `facts` | - | resolve |
+| `story` | agent | `story-editor` | `polish` | - | resolve |
+| `edit` | agent | `editor` | `story` | - | resolve |
+| `distribute` | agent | `distribution-planner` | `edit` | - | resolve |
+| `gate` | gate | - | `edit`, `distribute` | `edit exists` | resolve |
 
 ## `content_production` — Produce one piece of content
 

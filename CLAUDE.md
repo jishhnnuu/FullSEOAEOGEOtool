@@ -12,7 +12,7 @@ It is not an audit tool. Audit tools say what is wrong and leave the fixing to
 someone else. Anything added here should do the work, not describe it.
 
 ```
-53 agents · 8 missions · 60 tools · 21 connectors · 71 checks · 43 tables · 141 tests
+67 agents · 11 missions · 65 tools · 21 connectors · 71 checks · 43 tables · 147 tests
 ```
 
 ## How to work on this
@@ -96,6 +96,7 @@ apps/web/         Next.js: the public site and the dashboard. Plain CSS.
   src/lib/        The browser-held workspace store, the connector catalogue, sync
 deploy/d1/        The D1 schema. Applied by `npm run cf:setup`.
 scripts/          Reference generator, demo seeder
+docs/offerings/   One file per product line. Read these first.
 docs/reference/   Generated from the registries. Never edit by hand.
 deploy/           Dockerfiles. wrangler.jsonc at the root is Cloudflare.
 ```

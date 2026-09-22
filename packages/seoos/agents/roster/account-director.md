@@ -9,7 +9,7 @@ temperature: 0.4
 max_iterations: 14
 cost_ceiling_usd: 4.0
 reports_to: client
-delegates_to: [strategist, reporter, crisis-manager]
+delegates_to: [strategist, content-director, reporter, crisis-manager]
 tools:
   - report.site_state
   - report.history

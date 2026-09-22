@@ -1,0 +1,178 @@
+key: content_discovery
+name: Understand the business before writing anything
+description: >
+  The first mission of the content offering. Reads the company, the buyer and
+  the field, measures how everyone writes, and produces a point of view the
+  client approves once. Nothing else in the offering runs until this has.
+budget_usd: 22.0
+timeout_minutes: 60
+concurrency: 3
+tags: [content, discovery, onboarding]
+
+steps:
+  - id: state
+    type: tool
+    tool: report.site_state
+
+  - id: profile
+    type: tool
+    tool: research.company_profile
+    needs: [state]
+
+  - id: business
+    type: agent
+    agent: content-researcher
+    label: Read the business
+    needs: [profile]
+    context: [state, profile]
+    budget_usd: 3.0
+    task: >
+      Establish what this company actually sells, who to, and what it can
+      prove.
+
+      Start from the company profile in context. Where it came back thin or
+      reported a page it could not find, go and read further yourself:
+      careers pages, changelogs, support documentation, anything that shows
+      what the company does rather than what it says about itself.
+
+      Record every provable claim in the fact ledger with the page it came
+      from. A claim without a source is a claim a writer will have to defend
+      later, and they will not be able to.
+
+      Finish with one sentence describing what this company sells, in words a
+      customer would use. If the research was too thin to write that sentence
+      honestly, say so and name what is missing.
+
+  - id: audience
+    type: agent
+    agent: audience-analyst
+    label: Establish the buyer
+    needs: [business]
+    context: [state, profile, business]
+    budget_usd: 3.0
+    task: >
+      Work out who this content is for and what they are trying to get done.
+
+      Use Search Console for what the site already gets found for, the query
+      research for the words this market uses, and the client's own
+      testimonials for who is already buying.
+
+      Name the buyer specifically enough to picture. Name the trigger: the
+      moment this person stops living with the problem and starts looking.
+
+      If the search data contradicts what the company says about its
+      audience, report the contradiction with the numbers rather than
+      resolving it quietly.
+
+  - id: rivals
+    type: agent
+    agent: rival-reader
+    label: Read the field
+    needs: [audience]
+    context: [state, audience]
+    budget_usd: 3.5
+    task: >
+      Read the pages this company competes with for its most commercially
+      important queries.
+
+      Pull the ranking set, then actually fetch and measure the pages. Report
+      the median and the range for length and depth, which formats win, who
+      signs them, what they cite.
+
+      The most valuable line in your report is what every ranking page
+      leaves out. Find it.
+
+      If the ranking set is far above this client's weight, say so plainly
+      and recommend a narrower entry point.
+
+  - id: voice
+    type: agent
+    agent: voice-analyst
+    label: Measure the voice, both sides
+    needs: [rivals]
+    context: [state, rivals]
+    budget_usd: 2.5
+    task: >
+      Fingerprint how this client writes, then compare it against the pages
+      they compete with.
+
+      Report only differences past the materiality threshold, each with the
+      client's number and the rivals' median beside it.
+
+      If there is not enough text on the client's side, or fewer than three
+      rival pages could be measured, report that no verdict was possible and
+      what would make one possible. Do not substitute judgement.
+
+      Where the client accepts a change, write the targets into the brand
+      profile so every future draft is gated against them.
+
+  - id: concepts
+    type: agent
+    agent: concept-lab
+    label: Generate widely
+    needs: [business, audience, rivals]
+    context: [business, audience, rivals]
+    budget_usd: 3.0
+    task: >
+      Produce at least twenty distinct content concepts for this business.
+
+      Push along the axes: format inversion, scale inversion, audience
+      inversion, timeframe inversion, the refusal, the receipt. At least a
+      quarter should be things this client would not have thought to ask for.
+
+      Every concept carries a mechanism: one sentence on why somebody would
+      send it to a colleague. Mark what each would cost and what it needs
+      that the company may not have.
+
+      Then argue for your three strongest, with the risk of each named.
+
+  - id: pov
+    type: agent
+    agent: narrative-architect
+    label: Decide the point of view
+    needs: [voice, concepts]
+    context: [business, audience, rivals, voice, concepts]
+    budget_usd: 4.0
+    task: >
+      Write this company's point of view.
+
+      Three parts. What everyone in this market believes, stated fairly. What
+      is wrong or incomplete in it, with evidence. What this company says
+      instead, and why it is the one that gets to say it.
+
+      Name the enemy: the practice, assumption or false economy the argument
+      is against.
+
+      Then write the ladder. The claim at the top, three or four supporting
+      claims beneath it, and what kind of evidence each needs.
+
+      Every part must be defensible from the fact ledger. If the third part
+      cannot be completed from what the research found, say the point of view
+      is not ready and name the specific thing that would finish it.
+
+  - id: brief_the_client
+    type: agent
+    agent: content-director
+    label: One decision for the client
+    needs: [pov]
+    context: [business, audience, rivals, voice, pov]
+    budget_usd: 3.0
+    task: >
+      Assemble what the client sees.
+
+      The point of view, the ladder, and the tone recommendation if the
+      comparison produced one. Every number that appears carries its source
+      and its sample size.
+
+      Where the research was thin, mark the strategy provisional and say what
+      would firm it up.
+
+      This is one approval, not five. The client agrees with the argument or
+      tells you where it is wrong. Everything downstream follows from that
+      single decision.
+
+  - id: gate
+    type: gate
+    label: Nothing is commissioned until the point of view is approved
+    when: brief_the_client exists
+    needs: [brief_the_client]

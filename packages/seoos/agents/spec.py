@@ -25,6 +25,10 @@ FRONT_MATTER = re.compile(r"^---\s*\n(.*?)\n---\s*\n(.*)$", re.DOTALL)
 DEPARTMENTS = (
     "leadership", "strategy", "research", "technical", "content",
     "aeo", "offpage", "local", "commerce", "conversion", "operations",
+    # The content marketing offering. Separated from "content" on purpose:
+    # that department produces pages for search, these decide what a company
+    # should say and why anyone would care.
+    "creative", "distribution",
 )
 
 

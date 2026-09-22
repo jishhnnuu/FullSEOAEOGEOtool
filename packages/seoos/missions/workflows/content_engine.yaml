@@ -1,0 +1,194 @@
+key: content_engine
+name: Produce one piece, from angle to review queue
+description: >
+  The content offering's production run. Finds the angle nobody took, writes
+  the hook, drafts, verifies, edits for accuracy and then for whether anyone
+  would finish it. The client sees it once, at the end.
+budget_usd: 24.0
+timeout_minutes: 70
+concurrency: 2
+tags: [content, production]
+
+steps:
+  - id: state
+    type: tool
+    tool: report.site_state
+
+  - id: brand
+    type: tool
+    tool: brand.profile
+    needs: [state]
+
+  - id: angle
+    type: agent
+    agent: angle-finder
+    label: Find the way in
+    needs: [state, brand]
+    context: [state, brand, input]
+    budget_usd: 2.5
+    task: >
+      Topic: {{ input.topic }}
+      Target query: {{ input.primary_keyword }}
+
+      Read the ranking set before you claim anything is unused. Then find the
+      entry nobody took: the cost, the failure, who it is wrong for, the
+      comparison nobody makes, what changed.
+
+      Prove the angle holds by sketching the first paragraph. If it only
+      exists in the headline, it is packaging. Kill it and find another.
+
+      State the angle in one sentence, with the evidence from the ranking set
+      that it is genuinely open.
+
+  - id: brief
+    type: agent
+    agent: brief-writer
+    label: Brief it properly
+    needs: [angle]
+    context: [state, brand, angle, input]
+    budget_usd: 3.0
+    task: >
+      Write the brief for the angle in context.
+
+      Read the SERP and fetch the ranking pages. Establish the format that
+      wins, the depth floor, what they all miss, and whether a click is left
+      after the SERP features take their share.
+
+      Find the internal links in both directions. Check the fact ledger for
+      what this brand can actually claim.
+
+      The most important line is the differentiation: why a search engine
+      would rank this above what already exists. "More comprehensive" is not
+      an answer, and neither is the angle on its own.
+
+      Create the content item and save the brief.
+
+  - id: hook
+    type: agent
+    agent: hook-writer
+    label: Title and opening
+    needs: [brief]
+    context: [brief, brand, angle]
+    budget_usd: 1.5
+    task: >
+      Write ten titles. The first three will be obvious; that is what they
+      are for. Vary the form deliberately.
+
+      Check the ranking set. A title that reads like the ten above it
+      disappears however well written it is.
+
+      Choose one, say why, and write the opening three sentences. State the
+      answer. No history of the industry, no definition of a term this reader
+      knows, nothing containing "in today's".
+
+      Whatever the title promises, the piece must keep.
+
+  - id: draft
+    type: agent
+    agent: writer
+    label: Write it
+    needs: [hook]
+    context: [brief, hook, brand, angle]
+    budget_usd: 5.0
+    task: >
+      Write the draft from the brief, opening with the hook in context.
+
+      Read the brand profile and its example passages, then the fact ledger.
+      State only what you can source.
+
+      Vary your sentence length. No dashes as punctuation. None of the banned
+      vocabulary. No closing paragraph that restates the piece.
+
+      Save with content.save_draft, including meta title, meta description,
+      internal links and every source cited.
+
+  - id: facts
+    type: agent
+    agent: fact-checker
+    label: Verify every claim
+    needs: [draft]
+    context: [draft]
+    budget_usd: 2.0
+    task: >
+      Verify every factual claim. Open each cited source and confirm it says
+      what the sentence claims, that the figure matches, and that it is
+      current. A plausible URL is not a verification.
+
+      One line per claim: the sentence, the verdict, the source you checked,
+      the rewrite if it needs one. Remove anything unsupportable.
+
+  - id: polish
+    type: agent
+    agent: humanizer
+    label: Line edit
+    needs: [facts]
+    context: [draft, facts]
+    budget_usd: 1.5
+    task: >
+      Line edit so it reads like a person wrote it. Vary sentence length.
+      Delete filler openers. Replace banned vocabulary with the plain word.
+      Remove every dash used as punctuation. Cut the summary ending.
+
+      Change no number, name, claim or citation. Remove no source link.
+
+  - id: story
+    type: agent
+    agent: story-editor
+    label: Would anyone finish it
+    needs: [polish]
+    context: [draft, facts, polish, brand, angle]
+    budget_usd: 2.5
+    task: >
+      Read it once straight through as a reader and note where your attention
+      went. The place you started skimming is the finding.
+
+      Then check the four failures: buried lede, no stake, borrowed
+      authority, and the fine-but-forgettable piece.
+
+      Cut before you add. Most drafts are a fifth too long and the excess is
+      in the first third.
+
+      Name every edit at the paragraph. If the piece is accurate and
+      completely ordinary, say so plainly. Ordinary is a failure here.
+
+  - id: edit
+    type: agent
+    agent: editor
+    label: Final edit and submit
+    needs: [story]
+    context: [draft, facts, story, brand]
+    budget_usd: 2.0
+    task: >
+      Final pass, then the checks in order: does it answer the query in the
+      first three sentences, is every claim sourced, does it sound like this
+      client, are the meta title and description right, is it linked in both
+      directions, does it have valid schema.
+
+      Generate the schema, then submit for review. If a gate fails, fix the
+      draft. Do not work around the gate.
+
+  - id: distribute
+    type: agent
+    agent: distribution-planner
+    label: Decide where it goes
+    needs: [edit]
+    context: [brief, edit, angle]
+    budget_usd: 2.0
+    task: >
+      Write the distribution plan for this piece.
+
+      Named destinations, not channel categories. For each: who it reaches,
+      why they would care about this piece specifically, and the ask.
+
+      Start with the owned audience. Then the warm mentions: run the unlinked
+      mentions check, because the people already talking about this client
+      are the easiest win and nobody looks.
+
+      Weight mentions above links. Say what the repurposer should pull out of
+      this piece.
+
+  - id: gate
+    type: gate
+    label: Only the client's approval remains
+    when: edit exists
+    needs: [edit, distribute]

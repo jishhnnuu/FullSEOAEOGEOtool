@@ -36,7 +36,7 @@ function searchDesk(site: SiteRecord, result: AuditResult | null, base: string):
   if (!result) {
     return {
       key: manager.key, name: manager.name, title: manager.title, status: "waiting",
-      line: "Nothing crawled yet. Start a run and thirty-nine agents go over the live site.",
+      line: `Nothing crawled yet. Start a run and ${manager.team.length} agents go over the live site.`,
       href: null, metric: null,
     };
   }

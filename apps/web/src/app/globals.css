@@ -900,21 +900,6 @@ a.button.disabled {
   cursor: not-allowed;
 }
 
-/* ------------------------------------------------------------- the brief */
-/*
- * One agent speaks to the client, so one block speaks for the organisation.
- * It leads with what happened, then what each desk is doing, then what is
- * blocked. The blocked row is not an error state: a desk that steps aside and
- * names the missing connection is the product working correctly.
- */
-.brief {
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  background: var(--surface);
-  padding: 1.1rem 1.2rem;
-  margin-bottom: 1.4rem;
-}
-.brief-head {
 /* ── Content pages: comparisons, glossary, tools ────────────────────────────
    Added with the content programme. Everything reuses the existing tokens
    rather than introducing a second palette, because two palettes is how a
@@ -1082,6 +1067,45 @@ a.link-card h3 { color: var(--accent); }
   gap: 1rem;
   align-items: flex-start;
   justify-content: space-between;
+  padding: 0.85rem 0;
+  border-top: 1px solid var(--border);
+  flex-wrap: wrap;
+}
+.decide-row:first-child { border-top: none; }
+.decide-main { flex: 1 1 320px; min-width: 0; }
+.decide-main p { max-width: 68ch; }
+.decide-action { flex: 0 0 auto; padding-top: 0.15rem; }
+
+/* The research page. One oversized number per card, because the number is the
+   finding and everything else is context for it. */
+.research-stat {
+  font-size: 2.1rem;
+  font-weight: 650;
+  letter-spacing: -0.04em;
+  line-height: 1;
+  color: var(--accent-bright);
+}
+.research-table { font-size: 0.8rem; }
+.research-table code { font-size: 0.78rem; }
+/* ------------------------------------------------------------- the brief */
+/*
+ * One agent speaks to the client, so one block speaks for the organisation.
+ * It leads with what happened, then what each desk is doing, then what is
+ * blocked. The blocked row is not an error state: a desk that steps aside and
+ * names the missing connection is the product working correctly.
+ */
+.brief {
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+  padding: 1.1rem 1.2rem;
+  margin-bottom: 1.4rem;
+}
+.brief-head {
+  display: flex;
+  gap: 1rem;
+  align-items: flex-start;
+  justify-content: space-between;
   flex-wrap: wrap;
 }
 .brief-who {
@@ -1228,23 +1252,3 @@ a.link-card h3 { color: var(--accent); }
   .voice-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .diff-row { grid-template-columns: 1fr; gap: 0.15rem; }
 }
-  padding: 0.85rem 0;
-  border-top: 1px solid var(--border);
-  flex-wrap: wrap;
-}
-.decide-row:first-child { border-top: none; }
-.decide-main { flex: 1 1 320px; min-width: 0; }
-.decide-main p { max-width: 68ch; }
-.decide-action { flex: 0 0 auto; padding-top: 0.15rem; }
-
-/* The research page. One oversized number per card, because the number is the
-   finding and everything else is context for it. */
-.research-stat {
-  font-size: 2.1rem;
-  font-weight: 650;
-  letter-spacing: -0.04em;
-  line-height: 1;
-  color: var(--accent-bright);
-}
-.research-table { font-size: 0.8rem; }
-.research-table code { font-size: 0.78rem; }

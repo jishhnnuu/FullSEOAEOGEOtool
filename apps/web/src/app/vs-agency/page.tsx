@@ -30,7 +30,7 @@ const ROWS: Row[] = [
   ["Takes the blame in a board meeting", "no", "yes", "no", "no"],
 ];
 
-const COLS = ["SEO OS", "An agency", "An enterprise suite", "An AI writer"];
+const COLS = ["Thymesnow", "An agency", "An enterprise suite", "An AI writer"];
 
 function cell(value: string) {
   if (value === "yes") return <span className="yes">Yes</span>;

@@ -27,7 +27,7 @@ export type WpIdentity = { siteUrl: string; user: string; password: string };
 export function authorizeUrl(siteUrl: string, successUrl: string, appId: string): string {
   const base = new URL(siteUrl);
   const url = new URL("/wp-admin/authorize-application.php", base);
-  url.searchParams.set("app_name", "SEO OS");
+  url.searchParams.set("app_name", "Thymesnow");
   url.searchParams.set("app_id", appId);
   url.searchParams.set("success_url", successUrl);
   return url.toString();

@@ -9,6 +9,7 @@ import { startRun } from "@/lib/runner";
 import { overdueInBrowser, useSchedule } from "@/lib/schedule";
 import { useSession } from "@/lib/session";
 import { useSite } from "@/lib/site-hooks";
+import { DirectorBrief } from "@/components/director";
 import { KeepThisRun } from "@/components/gate";
 import {
   Badge,
@@ -80,6 +81,8 @@ export default function SiteDashboard() {
           </button>
         }
       />
+
+      <DirectorBrief site={site} result={result ?? null} diff={diff} workspace={workspace} />
 
       {startedBySchedule ? (
         <Notice kind="ok" title="This run started on its own">

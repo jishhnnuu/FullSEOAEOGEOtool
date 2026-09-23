@@ -1,4 +1,4 @@
-/* SEO OS. One stylesheet, no framework.
+/* Thymesnow. One stylesheet, no framework.
    Tokens first, then the app shell, then the marketing site. */
 
 :root {
@@ -132,6 +132,29 @@ hr { border: none; border-top: 1px solid var(--border); margin: 1.5rem 0; }
   color: var(--text-faint);
   padding: 0.5rem 0.5rem 0.2rem;
   font-weight: 650;
+}
+
+/* The count of people at a desk, or the quarter a desk opens. */
+.nav-section {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+.nav-note {
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  text-transform: none;
+  font-size: 0.66rem;
+  color: var(--text-faint);
+  opacity: 0.8;
+}
+/* A desk that does not exist yet is shown, not hidden, and is not a link
+   pretending to lead somewhere useful. */
+.nav a.planned {
+  color: var(--text-faint);
+  font-style: italic;
+  font-size: 0.82rem;
 }
 
 .main { flex: 1; min-width: 0; padding: 1.6rem 2rem 4rem; max-width: 1240px; }
@@ -602,25 +625,85 @@ details.reveal[open] summary { margin-bottom: 0.6rem; }
 
 /* ----------------------------------------------------------- responsive */
 
+/*
+ * The rail carries five manager groups, so below 900px it becomes a drawer
+ * rather than a horizontal scroller. A scroller hides everything past the
+ * third item, which on this navigation is every manager but the first.
+ */
+.app-bar { display: none; }
+
 @media (max-width: 900px) {
-  .layout { flex-direction: column; }
-  .sidebar {
-    width: 100%;
-    height: auto;
-    position: static;
-    border-right: none;
-    border-bottom: 1px solid var(--border);
-    flex-direction: row;
+  .layout { display: block; min-height: 100vh; }
+
+  .app-bar {
+    display: flex;
     align-items: center;
-    overflow-x: auto;
-    padding: 0.7rem;
-    gap: 0.7rem;
+    gap: 0.75rem;
+    position: sticky;
+    top: 0;
+    z-index: 40;
+    padding: 0.6rem 0.9rem;
+    padding-top: calc(0.6rem + env(safe-area-inset-top, 0px));
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
   }
-  .sidebar > div { display: flex; align-items: center; gap: 0.3rem; }
-  .nav { flex-direction: row; gap: 0.2rem; }
-  .nav-section { display: none; }
-  .main { padding: 1.2rem 1rem 3rem; }
-  .sidebar .brand small { display: none; }
+  .app-bar-toggle {
+    width: 38px;
+    height: 38px;
+    flex: none;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 4px;
+    padding: 0 9px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: transparent;
+    cursor: pointer;
+  }
+  .app-bar-toggle span { display: block; width: 100%; height: 2px; background: var(--text); border-radius: 2px; }
+  .app-bar-brand {
+    font-weight: 650;
+    letter-spacing: -0.02em;
+    color: var(--text);
+    min-width: 0;
+    line-height: 1.15;
+  }
+  .app-bar-brand:hover { text-decoration: none; }
+  .app-bar-brand small { display: block; font-weight: 400; font-size: 0.7rem; color: var(--text-faint); }
+  .app-bar-badge { margin-left: auto; }
+
+  .app-scrim {
+    position: fixed;
+    inset: 0;
+    z-index: 45;
+    border: 0;
+    padding: 0;
+    background: rgba(12, 12, 14, 0.42);
+    cursor: pointer;
+  }
+
+  .sidebar {
+    position: fixed;
+    z-index: 50;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: min(290px, 84vw);
+    height: 100dvh;
+    padding-top: calc(1.1rem + env(safe-area-inset-top, 0px));
+    padding-bottom: calc(1.1rem + env(safe-area-inset-bottom, 0px));
+    transform: translateX(-102%);
+    transition: transform 0.18s ease;
+    box-shadow: 0 0 40px rgba(0, 0, 0, 0.28);
+  }
+  .sidebar.open { transform: translateX(0); }
+
+  .main { padding: 1.1rem 1rem 3.5rem; max-width: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sidebar { transition: none; }
 }
 
 @media (max-width: 640px) {
@@ -815,4 +898,170 @@ a.button.disabled {
   opacity: 0.45;
   pointer-events: none;
   cursor: not-allowed;
+}
+
+/* ------------------------------------------------------------- the brief */
+/*
+ * One agent speaks to the client, so one block speaks for the organisation.
+ * It leads with what happened, then what each desk is doing, then what is
+ * blocked. The blocked row is not an error state: a desk that steps aside and
+ * names the missing connection is the product working correctly.
+ */
+.brief {
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+  padding: 1.1rem 1.2rem;
+  margin-bottom: 1.4rem;
+}
+.brief-head {
+  display: flex;
+  gap: 1rem;
+  align-items: flex-start;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+.brief-who {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-size: 0.78rem;
+  font-weight: 650;
+  letter-spacing: 0.01em;
+  color: var(--text-muted);
+}
+.brief-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--ok);
+  flex: none;
+}
+.brief-headline {
+  margin: 0.4rem 0 0;
+  font-size: 1.04rem;
+  line-height: 1.5;
+  max-width: 68ch;
+  color: var(--text);
+}
+.brief-desks {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.7rem;
+  margin-top: 1rem;
+}
+.desk {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 0.7rem 0.8rem;
+  min-width: 0;
+}
+.desk-top { display: flex; align-items: baseline; justify-content: space-between; gap: 0.5rem; }
+.desk-top strong { font-size: 0.92rem; }
+.desk-title { margin-bottom: 0.35rem; }
+.desk p { margin: 0 0 0.4rem; color: var(--text-muted); }
+.desk-working { border-left: 2px solid var(--ok); }
+.desk-waiting { border-left: 2px solid var(--warn); }
+.desk-blocked { border-left: 2px solid var(--bad); }
+.desk-planned { border-style: dashed; opacity: 0.72; }
+.brief-blocked {
+  margin-top: 0.9rem;
+  padding-top: 0.8rem;
+  border-top: 1px solid var(--line);
+}
+.blocked-row { padding: 0.28rem 0; gap: 1rem; align-items: baseline; }
+.brief-foot { margin-top: 0.9rem; padding-top: 0.7rem; border-top: 1px solid var(--line); }
+
+@media (max-width: 900px) {
+  .brief-desks { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 520px) {
+  .brief-desks { grid-template-columns: 1fr; }
+  .blocked-row { flex-direction: column; align-items: flex-start; gap: 0.2rem; }
+}
+
+/* ------------------------------------------------------ the organisation */
+.org-tier { margin-bottom: 1.6rem; }
+.org-tier-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--text);
+  margin-bottom: 0.8rem;
+}
+.org-tier-head h2 { font-size: 1rem; margin: 0; }
+.org-people { display: grid; gap: 0.6rem; }
+.org-people.wide { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.org-people.half { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.person {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 0.75rem 0.85rem;
+  background: var(--surface);
+  min-width: 0;
+}
+.person.lead { border-left: 2px solid var(--accent); }
+.person.planned { border-style: dashed; opacity: 0.68; }
+.person strong { display: block; font-size: 0.92rem; }
+.person .dept {
+  font-size: 0.66rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-faint);
+  margin-top: 0.1rem;
+}
+.person p { margin: 0.45rem 0 0; font-size: 0.85rem; color: var(--text-muted); line-height: 1.5; }
+.person .never {
+  margin-top: 0.5rem;
+  padding-top: 0.45rem;
+  border-top: 1px solid var(--line);
+  font-size: 0.79rem;
+  color: var(--bad);
+  line-height: 1.45;
+}
+.person .never b {
+  font-size: 0.63rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--text-faint);
+  margin-right: 0.35rem;
+  font-weight: 650;
+}
+.person .where {
+  margin-top: 0.4rem;
+  font-size: 0.72rem;
+  color: var(--text-faint);
+}
+
+@media (max-width: 1040px) { .org-people.wide { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 640px) {
+  .org-people.wide, .org-people.half { grid-template-columns: 1fr; }
+  .org-tier-head { flex-direction: column; gap: 0.2rem; align-items: flex-start; }
+}
+
+/* ------------------------------------------------------------ voice desk */
+.voice-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0.6rem; }
+.voice-metric {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 0.65rem 0.75rem;
+}
+.voice-metric .v { font-size: 1.35rem; font-weight: 600; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; }
+.voice-metric .k { font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.07em; color: var(--text-faint); }
+.voice-metric .n { font-size: 0.76rem; color: var(--text-muted); margin-top: 0.25rem; line-height: 1.4; }
+.diff-row {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  gap: 0.5rem 1rem;
+  align-items: baseline;
+  padding: 0.6rem 0;
+  border-bottom: 1px solid var(--line);
+}
+.diff-row:last-child { border-bottom: 0; }
+.diff-row .nums { font-variant-numeric: tabular-nums; }
+@media (max-width: 640px) {
+  .voice-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .diff-row { grid-template-columns: 1fr; gap: 0.15rem; }
 }

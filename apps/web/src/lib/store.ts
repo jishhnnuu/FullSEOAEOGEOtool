@@ -78,6 +78,30 @@ export type SiteRecord = {
   integrations: Integration[];
   schedule: { mission: string; cadence: "daily" | "weekly" | "monthly"; enabled: boolean }[];
   lastRunId: string | null;
+  /*
+   * The point of view the content desk works from.
+   *
+   * One argument per client, approved once, with everything laddering to it.
+   * Optional because every site created before this existed has none, and an
+   * absent point of view is a state the content desk reports rather than a
+   * field it fills with a guess.
+   */
+  pointOfView?: PointOfView | null;
+};
+
+export type PointOfView = {
+  /** The claim the field makes, which this client disagrees with. */
+  consensus: string;
+  /** Where that claim breaks. */
+  flaw: string;
+  /** What this company says instead. Arguable, or it is a description. */
+  argument: string;
+  /** Who or what this is against. A point of view with no enemy is a mission statement. */
+  enemy: string;
+  /** The ladder: everything commissioned has to hang from one of these. */
+  ladder: string[];
+  approvedAt: string | null;
+  updatedAt: string;
 };
 
 export type RunRecord = {

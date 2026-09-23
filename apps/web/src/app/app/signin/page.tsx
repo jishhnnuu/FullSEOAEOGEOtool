@@ -69,7 +69,7 @@ function SignIn() {
       <div style={{ width: "100%", maxWidth: "440px" }}>
         <Link href="/" className="wordmark" style={{ justifyContent: "center", marginBottom: "1.4rem" }}>
           <span className="dot" aria-hidden="true" />
-          SEO OS
+          Thymesnow
         </Link>
 
         {serverError ? <Notice kind="error" title="That did not work">{serverError}{serverFix ? ` ${serverFix}` : ""}</Notice> : null}

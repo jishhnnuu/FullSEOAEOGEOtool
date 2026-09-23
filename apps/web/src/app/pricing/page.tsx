@@ -90,7 +90,7 @@ const COMPARISON = [
   ["A mid-market SEO agency retainer", "£2,500 to £15,000", "per month"],
   ["An enterprise SEO suite licence", "£350 to £8,000", "per month, and somebody still does the work"],
   ["A freelance SEO on two days a month", "£800 to £2,000", "per month"],
-  ["SEO OS, Growth", "£249", "per site, per month"],
+  ["Thymesnow, Growth", "£249", "per site, per month"],
 ];
 
 export default function PricingPage() {

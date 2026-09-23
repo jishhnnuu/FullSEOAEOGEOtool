@@ -25,7 +25,7 @@ export function SiteHeader() {
       <div className="site-header-inner">
         <Link href="/" className="wordmark">
           <span className="dot" aria-hidden="true" />
-          SEO OS
+          Thymesnow
         </Link>
         <nav className="site-nav">
           <Link href="/platform" className="hide-sm">Platform</Link>
@@ -48,7 +48,7 @@ export function SiteFooter() {
         <div>
           <div className="wordmark" style={{ marginBottom: "0.6rem" }}>
             <span className="dot" aria-hidden="true" />
-            SEO OS
+            Thymesnow
           </div>
           <p className="small muted" style={{ maxWidth: "30ch" }}>
             The work an agency does, done by software you can watch, question and stop.
@@ -82,7 +82,7 @@ export function SiteFooter() {
         </div>
       </div>
       <div className="site-footer-bottom">
-        <span>SEO OS. Self-hostable, open source, and usable without an account.</span>
+        <span>Thymesnow. Self-hostable, open source, and usable without an account.</span>
         <span>Search, answer engines and generative engines: SEO, AEO and GEO.</span>
       </div>
     </footer>

@@ -100,7 +100,9 @@ def load_roster(directory: Path | None = None) -> AgentRegistry:
     if not directory.exists():
         log.warning("agent roster directory %s does not exist", directory)
         return AgentRegistry(specs)
-    for path in sorted(directory.glob("*.md")):
+    # Recursive: the roster is split by desk (search/, content/, shared/) so a
+    # new desk is a new folder rather than fifty more files in one directory.
+    for path in sorted(directory.rglob("*.md")):
         try:
             spec = AgentSpec.from_file(path)
         except ValidationFailed as exc:

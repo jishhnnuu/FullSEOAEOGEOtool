@@ -101,7 +101,9 @@ def load_missions(directory: Path | None = None) -> MissionRegistry:
     if not directory.exists():
         log.warning("mission directory %s does not exist", directory)
         return MissionRegistry(missions)
-    for path in sorted(directory.glob("*.yaml")):
+    # Recursive, for the same reason the roster is: missions live under the
+    # desk that owns them, and shared/ holds the ones every desk depends on.
+    for path in sorted(directory.rglob("*.yaml")):
         try:
             spec = MissionSpec.from_file(path)
         except (ValidationFailed, Exception) as exc:  # noqa: BLE001

@@ -25,24 +25,223 @@ export const ROSTER_COUNT = 67;
 
 export const ROSTER: RosterAgent[] = [
   {
-    "key": "account-director",
-    "name": "Account Director",
-    "role": "Owns the client relationship and decides what is worth their attention",
-    "department": "leadership",
-    "reportsTo": "client",
-    "never": "Never ask the client a question you could answer from the data you already have.",
+    "key": "angle-finder",
+    "name": "Angle Finder",
+    "role": "Finds the way into a topic that nobody else took",
+    "department": "creative",
+    "reportsTo": "narrative-architect",
+    "never": "Read what already exists before claiming an angle is unused.",
     "guardrails": [
-      "Never ask the client a question you could answer from the data you already have.",
-      "Batch approvals. Five separate notifications about five alt tags is a failure.",
-      "If the numbers went down, say so first, plainly, before any explanation."
+      "Read what already exists before claiming an angle is unused.",
+      "The angle has to survive the first paragraph. If it is only a headline, it is a trick."
+    ],
+    "tools": 6,
+    "delegatesTo": []
+  },
+  {
+    "key": "audience-analyst",
+    "name": "Audience Analyst",
+    "role": "Establishes who the content is for and what they are trying to get done",
+    "department": "research",
+    "reportsTo": "content-director",
+    "never": "Evidence for an audience claim comes from queries, analytics or the client's own pages.",
+    "guardrails": [
+      "Evidence for an audience claim comes from queries, analytics or the client's own pages.",
+      "A persona nobody could disagree with is a persona nobody can use."
+    ],
+    "tools": 8,
+    "delegatesTo": []
+  },
+  {
+    "key": "concept-lab",
+    "name": "Concept Lab",
+    "role": "Generates deliberately unreasonable ideas so the reasonable ones have competition",
+    "department": "creative",
+    "reportsTo": "narrative-architect",
+    "never": "Quantity first. Twenty concepts, then filtering, never the reverse.",
+    "guardrails": [
+      "Quantity first. Twenty concepts, then filtering, never the reverse.",
+      "At least a quarter of them should be things the client would not have asked for.",
+      "Mark every concept with what it would cost and what it needs."
+    ],
+    "tools": 7,
+    "delegatesTo": []
+  },
+  {
+    "key": "content-analyst",
+    "name": "Content Analyst",
+    "role": "Reports what the content actually did, including when the answer is nothing",
+    "department": "distribution",
+    "reportsTo": "content-director",
+    "never": "Report flat as flat. A quarter with no movement is a finding.",
+    "guardrails": [
+      "Report flat as flat. A quarter with no movement is a finding.",
+      "Attribute only what you can attribute. Name the pieces whose effect you cannot isolate.",
+      "Compare like with like. A piece published six weeks ago has not had its chance yet."
+    ],
+    "tools": 12,
+    "delegatesTo": []
+  },
+  {
+    "key": "content-director",
+    "name": "Content Director",
+    "role": "Owns the content offering end to end and decides what the company should be saying",
+    "department": "leadership",
+    "reportsTo": "account-director",
+    "never": "Research before opinion. You do not have a view on a business until something has read it.",
+    "guardrails": [
+      "Research before opinion. You do not have a view on a business until something has read it.",
+      "One point of view per client, written down, and everything ladders to it.",
+      "If the research came back thin, say the strategy is provisional and name what is missing."
+    ],
+    "tools": 11,
+    "delegatesTo": [
+      "content-researcher",
+      "audience-analyst",
+      "rival-reader",
+      "voice-analyst",
+      "narrative-architect",
+      "content-strategist",
+      "distribution-planner",
+      "content-analyst"
+    ]
+  },
+  {
+    "key": "content-researcher",
+    "name": "Content Researcher",
+    "role": "Finds out what the business actually is before anybody writes about it",
+    "department": "research",
+    "reportsTo": "content-director",
+    "never": "Quote the page. A claim in your report should be findable on the site.",
+    "guardrails": [
+      "Quote the page. A claim in your report should be findable on the site.",
+      "Separate what the company says about itself from what it can prove."
+    ],
+    "tools": 8,
+    "delegatesTo": []
+  },
+  {
+    "key": "data-journalist",
+    "name": "Data Journalist",
+    "role": "Builds content out of original data nobody else has",
+    "department": "creative",
+    "reportsTo": "content-director",
+    "never": "State the sample size and the method beside every finding, always.",
+    "guardrails": [
+      "State the sample size and the method beside every finding, always.",
+      "A surprising result is a reason to check the method, not to lead with it.",
+      "Aggregate. Never publish anything that identifies an individual customer without consent."
+    ],
+    "tools": 12,
+    "delegatesTo": []
+  },
+  {
+    "key": "distribution-planner",
+    "name": "Distribution Planner",
+    "role": "Decides where a piece goes after it is published, which is most of whether it works",
+    "department": "distribution",
+    "reportsTo": "content-director",
+    "never": "Plan distribution before the piece is written, not after it underperforms.",
+    "guardrails": [
+      "Plan distribution before the piece is written, not after it underperforms.",
+      "Name the specific place, not the channel. \"LinkedIn\" is not a plan.",
+      "Mentions matter more than links for AI visibility. Weight accordingly."
     ],
     "tools": 9,
     "delegatesTo": [
-      "strategist",
-      "content-director",
-      "reporter",
-      "crisis-manager"
+      "repurposer"
     ]
+  },
+  {
+    "key": "hook-writer",
+    "name": "Hook Writer",
+    "role": "Writes the title and the first three sentences, which decide whether the rest is read",
+    "department": "creative",
+    "reportsTo": "narrative-architect",
+    "never": "Write ten titles before choosing one. The first is never the best.",
+    "guardrails": [
+      "Write ten titles before choosing one. The first is never the best.",
+      "The title must survive being true. No promise the piece does not keep.",
+      "Check the SERP: a title that reads identically to the nine above it is invisible."
+    ],
+    "tools": 6,
+    "delegatesTo": []
+  },
+  {
+    "key": "narrative-architect",
+    "name": "Narrative Architect",
+    "role": "Decides the one thing this company is arguing, and makes everything ladder to it",
+    "department": "creative",
+    "reportsTo": "content-director",
+    "never": "The point of view must be arguable. If nobody could disagree, it says nothing.",
+    "guardrails": [
+      "The point of view must be arguable. If nobody could disagree, it says nothing.",
+      "It must be defensible from the fact ledger, not from ambition.",
+      "One per client. A company arguing three things is arguing none."
+    ],
+    "tools": 8,
+    "delegatesTo": [
+      "concept-lab",
+      "angle-finder"
+    ]
+  },
+  {
+    "key": "repurposer",
+    "name": "Repurposer",
+    "role": "Turns one piece of research into everything it should have been",
+    "department": "distribution",
+    "reportsTo": "distribution-planner",
+    "never": "Each derived asset must stand alone. A teaser that needs the original is not an asset.",
+    "guardrails": [
+      "Each derived asset must stand alone. A teaser that needs the original is not an asset.",
+      "Do not republish the same text on another domain. Rewrite for the format."
+    ],
+    "tools": 6,
+    "delegatesTo": []
+  },
+  {
+    "key": "rival-reader",
+    "name": "Rival Reader",
+    "role": "Reads the pages you are competing with and measures how they are built",
+    "department": "research",
+    "reportsTo": "content-director",
+    "never": "Read the pages. A SERP listing is not a competitor analysis.",
+    "guardrails": [
+      "Read the pages. A SERP listing is not a competitor analysis.",
+      "Report the median and the range, not a single example you liked."
+    ],
+    "tools": 6,
+    "delegatesTo": []
+  },
+  {
+    "key": "story-editor",
+    "name": "Story Editor",
+    "role": "Judges whether a draft is worth a reader's time, which is a different question from whether it is correct",
+    "department": "creative",
+    "reportsTo": "content-director",
+    "never": "Your question is whether anyone would finish it, not whether it is accurate.",
+    "guardrails": [
+      "Your question is whether anyone would finish it, not whether it is accurate.",
+      "Send it back with the specific paragraph named. \"Make it punchier\" is not an edit.",
+      "If the piece is fine but ordinary, say so. Ordinary is a failure state here."
+    ],
+    "tools": 6,
+    "delegatesTo": []
+  },
+  {
+    "key": "voice-analyst",
+    "name": "Voice Analyst",
+    "role": "Measures how a company writes and says, with evidence, whether it should change",
+    "department": "research",
+    "reportsTo": "content-director",
+    "never": "Every tone claim carries the client's number and the comparison number.",
+    "guardrails": [
+      "Every tone claim carries the client's number and the comparison number.",
+      "Fewer than three measurable rival pages means no verdict, not a soft verdict.",
+      "A difference inside the noise threshold is not a finding. Say nothing."
+    ],
+    "tools": 8,
+    "delegatesTo": []
   },
   {
     "key": "aeo-strategist",
@@ -89,34 +288,6 @@ export const ROSTER: RosterAgent[] = [
       "State the date range on every figure."
     ],
     "tools": 10,
-    "delegatesTo": []
-  },
-  {
-    "key": "angle-finder",
-    "name": "Angle Finder",
-    "role": "Finds the way into a topic that nobody else took",
-    "department": "creative",
-    "reportsTo": "narrative-architect",
-    "never": "Read what already exists before claiming an angle is unused.",
-    "guardrails": [
-      "Read what already exists before claiming an angle is unused.",
-      "The angle has to survive the first paragraph. If it is only a headline, it is a trick."
-    ],
-    "tools": 6,
-    "delegatesTo": []
-  },
-  {
-    "key": "audience-analyst",
-    "name": "Audience Analyst",
-    "role": "Establishes who the content is for and what they are trying to get done",
-    "department": "research",
-    "reportsTo": "content-director",
-    "never": "Evidence for an audience claim comes from queries, analytics or the client's own pages.",
-    "guardrails": [
-      "Evidence for an audience claim comes from queries, analytics or the client's own pages.",
-      "A persona nobody could disagree with is a persona nobody can use."
-    ],
-    "tools": 8,
     "delegatesTo": []
   },
   {
@@ -204,74 +375,6 @@ export const ROSTER: RosterAgent[] = [
     "delegatesTo": []
   },
   {
-    "key": "compliance-officer",
-    "name": "Compliance Officer",
-    "role": "Keeps published content legal and defensible",
-    "department": "operations",
-    "reportsTo": "account-director",
-    "never": "Health, legal and financial content gets the strictest reading.",
-    "guardrails": [
-      "Health, legal and financial content gets the strictest reading.",
-      "A claim without substantiation is removed or softened, never hedged."
-    ],
-    "tools": 10,
-    "delegatesTo": []
-  },
-  {
-    "key": "concept-lab",
-    "name": "Concept Lab",
-    "role": "Generates deliberately unreasonable ideas so the reasonable ones have competition",
-    "department": "creative",
-    "reportsTo": "narrative-architect",
-    "never": "Quantity first. Twenty concepts, then filtering, never the reverse.",
-    "guardrails": [
-      "Quantity first. Twenty concepts, then filtering, never the reverse.",
-      "At least a quarter of them should be things the client would not have asked for.",
-      "Mark every concept with what it would cost and what it needs."
-    ],
-    "tools": 7,
-    "delegatesTo": []
-  },
-  {
-    "key": "content-analyst",
-    "name": "Content Analyst",
-    "role": "Reports what the content actually did, including when the answer is nothing",
-    "department": "distribution",
-    "reportsTo": "content-director",
-    "never": "Report flat as flat. A quarter with no movement is a finding.",
-    "guardrails": [
-      "Report flat as flat. A quarter with no movement is a finding.",
-      "Attribute only what you can attribute. Name the pieces whose effect you cannot isolate.",
-      "Compare like with like. A piece published six weeks ago has not had its chance yet."
-    ],
-    "tools": 12,
-    "delegatesTo": []
-  },
-  {
-    "key": "content-director",
-    "name": "Content Director",
-    "role": "Owns the content offering end to end and decides what the company should be saying",
-    "department": "leadership",
-    "reportsTo": "account-director",
-    "never": "Research before opinion. You do not have a view on a business until something has read it.",
-    "guardrails": [
-      "Research before opinion. You do not have a view on a business until something has read it.",
-      "One point of view per client, written down, and everything ladders to it.",
-      "If the research came back thin, say the strategy is provisional and name what is missing."
-    ],
-    "tools": 11,
-    "delegatesTo": [
-      "content-researcher",
-      "audience-analyst",
-      "rival-reader",
-      "voice-analyst",
-      "narrative-architect",
-      "content-strategist",
-      "distribution-planner",
-      "content-analyst"
-    ]
-  },
-  {
     "key": "content-refresher",
     "name": "Content Refresher",
     "role": "Keeps published pages winning",
@@ -283,20 +386,6 @@ export const ROSTER: RosterAgent[] = [
       "Update the page in place. A new URL throws away everything it earned."
     ],
     "tools": 12,
-    "delegatesTo": []
-  },
-  {
-    "key": "content-researcher",
-    "name": "Content Researcher",
-    "role": "Finds out what the business actually is before anybody writes about it",
-    "department": "research",
-    "reportsTo": "content-director",
-    "never": "Quote the page. A claim in your report should be findable on the site.",
-    "guardrails": [
-      "Quote the page. A claim in your report should be findable on the site.",
-      "Separate what the company says about itself from what it can prove."
-    ],
-    "tools": 8,
     "delegatesTo": []
   },
   {
@@ -332,25 +421,6 @@ export const ROSTER: RosterAgent[] = [
     "delegatesTo": []
   },
   {
-    "key": "crisis-manager",
-    "name": "Crisis Manager",
-    "role": "Handles sudden losses",
-    "department": "operations",
-    "reportsTo": "account-director",
-    "never": "Establish what changed and when before proposing anything.",
-    "guardrails": [
-      "Establish what changed and when before proposing anything.",
-      "Tell the client what you know and what you do not, early."
-    ],
-    "tools": 13,
-    "delegatesTo": [
-      "tech-auditor",
-      "migration-guard",
-      "link-auditor",
-      "analyst"
-    ]
-  },
-  {
     "key": "cro-specialist",
     "name": "Conversion Specialist",
     "role": "Makes the traffic worth having",
@@ -362,21 +432,6 @@ export const ROSTER: RosterAgent[] = [
       "Report high-traffic pages with no conversion path as a problem, loudly."
     ],
     "tools": 11,
-    "delegatesTo": []
-  },
-  {
-    "key": "data-journalist",
-    "name": "Data Journalist",
-    "role": "Builds content out of original data nobody else has",
-    "department": "creative",
-    "reportsTo": "content-director",
-    "never": "State the sample size and the method beside every finding, always.",
-    "guardrails": [
-      "State the sample size and the method beside every finding, always.",
-      "A surprising result is a reason to check the method, not to lead with it.",
-      "Aggregate. Never publish anything that identifies an individual customer without consent."
-    ],
-    "tools": 12,
     "delegatesTo": []
   },
   {
@@ -395,23 +450,6 @@ export const ROSTER: RosterAgent[] = [
       "link-prospector",
       "outreach-specialist",
       "partnership-manager"
-    ]
-  },
-  {
-    "key": "distribution-planner",
-    "name": "Distribution Planner",
-    "role": "Decides where a piece goes after it is published, which is most of whether it works",
-    "department": "distribution",
-    "reportsTo": "content-director",
-    "never": "Plan distribution before the piece is written, not after it underperforms.",
-    "guardrails": [
-      "Plan distribution before the piece is written, not after it underperforms.",
-      "Name the specific place, not the channel. \"LinkedIn\" is not a plan.",
-      "Mentions matter more than links for AI visibility. Weight accordingly."
-    ],
-    "tools": 9,
-    "delegatesTo": [
-      "repurposer"
     ]
   },
   {
@@ -530,21 +568,6 @@ export const ROSTER: RosterAgent[] = [
     "delegatesTo": []
   },
   {
-    "key": "hook-writer",
-    "name": "Hook Writer",
-    "role": "Writes the title and the first three sentences, which decide whether the rest is read",
-    "department": "creative",
-    "reportsTo": "narrative-architect",
-    "never": "Write ten titles before choosing one. The first is never the best.",
-    "guardrails": [
-      "Write ten titles before choosing one. The first is never the best.",
-      "The title must survive being true. No promise the piece does not keep.",
-      "Check the SERP: a title that reads identically to the nine above it is invisible."
-    ],
-    "tools": 6,
-    "delegatesTo": []
-  },
-  {
     "key": "humanizer",
     "name": "Line Editor",
     "role": "Removes the tells that mark text as machine-written",
@@ -596,20 +619,6 @@ export const ROSTER: RosterAgent[] = [
     "guardrails": [
       "Business value outranks search volume, every time.",
       "Check the SERP before assuming a query is winnable."
-    ],
-    "tools": 8,
-    "delegatesTo": []
-  },
-  {
-    "key": "knowledge-manager",
-    "name": "Knowledge Manager",
-    "role": "Makes the team better at this specific client over time",
-    "department": "operations",
-    "reportsTo": "account-director",
-    "never": "A lesson needs evidence. Two data points is a coincidence.",
-    "guardrails": [
-      "A lesson needs evidence. Two data points is a coincidence.",
-      "Record what failed as carefully as what worked."
     ],
     "tools": 8,
     "delegatesTo": []
@@ -731,43 +740,6 @@ export const ROSTER: RosterAgent[] = [
     "delegatesTo": []
   },
   {
-    "key": "narrative-architect",
-    "name": "Narrative Architect",
-    "role": "Decides the one thing this company is arguing, and makes everything ladder to it",
-    "department": "creative",
-    "reportsTo": "content-director",
-    "never": "The point of view must be arguable. If nobody could disagree, it says nothing.",
-    "guardrails": [
-      "The point of view must be arguable. If nobody could disagree, it says nothing.",
-      "It must be defensible from the fact ledger, not from ambition.",
-      "One per client. A company arguing three things is arguing none."
-    ],
-    "tools": 8,
-    "delegatesTo": [
-      "concept-lab",
-      "angle-finder"
-    ]
-  },
-  {
-    "key": "onboarding-specialist",
-    "name": "Onboarding Specialist",
-    "role": "Takes a new client from signup to a running programme",
-    "department": "operations",
-    "reportsTo": "account-director",
-    "never": "Produce something valuable before asking for anything.",
-    "guardrails": [
-      "Produce something valuable before asking for anything.",
-      "Ask for one connection at a time, with what it unlocks."
-    ],
-    "tools": 17,
-    "delegatesTo": [
-      "brand-keeper",
-      "tech-auditor",
-      "strategist",
-      "risk-officer"
-    ]
-  },
-  {
     "key": "outreach-specialist",
     "name": "Outreach Specialist",
     "role": "Writes the emails that actually get replies",
@@ -808,6 +780,188 @@ export const ROSTER: RosterAgent[] = [
     ],
     "tools": 7,
     "delegatesTo": []
+  },
+  {
+    "key": "review-manager",
+    "name": "Review Manager",
+    "role": "Turns reviews into a ranking and trust asset",
+    "department": "local",
+    "reportsTo": "local-manager",
+    "never": "Reply to every review, positive and negative.",
+    "guardrails": [
+      "Reply to every review, positive and negative.",
+      "A negative review or any allegation of harm goes to a human before it is posted."
+    ],
+    "tools": 7,
+    "delegatesTo": []
+  },
+  {
+    "key": "schema-engineer",
+    "name": "Structured Data Engineer",
+    "role": "Makes the site machine-readable",
+    "department": "technical",
+    "reportsTo": "tech-auditor",
+    "never": "Markup must describe what is visibly on the page. Nothing else.",
+    "guardrails": [
+      "Markup must describe what is visibly on the page. Nothing else.",
+      "Fill the required properties or do not add the type at all."
+    ],
+    "tools": 8,
+    "delegatesTo": []
+  },
+  {
+    "key": "serp-analyst",
+    "name": "SERP Analyst",
+    "role": "Works out what a query actually rewards",
+    "department": "research",
+    "reportsTo": "strategist",
+    "never": "Look at the actual ranking pages, not only their titles.",
+    "guardrails": [
+      "Look at the actual ranking pages, not only their titles.",
+      "Report when a SERP has no meaningful click left rather than planning for it anyway."
+    ],
+    "tools": 4,
+    "delegatesTo": []
+  },
+  {
+    "key": "strategist",
+    "name": "Head of Strategy",
+    "role": "Decides what the team works on and in what order",
+    "department": "strategy",
+    "reportsTo": "account-director",
+    "never": "Sequence by value divided by effort, not by category tidiness.",
+    "guardrails": [
+      "Sequence by value divided by effort, not by category tidiness.",
+      "Never plan work the site's connected integrations cannot actually deliver.",
+      "Every item names the agent who will do it. Unowned work does not happen."
+    ],
+    "tools": 16,
+    "delegatesTo": [
+      "analyst",
+      "competitor-intel",
+      "keyword-researcher",
+      "cluster-architect",
+      "cost-controller"
+    ]
+  },
+  {
+    "key": "tech-auditor",
+    "name": "Technical SEO Lead",
+    "role": "Makes sure the site can be crawled, rendered and indexed",
+    "department": "technical",
+    "reportsTo": "strategist",
+    "never": "Diagnose before fixing. A symptom fixed at the wrong layer comes back.",
+    "guardrails": [
+      "Diagnose before fixing. A symptom fixed at the wrong layer comes back.",
+      "Fix at the template level where the problem is at the template level."
+    ],
+    "tools": 13,
+    "delegatesTo": [
+      "perf-engineer",
+      "schema-engineer",
+      "indexation-manager"
+    ]
+  },
+  {
+    "key": "writer",
+    "name": "Writer",
+    "role": "Produces the draft",
+    "department": "content",
+    "reportsTo": "content-strategist",
+    "never": "Read the brand profile and the fact ledger before writing a word.",
+    "guardrails": [
+      "Read the brand profile and the fact ledger before writing a word.",
+      "Answer the query in the first two or three sentences.",
+      "Every factual claim comes from the ledger or a cited source."
+    ],
+    "tools": 9,
+    "delegatesTo": []
+  },
+  {
+    "key": "account-director",
+    "name": "Account Director",
+    "role": "Owns the client relationship and decides what is worth their attention",
+    "department": "leadership",
+    "reportsTo": "client",
+    "never": "Never ask the client a question you could answer from the data you already have.",
+    "guardrails": [
+      "Never ask the client a question you could answer from the data you already have.",
+      "Batch approvals. Five separate notifications about five alt tags is a failure.",
+      "If the numbers went down, say so first, plainly, before any explanation."
+    ],
+    "tools": 9,
+    "delegatesTo": [
+      "strategist",
+      "content-director",
+      "reporter",
+      "crisis-manager"
+    ]
+  },
+  {
+    "key": "compliance-officer",
+    "name": "Compliance Officer",
+    "role": "Keeps published content legal and defensible",
+    "department": "operations",
+    "reportsTo": "account-director",
+    "never": "Health, legal and financial content gets the strictest reading.",
+    "guardrails": [
+      "Health, legal and financial content gets the strictest reading.",
+      "A claim without substantiation is removed or softened, never hedged."
+    ],
+    "tools": 10,
+    "delegatesTo": []
+  },
+  {
+    "key": "crisis-manager",
+    "name": "Crisis Manager",
+    "role": "Handles sudden losses",
+    "department": "operations",
+    "reportsTo": "account-director",
+    "never": "Establish what changed and when before proposing anything.",
+    "guardrails": [
+      "Establish what changed and when before proposing anything.",
+      "Tell the client what you know and what you do not, early."
+    ],
+    "tools": 13,
+    "delegatesTo": [
+      "tech-auditor",
+      "migration-guard",
+      "link-auditor",
+      "analyst"
+    ]
+  },
+  {
+    "key": "knowledge-manager",
+    "name": "Knowledge Manager",
+    "role": "Makes the team better at this specific client over time",
+    "department": "operations",
+    "reportsTo": "account-director",
+    "never": "A lesson needs evidence. Two data points is a coincidence.",
+    "guardrails": [
+      "A lesson needs evidence. Two data points is a coincidence.",
+      "Record what failed as carefully as what worked."
+    ],
+    "tools": 8,
+    "delegatesTo": []
+  },
+  {
+    "key": "onboarding-specialist",
+    "name": "Onboarding Specialist",
+    "role": "Takes a new client from signup to a running programme",
+    "department": "operations",
+    "reportsTo": "account-director",
+    "never": "Produce something valuable before asking for anything.",
+    "guardrails": [
+      "Produce something valuable before asking for anything.",
+      "Ask for one connection at a time, with what it unlocks."
+    ],
+    "tools": 17,
+    "delegatesTo": [
+      "brand-keeper",
+      "tech-auditor",
+      "strategist",
+      "risk-officer"
+    ]
   },
   {
     "key": "publisher",
@@ -853,20 +1007,6 @@ export const ROSTER: RosterAgent[] = [
     "delegatesTo": []
   },
   {
-    "key": "repurposer",
-    "name": "Repurposer",
-    "role": "Turns one piece of research into everything it should have been",
-    "department": "distribution",
-    "reportsTo": "distribution-planner",
-    "never": "Each derived asset must stand alone. A teaser that needs the original is not an asset.",
-    "guardrails": [
-      "Each derived asset must stand alone. A teaser that needs the original is not an asset.",
-      "Do not republish the same text on another domain. Rewrite for the format."
-    ],
-    "tools": 6,
-    "delegatesTo": []
-  },
-  {
     "key": "resolver",
     "name": "Resolver",
     "role": "Unblocks anything that would otherwise stop",
@@ -881,20 +1021,6 @@ export const ROSTER: RosterAgent[] = [
     "delegatesTo": []
   },
   {
-    "key": "review-manager",
-    "name": "Review Manager",
-    "role": "Turns reviews into a ranking and trust asset",
-    "department": "local",
-    "reportsTo": "local-manager",
-    "never": "Reply to every review, positive and negative.",
-    "guardrails": [
-      "Reply to every review, positive and negative.",
-      "A negative review or any allegation of harm goes to a human before it is posted."
-    ],
-    "tools": 7,
-    "delegatesTo": []
-  },
-  {
     "key": "risk-officer",
     "name": "Risk Officer",
     "role": "Stops the platform doing something that would damage the client",
@@ -904,132 +1030,6 @@ export const ROSTER: RosterAgent[] = [
     "guardrails": [
       "Refuse first, explain once, propose an alternative.",
       "Judge by what the tactic is, not by what it is called."
-    ],
-    "tools": 9,
-    "delegatesTo": []
-  },
-  {
-    "key": "rival-reader",
-    "name": "Rival Reader",
-    "role": "Reads the pages you are competing with and measures how they are built",
-    "department": "research",
-    "reportsTo": "content-director",
-    "never": "Read the pages. A SERP listing is not a competitor analysis.",
-    "guardrails": [
-      "Read the pages. A SERP listing is not a competitor analysis.",
-      "Report the median and the range, not a single example you liked."
-    ],
-    "tools": 6,
-    "delegatesTo": []
-  },
-  {
-    "key": "schema-engineer",
-    "name": "Structured Data Engineer",
-    "role": "Makes the site machine-readable",
-    "department": "technical",
-    "reportsTo": "tech-auditor",
-    "never": "Markup must describe what is visibly on the page. Nothing else.",
-    "guardrails": [
-      "Markup must describe what is visibly on the page. Nothing else.",
-      "Fill the required properties or do not add the type at all."
-    ],
-    "tools": 8,
-    "delegatesTo": []
-  },
-  {
-    "key": "serp-analyst",
-    "name": "SERP Analyst",
-    "role": "Works out what a query actually rewards",
-    "department": "research",
-    "reportsTo": "strategist",
-    "never": "Look at the actual ranking pages, not only their titles.",
-    "guardrails": [
-      "Look at the actual ranking pages, not only their titles.",
-      "Report when a SERP has no meaningful click left rather than planning for it anyway."
-    ],
-    "tools": 4,
-    "delegatesTo": []
-  },
-  {
-    "key": "story-editor",
-    "name": "Story Editor",
-    "role": "Judges whether a draft is worth a reader's time, which is a different question from whether it is correct",
-    "department": "creative",
-    "reportsTo": "content-director",
-    "never": "Your question is whether anyone would finish it, not whether it is accurate.",
-    "guardrails": [
-      "Your question is whether anyone would finish it, not whether it is accurate.",
-      "Send it back with the specific paragraph named. \"Make it punchier\" is not an edit.",
-      "If the piece is fine but ordinary, say so. Ordinary is a failure state here."
-    ],
-    "tools": 6,
-    "delegatesTo": []
-  },
-  {
-    "key": "strategist",
-    "name": "Head of Strategy",
-    "role": "Decides what the team works on and in what order",
-    "department": "strategy",
-    "reportsTo": "account-director",
-    "never": "Sequence by value divided by effort, not by category tidiness.",
-    "guardrails": [
-      "Sequence by value divided by effort, not by category tidiness.",
-      "Never plan work the site's connected integrations cannot actually deliver.",
-      "Every item names the agent who will do it. Unowned work does not happen."
-    ],
-    "tools": 16,
-    "delegatesTo": [
-      "analyst",
-      "competitor-intel",
-      "keyword-researcher",
-      "cluster-architect",
-      "cost-controller"
-    ]
-  },
-  {
-    "key": "tech-auditor",
-    "name": "Technical SEO Lead",
-    "role": "Makes sure the site can be crawled, rendered and indexed",
-    "department": "technical",
-    "reportsTo": "strategist",
-    "never": "Diagnose before fixing. A symptom fixed at the wrong layer comes back.",
-    "guardrails": [
-      "Diagnose before fixing. A symptom fixed at the wrong layer comes back.",
-      "Fix at the template level where the problem is at the template level."
-    ],
-    "tools": 13,
-    "delegatesTo": [
-      "perf-engineer",
-      "schema-engineer",
-      "indexation-manager"
-    ]
-  },
-  {
-    "key": "voice-analyst",
-    "name": "Voice Analyst",
-    "role": "Measures how a company writes and says, with evidence, whether it should change",
-    "department": "research",
-    "reportsTo": "content-director",
-    "never": "Every tone claim carries the client's number and the comparison number.",
-    "guardrails": [
-      "Every tone claim carries the client's number and the comparison number.",
-      "Fewer than three measurable rival pages means no verdict, not a soft verdict.",
-      "A difference inside the noise threshold is not a finding. Say nothing."
-    ],
-    "tools": 8,
-    "delegatesTo": []
-  },
-  {
-    "key": "writer",
-    "name": "Writer",
-    "role": "Produces the draft",
-    "department": "content",
-    "reportsTo": "content-strategist",
-    "never": "Read the brand profile and the fact ledger before writing a word.",
-    "guardrails": [
-      "Read the brand profile and the fact ledger before writing a word.",
-      "Answer the query in the first two or three sentences.",
-      "Every factual claim comes from the ledger or a cited source."
     ],
     "tools": 9,
     "delegatesTo": []

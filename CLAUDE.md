@@ -80,8 +80,10 @@ need that, stop and ask.
 ```
 packages/seoos/
   api/            FastAPI app, routes, schemas, auth. Prefix /api/v1.
-  agents/         Runtime, tool-use loop, policy engine, and roster/ (53 specs)
+  agents/         Runtime, tool-use loop, policy engine, and roster/
+                  roster/ is split by desk: shared/ 10, search/ 43, content/ 14
   missions/       Declarative YAML workflows, the DAG engine, the scheduler
+                  workflows/ is split the same way: shared/, search/, content/
   tools/          Everything an agent can do to the world. Registry-gated.
   connectors/     GSC, GA4, GBP, CMSes and the rest, plus the capability map
   llm/            Provider-agnostic model layer, raw HTTP, no vendor SDK
@@ -94,9 +96,10 @@ apps/web/         Next.js: the public site and the dashboard. Plain CSS.
   src/engine/     The TypeScript audit engine: crawl, checks, fixes, strategy
   src/server/     Sessions, D1, envelope sealing, Google OAuth, GSC, GA4, WordPress
   src/lib/        The browser-held workspace store, the connector catalogue, sync
+                  org.ts is the organisation; roster.generated.ts is built by make docs
 deploy/d1/        The D1 schema. Applied by `npm run cf:setup`.
 scripts/          Reference generator, demo seeder
-docs/offerings/   One file per product line. Read these first.
+docs/offerings/   One file per desk, plus BASELINE.md. Read these first.
 docs/reference/   Generated from the registries. Never edit by hand.
 deploy/           Dockerfiles. wrangler.jsonc at the root is Cloudflare.
 ```
@@ -226,8 +229,24 @@ style disagreement.
   `compareRuns()` drops any score whose `measured` flag is false, and
   `measurementMissing` makes the report say so in its first paragraph rather
   than filling the space. `report.ts` reads flat as flat.
-- **`docs/reference` is generated.** Adding a tool, check, agent or mission
-  means running `make docs` and committing the result. CI fails if it is stale.
+- **Every desk inherits the same baseline.** `HOUSE_RULES` in
+  `agents/spec.py` is injected into every system prompt in the roster, and
+  `docs/offerings/BASELINE.md` says what each rule is for. Two of them define
+  the product: an agent works without the client, and an agent is the best in
+  the world at exactly one thing. A desk may add to the baseline. No desk may
+  weaken it.
+- **The roster is split by desk, and the loader walks the tree.**
+  `agents/roster/{shared,search,content}/` and
+  `missions/workflows/{shared,search,content}/`. Adding a desk is a folder.
+  Search keeps its own content team under `content-strategist`, which is not a
+  duplicate of the content desk: `docs/offerings/THE-ORGANISATION.md` has the
+  division and who wins when both want the same page.
+- **`docs/reference` and `roster.generated.ts` are generated.** Adding a tool,
+  check, agent or mission means running `make docs` and committing the result.
+  CI fails if either is stale. The browser interface reads the generated
+  roster because Workers cannot run Python, and a hand-written copy drifts:
+  the first thing to drift is the list of what each agent refuses to do, which
+  is the part the interface makes a promise out of.
 
 ## The public deployment
 

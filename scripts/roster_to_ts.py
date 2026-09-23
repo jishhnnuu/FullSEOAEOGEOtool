@@ -55,8 +55,13 @@ def front_matter(text: str) -> dict:
 
 def main() -> int:
     agents = []
-    for path in sorted(ROSTER.glob("*.md")):
-        fm = front_matter(path.read_text(encoding="utf-8"))
+    for path in sorted(ROSTER.rglob("*.md")):
+        text = path.read_text(encoding="utf-8")
+        # The folder READMEs explain how the roster is split. They are not
+        # agents, and they have no front matter to read.
+        if not text.startswith("---"):
+            continue
+        fm = front_matter(text)
         guardrails = fm.get("guardrails") or []
         agents.append({
             "key": fm["key"],

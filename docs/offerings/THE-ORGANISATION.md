@@ -122,6 +122,65 @@ where nothing moved is reported as a quarter where nothing moved.
 
 ---
 
+## Where search and content overlap, and who wins
+
+Both desks have a content team. That is not a duplicate, and the difference
+decides a real argument every week, so it is written down.
+
+`content-strategist` and its team sit under **search**. `content-director` and
+its team are **content marketing**. They share the production line on purpose.
+
+```
+                         account-director
+                          /            \
+                 strategist          content-director
+                     |                      |
+             content-strategist       narrative-architect
+             (what to publish so      (what this company
+              a page can rank)         should be arguing)
+                     \                      /
+                      \                    /
+                       the same production line
+              brief-writer, writer, fact-checker,
+              humanizer, editor, brand-keeper
+```
+
+### The division
+
+| | Search's content team | The content desk |
+| --- | --- | --- |
+| **Commissions from** | A measured gap, a decayed page, a query with demand | An approved point of view and an angle nobody took |
+| **Owns** | Briefs from gaps, refreshes, internal links, authorship and trust signals, localisation, multimedia | The argument, the ladder, original research, hooks, distribution, the week-eight verdict |
+| **Succeeds when** | The page ranks and gets cited | A person finishes reading it and remembers the argument |
+| **Mission** | `content_production` | `content_engine` |
+| **Gate** | The keyword model and the gap analysis | `content_discovery`, approved once by the client |
+
+### Who wins when both want the same page
+
+- **What it says**: the content desk. The point of view is approved once and
+  everything ladders to it, including anything search commissions.
+- **Where it sits, how it is marked up, what it links to**: search. That is a
+  technical decision and the content desk has no measurement for it.
+- **Whether it ships**: neither. It goes in the one review queue like
+  everything else, and the client approves it.
+- **Who writes it**: the same writer, either way. That is the whole reason the
+  production line is shared. A client should not be able to tell which desk
+  commissioned a piece by reading it.
+
+The failure this prevents is the ordinary agency one: an SEO team and a
+content team each briefing the same freelancer, neither knowing, and the
+client receiving two articles about the same thing in different voices in the
+same month.
+
+### The client sees one thing
+
+Both desks report through `account-director`, and there is one review queue,
+one point of view and one brand profile. The division above is how the work is
+organised, not how it is presented. A client who wanted to know which desk
+wrote something would have to ask.
+
+---
+
 ## How information moves
 
 Three mechanisms, and no agent has to hold the whole picture.

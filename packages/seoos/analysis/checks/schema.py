@@ -40,8 +40,25 @@ REQUIREMENTS: dict[str, tuple[set[str], set[str]]] = {
 MERCHANT_LISTING_REQUIRED = {"name", "image", "offers"}
 MERCHANT_OFFER_REQUIRED = {"price", "priceCurrency", "availability"}
 
+# Types whose headline is a claim about *this page's* content, so a mismatch
+# between markup and page is a real contradiction. Entity-level types
+# (Organization, WebSite, LocalBusiness, BreadcrumbList, SoftwareApplication)
+# are deliberately absent: their name and description describe the business or
+# the site, are legitimately absent from body copy, and usually appear site
+# wide, so comparing them fires on every page at once.
+CONTENT_BEARING_TYPES = {
+    "Article", "BlogPosting", "NewsArticle", "Product", "Recipe",
+    "HowTo", "Event", "JobPosting", "VideoObject", "QAPage",
+}
 
-def validate_jsonld(blocks: list[dict], *, page_text: str = "") -> dict[str, Any]:
+
+def validate_jsonld(
+    blocks: list[dict],
+    *,
+    page_text: str = "",
+    title: str | None = None,
+    headings: list[str] | None = None,
+) -> dict[str, Any]:
     """Validate a page's JSON-LD. Returns issues, not a pass/fail boolean."""
     issues: list[dict] = []
     types_found: list[str] = []
@@ -87,18 +104,45 @@ def validate_jsonld(blocks: list[dict], *, page_text: str = "") -> dict[str, Any
                 )
 
         # Markup describing content that is not on the page is a policy risk,
-        # not a nicety, so it is checked rather than assumed.
+        # not a nicety, so it is checked rather than assumed. The rule is
+        # deliberately narrow, and the narrowing was bought with a bug: an
+        # earlier version compared `description` on any type, which fires on
+        # every page of every site carrying a site-wide Organization block,
+        # because an Organization description is an entity fact and was never
+        # meant to be body copy. Forty high-severity false positives on forty
+        # pages is worse than missing the real case, so only the headline of a
+        # type that *is* the page is compared, and `description` never is.
         if page_text:
-            for prop in ("name", "headline", "description"):
-                value = block.get(prop)
-                if isinstance(value, str) and len(value) > 25:
-                    if value[:60].lower() not in page_text.lower():
+            # Every place a headline may legitimately appear. The title and the
+            # headings matter as much as the body: a page states its subject in
+            # its title first, and that is not a contradiction.
+            haystack = " \n ".join(
+                part for part in [page_text, title or "", *(headings or [])] if part
+            ).lower()
+            for block_type in block_types:
+                if block_type not in CONTENT_BEARING_TYPES:
+                    continue
+                for prop in ("headline", "name"):
+                    value = block.get(prop)
+                    if not isinstance(value, str) or len(value) <= 25:
+                        continue
+                    if value[:60].lower() not in haystack:
                         issues.append(
-                            {"severity": "warning", "type": block_types[0], "index": index,
-                             "message": f"{prop} in markup does not appear in the visible page",
+                            {"severity": "warning", "type": block_type, "index": index,
+                             "message": f"{prop} in {block_type} markup does not appear in the visible page",
                              "code": "schema_contradicts_page"}
                         )
-                        break
+                    break
+                break
+
+        # FAQPage markup on a page with no questions is the cheapest version of
+        # the same problem, and the one Google has issued manual actions over.
+        if "FAQPage" in block_types and page_text and "?" not in page_text:
+            issues.append(
+                {"severity": "warning", "type": "FAQPage", "index": index,
+                 "message": "FAQPage markup on a page with no visible questions",
+                 "code": "schema_contradicts_page"}
+            )
 
     return {
         "types": sorted(set(types_found)),
@@ -126,7 +170,17 @@ def check_schema(page: CrawledPage) -> list[FindingDraft]:
         )
         return out
 
-    result = validate_jsonld(signals.jsonld, page_text=signals.main_text or signals.text)
+    # The whole page, not the chrome-stripped body. An Article headline lives
+    # in the page header, which `main_text` deliberately removes, so comparing
+    # a headline against `main_text` marks every correctly built blog post as
+    # contradicting itself. Auditing one real site produced 45 of those at high
+    # severity before this was caught.
+    result = validate_jsonld(
+        signals.jsonld,
+        page_text=signals.text,
+        title=signals.title,
+        headings=[h for _, h in signals.headings],
+    )
     for issue in result["issues"]:
         if issue["severity"] == "info":
             continue

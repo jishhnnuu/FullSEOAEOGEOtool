@@ -5,9 +5,11 @@ import { UrlStart } from "@/components/url-start";
 import { CATALOG_SIZE } from "@/engine/catalog";
 
 export const metadata = {
-  title: "Thymesnow: a digital marketing agency run by AI agents",
+  // The homepage keeps the layout's default title rather than restating it,
+  // so the product name lives in exactly one place.
   description:
     "Enter your website and the work starts: a real crawl, findings with the fix already written, content briefs, schema, internal links, local listings and link prospects. You approve. It ships. Covers SEO, AEO and GEO.",
+  alternates: { canonical: "/" },
 };
 
 const DEPARTMENTS = [

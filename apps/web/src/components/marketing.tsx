@@ -1,5 +1,7 @@
 import Link from "next/link";
 
+import { BRAND } from "@/lib/brand";
+
 /**
  * The public site's chrome.
  *
@@ -25,13 +27,14 @@ export function SiteHeader() {
       <div className="site-header-inner">
         <Link href="/" className="wordmark">
           <span className="dot" aria-hidden="true" />
-          Thymesnow
+          {BRAND}
         </Link>
         <nav className="site-nav">
           <Link href="/platform" className="hide-sm">Platform</Link>
           <Link href="/ai-search" className="hide-sm">AI search</Link>
           <Link href="/how-it-works" className="hide-sm">How it works</Link>
-          <Link href="/vs-agency" className="hide-sm">Vs an agency</Link>
+          <Link href="/compare" className="hide-sm">Compare</Link>
+          <Link href="/tools" className="hide-sm">Free tools</Link>
           <Link href="/pricing">Pricing</Link>
           <Link href="/app/signin">Sign in</Link>
           <Link href="/app/new" className="cta">Audit my site</Link>
@@ -48,7 +51,7 @@ export function SiteFooter() {
         <div>
           <div className="wordmark" style={{ marginBottom: "0.6rem" }}>
             <span className="dot" aria-hidden="true" />
-            Thymesnow
+            {BRAND}
           </div>
           <p className="small muted" style={{ maxWidth: "30ch" }}>
             The work an agency does, done by software you can watch, question and stop.
@@ -63,14 +66,25 @@ export function SiteFooter() {
         </div>
         <div>
           <h4>Compare</h4>
-          <Link href="/vs-agency">Against an agency</Link>
-          <Link href="/vs-agency#tools">Against audit tools</Link>
-          <Link href="/vs-agency#autowriters">Against AI writers</Link>
+          <Link href="/compare">All comparisons</Link>
+          <Link href="/compare/search-atlas">Vs Search Atlas</Link>
+          <Link href="/compare/semrush">Vs Semrush</Link>
+          <Link href="/compare/profound">Vs Profound</Link>
+          <Link href="/compare/seo-agency">Vs an agency</Link>
+        </div>
+        <div>
+          <h4>Learn</h4>
+          <Link href="/tools">Free tools</Link>
+          <Link href="/glossary">Glossary</Link>
+          <Link href="/ai-crawlers-and-javascript">AI crawlers and JavaScript</Link>
+          <Link href="/research/ai-crawler-access">The 100-site study</Link>
+          <Link href="/proof">Our own audit</Link>
         </div>
         <div>
           <h4>Trust</h4>
           <Link href="/security">Security and data</Link>
           <Link href="/security#standalone">Runs without us</Link>
+          <Link href="/proof">Our own audit, in public</Link>
           <a href="https://github.com/jishhnnuu/fullseoaeogeotool" target="_blank" rel="noopener noreferrer">
             Source
           </a>
@@ -82,7 +96,7 @@ export function SiteFooter() {
         </div>
       </div>
       <div className="site-footer-bottom">
-        <span>Thymesnow. Self-hostable, open source, and usable without an account.</span>
+        <span>{BRAND}. Self-hostable, open source, and usable without an account.</span>
         <span>Search, answer engines and generative engines: SEO, AEO and GEO.</span>
       </div>
     </footer>

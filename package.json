@@ -10,13 +10,15 @@
     "dev": "npm run dev --workspace=@seoos/web",
     "build": "npm run build --workspace=@seoos/web",
     "typecheck": "npm run typecheck --workspace=@seoos/web",
-    "cf:build": "npm run cf:build --workspace=@seoos/web",
+    "cf:build": "npm run brand:check && npm run seo:check && npm run cf:build --workspace=@seoos/web",
     "cf:preview": "npm run cf:preview --workspace=@seoos/web",
     "deploy": "npm run cf:build && wrangler deploy",
     "cf:setup": "node scripts/cf-setup.mjs",
     "cf:migrate": "wrangler d1 migrations apply seoos --remote",
     "d1:sql": "node scripts/d1-sql.mjs",
-    "test:engine": "npm run test --workspace=@seoos/web"
+    "test:engine": "npm run test --workspace=@seoos/web",
+    "brand:check": "node scripts/check-brand.mjs",
+    "seo:check": "node scripts/check-seo.mjs"
   },
   "devDependencies": {
     "wrangler": "4.131.2"

@@ -21,13 +21,15 @@ import { basicAuth, type ConnectionRow } from "./connections";
 import type { Env } from "./env";
 import { validateUrl } from "./safe-fetch";
 
+import { BRAND } from "@/lib/brand";
+
 export type WpIdentity = { siteUrl: string; user: string; password: string };
 
 /** The URL that asks a WordPress admin to approve this app. */
 export function authorizeUrl(siteUrl: string, successUrl: string, appId: string): string {
   const base = new URL(siteUrl);
   const url = new URL("/wp-admin/authorize-application.php", base);
-  url.searchParams.set("app_name", "Thymesnow");
+  url.searchParams.set("app_name", BRAND);
   url.searchParams.set("app_id", appId);
   url.searchParams.set("success_url", successUrl);
   return url.toString();

@@ -5,6 +5,7 @@ export const metadata = {
   title: "AI answer visibility",
   description:
     "AEO and GEO done as work rather than a dashboard: crawler access, extractability, citable passages, entity resolution, llms.txt and the answer blocks that earn the citation.",
+  alternates: { canonical: "/ai-search" },
 };
 
 const STEPS = [

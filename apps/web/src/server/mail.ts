@@ -9,6 +9,8 @@
 
 import type { Env } from "./env";
 
+import { BRAND } from "@/lib/brand";
+
 export type SendResult = { ok: true } | { ok: false; reason: string };
 
 export function canSend(e: Env): boolean {
@@ -24,7 +26,7 @@ export async function sendLoginLink(e: Env, to: string, link: string): Promise<S
         "Set RESEND_API_KEY as a Worker secret, or sign in with Google instead.",
     };
   }
-  const from = e.MAIL_FROM ?? "Thymesnow <onboarding@resend.dev>";
+  const from = e.MAIL_FROM ?? `${BRAND} <onboarding@resend.dev>`;
   const response = await fetch("https://api.resend.com/emails", {
     method: "POST",
     headers: { authorization: `Bearer ${e.RESEND_API_KEY}`, "content-type": "application/json" },
@@ -69,7 +71,7 @@ export async function send(
         "Set RESEND_API_KEY as a Worker secret to turn delivery on.",
     };
   }
-  const from = e.MAIL_FROM ?? "Thymesnow <onboarding@resend.dev>";
+  const from = e.MAIL_FROM ?? `${BRAND} <onboarding@resend.dev>`;
   const response = await fetch("https://api.resend.com/emails", {
     method: "POST",
     headers: { authorization: `Bearer ${e.RESEND_API_KEY}`, "content-type": "application/json" },

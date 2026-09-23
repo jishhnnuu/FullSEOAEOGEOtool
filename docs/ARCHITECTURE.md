@@ -46,7 +46,7 @@ to `echo`, which returns clearly labelled degraded output that the quality
 gate then refuses to publish.
 
 **`analysis`** — the deterministic engine: a safe HTTP client, a crawler, a
-one-pass HTML parser, 71 checks across 12 categories, and scoring. No model
+one-pass HTML parser, 74 checks across 12 categories, and scoring. No model
 is involved, so results are reproducible and free. This is the layer that
 makes a free audit viable as a customer-acquisition motion.
 

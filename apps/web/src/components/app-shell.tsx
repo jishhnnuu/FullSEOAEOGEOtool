@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
+import { BRAND } from "@/lib/brand";
 import { MANAGERS, DIRECTOR } from "@/lib/org";
 import { pendingApprovals, siteById } from "@/lib/store";
 import { useWorkspace } from "@/lib/useWorkspace";
@@ -68,7 +69,7 @@ export function AppShell({ siteId, children }: { siteId: string; children: React
     <>
       <div>
         <Link href="/app" className="brand">
-          Thymesnow
+          {BRAND}
           {site && <small className="truncate">{site.domain}</small>}
         </Link>
       </div>
@@ -153,7 +154,7 @@ export function AppShell({ siteId, children }: { siteId: string; children: React
           <span /><span /><span />
         </button>
         <Link href="/app" className="app-bar-brand">
-          Thymesnow
+          {BRAND}
           {site && <small className="truncate">{site.domain}</small>}
         </Link>
         {pending > 0 && (

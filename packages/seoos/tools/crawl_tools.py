@@ -127,7 +127,20 @@ async def crawl_site(ctx: ToolContext, max_pages: int = 250, max_depth: int = 5,
         ),
         data={
             "crawl_id": crawl.id,
-            "scores": {k: v["score"] for k, v in audit.scores.items()},
+            # Carry the measured flag through, not just the number. Flattening
+            # this to `v["score"]` is how "authority 100.0" reached the CLI for
+            # a site with no backlink source connected: the scorer knew it was
+            # unmeasured and the tool boundary threw that away, so every reader
+            # downstream saw a confident number with nothing behind it.
+            "scores": {
+                k: {
+                    "score": v["score"],
+                    "measured": v.get("measured", True),
+                    "unmeasured_reason": v.get("unmeasured_reason"),
+                    "unmeasured_fix": v.get("unmeasured_fix"),
+                }
+                for k, v in audit.scores.items()
+            },
             "summary": audit.summary,
             "findings": reconcile.to_dict(),
             "top_priorities": audit.to_dict()["top_priorities"][:15],

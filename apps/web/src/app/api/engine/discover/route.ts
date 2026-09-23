@@ -9,6 +9,7 @@
 import { NextRequest } from "next/server";
 
 import { fetchPage, fetchSiteFiles, validateUrl } from "@/engine/fetcher";
+import { allowanceFor } from "@/server/quota";
 
 export const dynamic = "force-dynamic";
 
@@ -90,6 +91,12 @@ export async function POST(request: NextRequest) {
     ),
   ];
 
+  // The page ceiling for this caller, read once at the start of the crawl
+  // rather than checked per batch. It travels back so the screen can state
+  // the coverage above the score rather than underneath it, which is the rule
+  // that stops a 40-page sample being reported as a verdict on the site.
+  const allowance = await allowanceFor(request);
+
   return Response.json({
     ok: true,
     baseUrl: finalOrigin,
@@ -97,5 +104,11 @@ export async function POST(request: NextRequest) {
     files,
     home,
     seeds,
+    allowance: {
+      plan: allowance.plan.id,
+      planName: allowance.plan.name,
+      pagesPerRun: allowance.pagesPerRun,
+      note: allowance.note,
+    },
   });
 }

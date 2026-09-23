@@ -7,6 +7,7 @@ export const metadata = {
   title: "The platform",
   description:
     "Every check the audit runs, every fix it generates, and the departments the work is organised into. Technical, content, schema, AI answers, local, off page, compliance and measurement.",
+  alternates: { canonical: "/platform" },
 };
 
 const SEVERITY_ORDER = ["critical", "high", "medium", "low", "info"];

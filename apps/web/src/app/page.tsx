@@ -3,337 +3,327 @@ import Link from "next/link";
 import { CtaBand, MarketingChrome } from "@/components/marketing";
 import { UrlStart } from "@/components/url-start";
 import { CATALOG_SIZE } from "@/engine/catalog";
+import { DESKS, deskPrice, managerFor, WHOLE_AGENCY } from "@/lib/desks";
+import { DIRECTOR, headcount } from "@/lib/org";
+import { PLANS, priceLabel } from "@/lib/plans";
 
 export const metadata = {
   // The homepage keeps the layout's default title rather than restating it,
   // so the product name lives in exactly one place.
   description:
-    "Enter your website and the work starts: a real crawl, findings with the fix already written, content briefs, schema, internal links, local listings and link prospects. You approve. It ships. Covers SEO, AEO and GEO.",
+    "Everything a digital marketing agency does, without the agency. Sixty-seven specialists across search and content do the work and you approve it. Published prices, no retainer, no call. Look inside a live account before you give us anything.",
   alternates: { canonical: "/" },
 };
 
-const DEPARTMENTS = [
+/*
+ * The home page, in nine bands.
+ *
+ * The order is the argument, and the order is the part worth defending.
+ * Nothing above the fold asks for input: a stranger will not hand over their
+ * domain to a company they cannot yet describe to a colleague. Tools open with
+ * a field. Agencies open with a claim, a price, and something to look at.
+ *
+ * The audit is band eight rather than band one on purpose. It now confirms a
+ * decision instead of trying to start one, which also means a thin result no
+ * longer costs the sale.
+ */
+
+/** A week's shape, labelled as a shape. The real thing runs live on /inside. */
+const WEEK = [
+  { t: "Mon 06:00", who: "account-director", what: "Weekly cycle opened, assigned to 2 desks" },
+  { t: "Mon 06:02", who: "tech-auditor", what: "Crawled 142 pages, 38 findings, 24 with the fix written" },
+  { t: "Mon 06:19", who: "schema-engineer", what: "Product markup written for 47 pages, entity graph left intact" },
+  { t: "Mon 06:31", who: "voice-analyst", what: "Rhythm 0.34 against a field median of 0.61, material" },
+  { t: "Mon 06:44", who: "angle-finder", what: "Read 9 ranking pages, one entry nobody took" },
+  { t: "Tue 09:12", who: "publisher", what: "9 approved changes pushed to WordPress, all 9 verified live" },
+  { t: "Tue 09:20", who: "ai-visibility-analyst", what: "Blocked. No Search Console connected", blocked: true },
+  { t: "Fri 16:00", who: "reporter", what: "Referring domains moved less than the floor. Printed flat" },
+];
+
+/** A composite of published UK market rates, with the basis stated. */
+const RETAINER = [
+  { line: "Technical audit and findings report", hrs: 6, amount: "960", now: "Crawled, 90 checks, and the fixes written rather than listed" },
+  { line: "On-page implementation", hrs: 5, amount: "800", now: "Pushed through your CMS and re-fetched to confirm" },
+  { line: "Structured data markup", hrs: 3, amount: "480", now: "Written, and it resolves @id before it complains" },
+  { line: "Keyword and competitor research", hrs: 4, amount: "640", now: "Competitor pages fetched and measured, not summarised" },
+  { line: "Content briefs", hrs: 4, amount: "640", now: "Built from measured gaps and an approved point of view" },
+  { line: "Copywriting, four pieces", hrs: 10, amount: "1,600", now: "Nine agents, three gates, one asks if anyone would finish it" },
+  { line: "Link prospecting and outreach", hrs: 4, amount: "640", now: "Drafted into your own mail client. We never send" },
+  { line: "Monthly reporting", hrs: 4, amount: "640", now: "Weekly, and it reads a flat week as flat" },
+];
+
+const REFUSALS = [
   {
-    tag: "Technical",
-    title: "The crawl, and then the repair",
-    body: "Indexability, canonicals, redirect chains, broken links, orphans, sitemaps, hreflang, page weight and render-blocking work. Each finding arrives with the corrected tag, file or rule attached.",
+    title: "No disavow without a manual action",
+    body: "Google's own guidance is that the tool is not normal site maintenance. A careless disavow removes links that were counting in your favour, and the damage is slow and hard to see.",
   },
   {
-    tag: "Content",
-    title: "Briefs, drafts, and a gate before anything ships",
-    body: "Gaps found from your own content and your competitors, turned into briefs with outlines, answer blocks, FAQs and schema. Drafts go through quality gates that fail on unverified claims and machine-writing tells.",
+    title: "No tone verdict on two rivals",
+    body: "Three readable competitor pages is the floor. Two is one writer's habit, and asking you to rewrite your site against it would be the expensive kind of wrong.",
   },
   {
-    tag: "Structured data",
-    title: "Schema that matches the page",
-    body: "Organization, LocalBusiness, Article, Product, FAQ and Breadcrumb JSON-LD, generated from what the page actually contains. Required properties checked, invalid blocks rewritten.",
+    title: "No score without a measurement",
+    body: "Forty of fifty-five pages crawled is a score of those forty, and you are told that above the number rather than under it. A signal nothing measured gets a sentence, not a figure.",
   },
   {
-    tag: "AI answers",
-    title: "AEO and GEO, treated as work rather than a dashboard",
-    body: "Which answer engines can reach you, whether your content survives without JavaScript, whether your passages are quotable, and the llms.txt, entity markup and answer blocks that fix it.",
-  },
-  {
-    tag: "Local",
-    title: "Maps, profiles and reviews",
-    body: "NAP consistency across the site, LocalBusiness markup, location pages that are not the national page with the city swapped in, and Business Profile posts and review replies drafted for approval.",
-  },
-  {
-    tag: "Off page",
-    title: "Prospects, not a backlink chart",
-    body: "Entity records you are missing, sites you already cite that could cite you back, and competitor link sources. Outreach is drafted and sent from your domain, never ours, under a per-domain cap.",
+    title: "We cannot read Google's results pages",
+    body: "Search engines block automated queries and their terms forbid scraping. Difficulty comes from signals we can actually see, and anything presented as a prediction says so.",
   },
 ];
 
-const PRINCIPLES = [
+const FAQ = [
   {
-    title: "It does the work",
-    body: "An audit tool tells you your titles are duplicated. This writes the replacement titles, the JSON-LD, the sitemap, the robots.txt and the internal link plan, then queues them for you to approve.",
+    q: "Is this a tool or an agency?",
+    a: "An agency, delivered as software. You do not operate it. You connect the accounts once, approve the argument once, then approve finished work in a queue. If a feature ever ends in “paste this into your CMS”, it is unfinished, unless no API exists, in which case the screen says so.",
   },
   {
-    title: "You keep the veto",
-    body: "Five autonomy levels. Reversible technical fixes can ship on their own; anything written in your voice or sent from your domain always waits for a person. No setting authorises a site-wide or irreversible action.",
+    q: "What happens if I cancel?",
+    a: "The fixes stay applied, because they are in your CMS rather than in our dashboard. The drafts are yours. You can export the whole workspace as JSON at any time, including before you ever pay us anything.",
   },
   {
-    title: "Nothing is invented",
-    body: "Every number on every screen came from a real crawl of your real site. A draft that states something the brief did not supply is marked unverified and blocked before you see it.",
+    q: "Do I have to book a call?",
+    a: "No, and there is no call to book. Prices are on this page. Agencies hide price behind a discovery call because their price depends on what they think you can pay.",
   },
   {
-    title: "It runs without us",
-    body: "The audit uses no model and no data vendor, so it costs nothing per run. Drafting uses your own provider key, held in your browser. There is no account of ours in the loop.",
-  },
-];
-
-const FAQS = [
-  {
-    q: "Do I need to connect anything to get value?",
-    a: "No. The audit runs on your public site alone, which is why you can run one right now without an account. Connecting Search Console, analytics or your CMS makes the work sharper and lets approved changes ship automatically, but nothing is gated behind it.",
+    q: "Is it actually AI, or is it a person with a template?",
+    a: "Sixty-seven agent specifications, each with declared tools and a published list of what it refuses to do, validated when the runtime starts. You can read all of them, and you can watch a run happen.",
   },
   {
-    q: "Will it publish something I have not read?",
-    a: "Not unless you tell it to, and never for content. Drafting and outreach always wait for a person regardless of the autonomy level. Technical fixes can be set to ship on their own once you trust them, and every one of those is reversible.",
-  },
-  {
-    q: "How is this different from Semrush or Ahrefs?",
-    a: "Those are measurement. They tell you what is wrong and the fixing is still somebody's job, usually an agency's. This produces the change itself, then reports on what it did and whether it worked.",
-  },
-  {
-    q: "How is it different from an AI article writer?",
-    a: "Those solve the cheapest part of the problem and create a new one: volume with no brand grounding, no fact discipline and no technical work. Here, content is one department out of several, and a draft cannot reach you with an unsourced claim in it.",
-  },
-  {
-    q: "What does it cost to run?",
-    a: "The crawl and the full check catalogue cost nothing per run: no model call, no data provider. Search Console is free and is a better keyword source than most paid tools for any site that already ranks. Model spend only starts when you ask it to draft, and it is your key and your bill.",
-  },
-  {
-    q: "Can I host it myself?",
-    a: "Yes. The whole platform is in one repository: a FastAPI service, a mission worker, Postgres and this dashboard. Docker Compose brings the stack up. Nothing phones home.",
+    q: "What about paid ads and social?",
+    a: "Not built. They have pages on this site that say so and name the quarter they open, because a page implying a service exists is the one thing this business cannot survive.",
   },
 ];
 
 export default function Home() {
+  const live = DESKS.filter((d) => managerFor(d).status === "live");
+  const agencyTotal = RETAINER.reduce((n, r) => n + Number(r.amount.replace(",", "")), 0);
+  const agencyHours = RETAINER.reduce((n, r) => n + r.hrs, 0);
+
   return (
     <MarketingChrome>
-      <section className="section hero" style={{ paddingTop: "4rem" }}>
-        <div className="hero-split">
-          <div>
-            <div className="eyebrow">SEO, AEO and GEO in one platform</div>
-            <h1>Everything an SEO agency does, without the agency.</h1>
-            <p className="lede">
-              Enter a website. It gets crawled for real, checked against {CATALOG_SIZE} audit criteria, and handed
-              back with the fixes already written: titles, schema, sitemaps, internal links, content briefs, local
-              markup and link prospects. You approve the work. It ships and reports on what changed.
-            </p>
-            <UrlStart />
-            <p className="small muted" style={{ marginTop: "0.85rem", marginBottom: 0 }}>
-              No account, no card, no integrations. The first run takes about a minute.
-            </p>
-          </div>
-
-          <div>
-            <div className="mock">
-              <div className="mock-bar">
-                <i /><i /><i />
-                <span>seo-os / run 01</span>
-              </div>
-              <div className="mock-body">
-                <div className="mock-scores">
-                  <ScoreMock label="Search health" value={62} band="bad" />
-                  <ScoreMock label="AI readiness" value={41} band="bad" />
-                  <ScoreMock label="Authority" value={58} band="bad" />
-                  <ScoreMock label="Experience" value={79} band="warn" />
-                </div>
-                <div className="steps">
-                  <StepMock state="done" label="Crawled 40 pages, read robots.txt and 2 sitemaps" />
-                  <StepMock state="done" label="31 findings, 18 with the fix generated" />
-                  <StepMock state="done" label="6 content briefs written from the gaps" />
-                  <StepMock state="running" label="Waiting on you: 18 approvals, 4 need reading first" />
-                </div>
-              </div>
-            </div>
-            <p className="tiny faint center" style={{ marginTop: "0.6rem", marginBottom: 0 }}>
-              An illustration of the run screen. Your numbers come from your own site.
-            </p>
-          </div>
+      {/* 01 — The swap and the number. No input above the fold. */}
+      <section className="section hero" style={{ paddingTop: "3.4rem" }}>
+        <div className="eyebrow">A digital marketing agency, staffed by {headcount()} agents</div>
+        <h1 className="hero-title">Everything an agency does. None of the agency.</h1>
+        <p className="hero-lede">
+          Sixty-seven specialists across search and content. They do the work, you approve it, and you can watch the
+          whole thing happen. From {priceLabel(PLANS.starter)} a month. No retainer, no minimum term, and no call to book.
+        </p>
+        <div className="hero-actions">
+          <Link href="/inside" className="button primary big-button">Look inside a live account</Link>
+          <Link href="/the-firm" className="button big-button">Meet the {headcount()}</Link>
         </div>
+        <p className="small faint" style={{ marginTop: "0.9rem" }}>
+          Nothing to enter. The account below is real and the audit inside it runs against our own site.
+        </p>
       </section>
 
+      {/* 02 — Self-selection. The most valuable interaction on the page. */}
       <section className="section section-tight">
-        <div className="stat-band">
-          <div><div className="n">{CATALOG_SIZE}</div><div className="l">Audit criteria, each with severity, impact and effort</div></div>
-          <div><div className="n">12</div><div className="l">Answer engines checked for crawl access</div></div>
-          <div><div className="n">0</div><div className="l">Model calls needed for an audit</div></div>
-          <div><div className="n">You</div><div className="l">Approve everything written in your voice</div></div>
+        <h2 className="section-title small-title">Four desks. Pick the one you came for.</h2>
+        <div className="desk-tiles">
+          {DESKS.map((desk) => {
+            const manager = managerFor(desk);
+            const open = manager.status === "live";
+            return (
+              <Link key={desk.key} href={desk.path} className={open ? "desk-tile" : "desk-tile soon"}>
+                <span className="desk-name">{desk.label}</span>
+                <span className="desk-count">
+                  {open ? `${manager.team.length} specialists` : `Opens ${manager.opens}`}
+                </span>
+                <span className="desk-line">{desk.headline}</span>
+                <span className="desk-price">{deskPrice(desk)}</span>
+              </Link>
+            );
+          })}
+        </div>
+        <p className="small muted" style={{ marginTop: "0.9rem" }}>
+          Two of these are built and running. Two are not, and their pages say so rather than implying otherwise.{" "}
+          <Link href={WHOLE_AGENCY.path}>All of them on one plan</Link>.
+        </p>
+      </section>
+
+      {/* 03 — Proof before claims. */}
+      <section className="section">
+        <div className="eyebrow">A week, in the shape it actually takes</div>
+        <h2 className="section-title">You can see what happened, and when, and who did it.</h2>
+        <p className="section-lede">
+          An agency is a black box: you pay, and things happen in a Slack channel you are not in. Every action here is
+          logged with the agent that took it, including the ones that stopped.
+        </p>
+        <div className="runlog">
+          {WEEK.map((row) => (
+            <div key={row.t + row.who} className={row.blocked ? "runrow blocked" : "runrow"}>
+              <span className="rt">{row.t}</span>
+              <span className="rw">{row.who}</span>
+              <span className="rx">{row.what}</span>
+            </div>
+          ))}
+        </div>
+        <p className="small faint" style={{ marginTop: "0.7rem" }}>
+          A worked example of the shape of a week, not a specific client. The real thing, running live against our own
+          site, is on <Link href="/inside">the inside page</Link>.
+        </p>
+      </section>
+
+      {/* 04 — Price anchoring, and the product promise made literal. */}
+      <section className="section section-alt">
+        <div className="eyebrow">Forty hours against two decisions</div>
+        <h2 className="section-title">The retainer, line by line, with the lines that are still yours.</h2>
+        <p className="section-lede">
+          A composite of published UK mid-market retainer rates at £160 an hour. Every line a desk now covers is struck
+          through, with what replaced it underneath. Two lines are not struck through, and they are the whole of what
+          you do.
+        </p>
+        <div className="retainer">
+          {RETAINER.map((row) => (
+            <div key={row.line} className="ret-row">
+              <div className="ret-line"><s>{row.line}</s></div>
+              <div className="ret-hrs"><s>{row.hrs}h</s></div>
+              <div className="ret-amt"><s>£{row.amount}</s></div>
+              <div className="ret-now">{row.now}</div>
+            </div>
+          ))}
+          <div className="ret-row keep">
+            <div className="ret-line"><strong>Approving the strategy</strong></div>
+            <div className="ret-hrs">&mdash;</div>
+            <div className="ret-amt">&mdash;</div>
+            <div className="ret-now">Once, at the start. One message, not five.</div>
+          </div>
+          <div className="ret-row keep">
+            <div className="ret-line"><strong>Approving finished work</strong></div>
+            <div className="ret-hrs">&mdash;</div>
+            <div className="ret-amt">&mdash;</div>
+            <div className="ret-now">A queue, batched weekly. Also yours.</div>
+          </div>
+          <div className="ret-total">
+            <span>Agency, {agencyHours} hours</span>
+            <span className="was">£{agencyTotal.toLocaleString("en-GB")}</span>
+            <span>This, everything above</span>
+            <span className="now">{priceLabel(PLANS.growth)} a month</span>
+          </div>
         </div>
       </section>
 
+      {/* 05 — The differentiator, surfaced. */}
       <section className="section">
-        <div className="eyebrow">The gap</div>
-        <h2 className="section-title">Every tool tells you what is wrong. Then it stops.</h2>
+        <div className="eyebrow">The roster</div>
+        <h2 className="section-title">Sixty-seven specialists, and each one publishes what it will not do.</h2>
         <p className="section-lede">
-          That is the whole category. A company with an enterprise SEO subscription still needs somebody to read
-          the audit, decide what matters, write the content, brief a developer, run the outreach and explain the
-          results. That somebody costs between two and fifteen thousand a month, and the tool is a line item
-          inside their cost base.
+          Every agent is declared with the tools it may touch and the one thing it refuses, checked when the runtime
+          starts rather than written on a page. Nobody generating slop publishes constraints.
         </p>
-        <div className="feature-grid">
-          {PRINCIPLES.map((item) => (
-            <div className="feature" key={item.title}>
-              <h3>{item.title}</h3>
-              <p>{item.body}</p>
+        <div className="card-grid">
+          {live.flatMap((desk) => managerFor(desk).team.slice(0, 2)).slice(0, 4).map((member) => (
+            <div className="card" key={member.key}>
+              <h3>{member.name}</h3>
+              <p>{member.role}</p>
+              <span className="never-line"><b>Never</b>{member.never}</span>
+            </div>
+          ))}
+        </div>
+        <p style={{ marginTop: "1rem" }}>
+          <Link href="/the-firm" className="button">See all {headcount()}, and every refusal</Link>
+        </p>
+      </section>
+
+      {/* 06 — Publishing limits is the cheapest trust available. */}
+      <section className="section section-alt">
+        <div className="eyebrow">Where it stops</div>
+        <h2 className="section-title">Four things it refuses to do, in writing, before you pay.</h2>
+        <div className="card-grid">
+          {REFUSALS.map((r) => (
+            <div className="card muted-card" key={r.title}>
+              <h3>{r.title}</h3>
+              <p>{r.body}</p>
             </div>
           ))}
         </div>
       </section>
 
-      <section className="section section-alt">
-        <div style={{ padding: "0 1.5rem" }}>
-          <div className="eyebrow">What it covers</div>
-          <h2 className="section-title">Six departments, one run.</h2>
-          <p className="section-lede">
-            An agency splits this across a technical lead, a content strategist, a writer, a local specialist and
-            an outreach team. Here they are missions that run on a schedule and report into the same place.
-          </p>
-          <div className="feature-grid">
-            {DEPARTMENTS.map((item) => (
-              <div className="feature" key={item.title}>
-                <span className="tag">{item.tag}</span>
-                <h3>{item.title}</h3>
-                <p>{item.body}</p>
-              </div>
-            ))}
+      {/* 07 — The price, on the page, with no call. */}
+      <section className="section">
+        <div className="eyebrow">Price</div>
+        <h2 className="section-title">On this page, because hiding it tells you how an agency charges.</h2>
+        <div className="stat-row">
+          <div className="stat">
+            <span className="stat-value">{priceLabel(PLANS.free)}</span>
+            <span className="stat-label">The audit. No account, no card, no time limit.</span>
           </div>
-          <p style={{ marginTop: "1.6rem" }}>
-            <Link href="/platform">The full breakdown, department by department</Link>
-          </p>
+          <div className="stat">
+            <span className="stat-value">{priceLabel(PLANS.starter)}</span>
+            <span className="stat-label">Per site, per month. The search desk, fixes applied.</span>
+          </div>
+          <div className="stat">
+            <span className="stat-value">{priceLabel(PLANS.growth)}</span>
+            <span className="stat-label">Per site, per month. Every desk, content and links included.</span>
+          </div>
         </div>
+        <p style={{ marginTop: "1rem" }}>
+          No onboarding fee, no minimum term. Cancel and the fixes stay applied, because they are in your CMS rather
+          than in our dashboard. <Link href="/pricing">What each plan permits</Link>.
+        </p>
       </section>
 
-      <section className="section">
-        <div className="eyebrow">AI answers</div>
-        <h2 className="section-title">Ranking first is worth less every quarter.</h2>
+      {/* 08 — The audit, as the close rather than the opener. */}
+      <section className="section section-alt">
+        <div className="eyebrow">Now, if you want it</div>
+        <h2 className="section-title">See what we would fix on your site this week.</h2>
         <p className="section-lede">
-          More searches end inside an answer than on a results page. That answer is assembled from pages a model
-          could reach, parse and trust. Most sites fail at the first step and have no idea, because nothing they
-          use checks it.
+          {CATALOG_SIZE} checks over a real crawl, in about four minutes. It runs in your browser, the results stay
+          there, and you can export everything. No account and no card, now or later.
         </p>
-        <div className="feature-grid">
-          <div className="feature">
-            <span className="tag">Access</span>
-            <h3>Twelve crawlers, checked individually</h3>
-            <p>
-              GPTBot, OAI-SearchBot, ClaudeBot, PerplexityBot, Google-Extended, Applebot-Extended and the rest.
-              Blocking them is a legitimate decision. Blocking them by accident, through a robots.txt somebody
-              copied in 2023, is not.
-            </p>
-          </div>
-          <div className="feature">
-            <span className="tag">Extraction</span>
-            <h3>What arrives before JavaScript runs</h3>
-            <p>
-              If the served HTML is an empty shell, an engine that does not execute scripts sees nothing. This is
-              measured per page and reported as a finding, not a footnote.
-            </p>
-          </div>
-          <div className="feature">
-            <span className="tag">Citability</span>
-            <h3>Passages worth quoting</h3>
-            <p>
-              Direct answers near the top, specific figures, named authors, sourced claims, FAQ structure and an
-              entity a model can resolve. Each one is checked, and each gap comes with the block that fills it.
-            </p>
-          </div>
-          <div className="feature">
-            <span className="tag">Measurement</span>
-            <h3>Whether they actually name you</h3>
-            <p>
-              Readiness is the theory. This is the fact: a dozen questions a buyer would really type, put to a
-              model, read for whether you were named, whether you were linked, and who got named instead. On your
-              own provider key, at cost, rather than as a subscription.
-            </p>
-          </div>
-          <div className="feature">
-            <span className="tag">The catch nobody mentions</span>
-            <h3>A fix injected by script is a fix no engine sees</h3>
-            <p>
-              GPTBot, ClaudeBot and PerplexityBot fetch raw HTML and never run JavaScript. So the popular pixel
-              tools, the ones that promise to fix your SEO from a script tag, produce changes the answer engines
-              cannot read and that vanish the day you cancel. We detect that, name the tool doing it, and write
-              into the CMS instead.
-            </p>
-          </div>
-        </div>
-        <p style={{ marginTop: "1.6rem" }}>
-          <Link href="/ai-search">How AEO and GEO work here</Link>
-        </p>
+        <UrlStart />
       </section>
 
-      <section className="section section-alt">
-        <div style={{ padding: "0 1.5rem" }}>
-          <div className="eyebrow">The loop</div>
-          <h2 className="section-title">Run, approve, ship, measure. Then do it again.</h2>
-          <div className="timeline" style={{ marginTop: "2rem", maxWidth: "62ch" }}>
-            <div className="timeline-item">
-              <div className="timeline-when">Minute one</div>
-              <h3>It crawls</h3>
-              <p>
-                robots.txt, every sitemap it can find, then the pages themselves. You watch the count climb. Nothing
-                is stubbed and no result is cached from somebody else&apos;s site.
-              </p>
-            </div>
-            <div className="timeline-item">
-              <div className="timeline-when">Minute two</div>
-              <h3>It finds, and it fixes</h3>
-              <p>
-                The full catalogue runs. Every finding carries why it matters, how much it is worth, how hard it is,
-                and where it was found. Where a fix can be generated, it already has been.
-              </p>
-            </div>
-            <div className="timeline-item">
-              <div className="timeline-when">Same session</div>
-              <h3>It plans the content</h3>
-              <p>
-                A topic model from your own pages, the gaps against your competitors and your target terms, then
-                briefs with outlines, answer blocks, FAQs, internal links, meta and schema.
-              </p>
-            </div>
-            <div className="timeline-item">
-              <div className="timeline-when">When you are ready</div>
-              <h3>You approve</h3>
-              <p>
-                Batched by risk. Low-risk reversible items can be set to auto-approve after a delay you choose.
-                Anything in your voice waits for you, and anything site-wide waits for you forever.
-              </p>
-            </div>
-            <div className="timeline-item">
-              <div className="timeline-when">Next run</div>
-              <h3>It reports the difference</h3>
-              <p>
-                Not the current state. The difference: what cleared, what appeared, what got worse, which pages
-                changed and which way the scores moved, against the run before it.
-              </p>
-            </div>
-          </div>
-          <p style={{ marginTop: "0.5rem" }}>
-            <Link href="/how-it-works">A full run, step by step</Link>
-          </p>
-        </div>
-      </section>
-
+      {/* 09 — The last fear is effort, not price. */}
       <section className="section">
-        <div className="eyebrow">Questions</div>
-        <h2 className="section-title">The things people ask first.</h2>
-        <div style={{ marginTop: "1.5rem" }}>
-          {FAQS.map((item) => (
-            <div className="faq-item" key={item.q}>
-              <h3>{item.q}</h3>
+        <div className="eyebrow">The first 72 hours</div>
+        <h2 className="section-title">How much of your time this actually takes.</h2>
+        <div className="card-grid">
+          <div className="card">
+            <span className="small faint">Day 0</span>
+            <h3>Connect, once</h3>
+            <p>
+              Search Console, Analytics and your CMS. Whatever is missing becomes a named gap, and every later report
+              says which capability is degraded and why rather than quietly scoring around it.
+            </p>
+          </div>
+          <div className="card">
+            <span className="small faint">Day 3</span>
+            <h3>One decision</h3>
+            <p>
+              {DIRECTOR.name} assembles a single message: the findings worth acting on, the point of view with its
+              ladder, the tone recommendation if one could be measured, and what could not be. You agree or say where
+              it is wrong.
+            </p>
+          </div>
+          <div className="card">
+            <span className="small faint">Weekly</span>
+            <h3>The queue</h3>
+            <p>
+              Your standing job and nothing else. Approvals are batched, because five notifications about five alt tags
+              is a failure of the system rather than a busy week.
+            </p>
+          </div>
+        </div>
+
+        <div className="faq" style={{ marginTop: "2rem" }}>
+          {FAQ.map((item) => (
+            <details key={item.q}>
+              <summary>{item.q}</summary>
               <p>{item.a}</p>
-            </div>
+            </details>
           ))}
         </div>
       </section>
 
-      <CtaBand secondary={{ href: "/pricing", label: "See pricing" }} />
+      <CtaBand
+        title="Look inside before you give us anything"
+        body="A real account, running against our own site, with the findings we have not fixed still in it. No signup, no URL, no email."
+        primary={{ href: "/inside", label: "Look inside a live account" }}
+        secondary={{ href: "/pricing", label: "See the prices" }}
+      />
     </MarketingChrome>
-  );
-}
-
-function ScoreMock({ label, value, band }: { label: string; value: number; band: string }) {
-  const colour = band === "good" ? "var(--ok)" : band === "warn" ? "var(--warn)" : "var(--bad)";
-  return (
-    <div className="card score card-flat">
-      <div className="label">{label}</div>
-      <div className="value" style={{ color: colour }}>{value}</div>
-      <div className="meter"><span style={{ width: `${value}%`, background: colour }} /></div>
-    </div>
-  );
-}
-
-function StepMock({ state, label }: { state: string; label: string }) {
-  return (
-    <div className={`step step-${state}`}>
-      <span className="step-dot" />
-      <span className="small">{label}</span>
-    </div>
   );
 }

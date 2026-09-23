@@ -29,15 +29,15 @@ export function SiteHeader() {
           <span className="dot" aria-hidden="true" />
           {BRAND}
         </Link>
+        {/* Ordered by what a stranger is choosing between, not by what we built first. */}
         <nav className="site-nav">
-          <Link href="/platform" className="hide-sm">Platform</Link>
-          <Link href="/ai-search" className="hide-sm">AI search</Link>
-          <Link href="/how-it-works" className="hide-sm">How it works</Link>
-          <Link href="/compare" className="hide-sm">Compare</Link>
-          <Link href="/tools" className="hide-sm">Free tools</Link>
+          <Link href="/seo" className="hide-sm">Search</Link>
+          <Link href="/content" className="hide-sm">Content</Link>
+          <Link href="/the-firm" className="hide-sm">The firm</Link>
+          <Link href="/inside" className="hide-sm">Look inside</Link>
           <Link href="/pricing">Pricing</Link>
           <Link href="/app/signin">Sign in</Link>
-          <Link href="/app/new" className="cta">Audit my site</Link>
+          <Link href="/inside" className="cta">Look inside</Link>
         </nav>
       </div>
     </header>
@@ -54,26 +54,36 @@ export function SiteFooter() {
             {BRAND}
           </div>
           <p className="small muted" style={{ maxWidth: "30ch" }}>
-            The work an agency does, done by software you can watch, question and stop.
+            Everything an agency does, done by specialists you can watch, question and stop.
           </p>
         </div>
         <div>
-          <h4>Product</h4>
-          <Link href="/platform">What it does</Link>
-          <Link href="/ai-search">AI answer visibility</Link>
+          <h4>The desks</h4>
+          <Link href="/seo">Search</Link>
+          <Link href="/content">Content</Link>
+          <Link href="/paid">Paid ads</Link>
+          <Link href="/social">Social</Link>
+          <Link href="/the-whole-agency">Every desk, one plan</Link>
+        </div>
+        <div>
+          <h4>The firm</h4>
+          <Link href="/the-firm">All 67 specialists</Link>
+          <Link href="/inside">Look inside a live account</Link>
           <Link href="/how-it-works">How a run works</Link>
+          <Link href="/platform">Every capability</Link>
           <Link href="/pricing">Pricing</Link>
         </div>
         <div>
           <h4>Compare</h4>
-          <Link href="/compare">All comparisons</Link>
-          <Link href="/compare/search-atlas">Vs Search Atlas</Link>
+          <Link href="/vs">Against an agency</Link>
+          <Link href="/vs/seo-agency">Vs an SEO agency</Link>
+          <Link href="/vs/content-agency">Vs a content agency</Link>
+          <Link href="/compare">Against other tools</Link>
           <Link href="/compare/semrush">Vs Semrush</Link>
-          <Link href="/compare/profound">Vs Profound</Link>
-          <Link href="/compare/seo-agency">Vs an agency</Link>
         </div>
         <div>
           <h4>Learn</h4>
+          <Link href="/library">The check library</Link>
           <Link href="/tools">Free tools</Link>
           <Link href="/glossary">Glossary</Link>
           <Link href="/ai-crawlers-and-javascript">AI crawlers and JavaScript</Link>
@@ -91,7 +101,8 @@ export function SiteFooter() {
         </div>
         <div>
           <h4>Start</h4>
-          <Link href="/app/new">Audit a site</Link>
+          <Link href="/inside">Look inside a live account</Link>
+          <Link href="/app/new">See what we would fix</Link>
           <Link href="/app/signin">Sign in</Link>
         </div>
       </div>
@@ -104,9 +115,9 @@ export function SiteFooter() {
 }
 
 export function CtaBand({
-  title = "Audit a real site in about a minute",
+  title = "See what we would fix on your site this week",
   body = "No account, no card, no connections. Enter an address and watch the crawl run. You keep everything it produces.",
-  primary = { href: "/app/new", label: "Run a free audit" },
+  primary = { href: "/app/new", label: "See what we would fix this week" },
   secondary,
 }: {
   title?: string;

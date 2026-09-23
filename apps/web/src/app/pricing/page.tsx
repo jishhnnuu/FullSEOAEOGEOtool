@@ -1,6 +1,7 @@
 import Link from "next/link";
 
 import { CtaBand, MarketingChrome } from "@/components/marketing";
+import { DESKS, deskPrice, managerFor } from "@/lib/desks";
 import { EXCLUDED_FOR, PLANS, PLAN_ORDER, priceLabel } from "@/lib/plans";
 
 export const metadata = {
@@ -29,10 +30,10 @@ const CARDS = PLAN_ORDER.map((id) => {
     excludes: EXCLUDED_FOR[id],
     cta:
       id === "free"
-        ? { href: "/app/new", label: "Run an audit" }
+        ? { href: "/app/new", label: "See what we would fix" }
         : id === "scale"
           ? { href: "/app/new", label: "Try it on one site first" }
-          : { href: "/app/new", label: "Start with a free audit" },
+          : { href: "/app/new", label: "See what we would fix first" },
   };
 });
 
@@ -64,6 +65,39 @@ export default function PricingPage() {
           A deterministic crawl costs nothing to run: no model call, no data vendor, no per-seat licence behind
           it. Charging for it would be charging for nothing. What you pay for is the work that follows: the
           scheduling, the publishing, the content, the outreach and the record of what changed.
+        </p>
+      </section>
+
+      {/*
+        * Which desk each plan opens.
+        *
+        * The desks are what the work is; the plans are what you pay. Keeping
+        * those separate is what stops a service page inventing a price of its
+        * own, which is exactly the pricing-grid dishonesty this codebase
+        * refuses everywhere else.
+        */}
+      <section className="section section-tight">
+        <h2 className="section-title small-title">Which desks each plan opens</h2>
+        <div className="desk-tiles" style={{ marginTop: "0.9rem" }}>
+          {DESKS.map((desk) => {
+            const manager = managerFor(desk);
+            const open = manager.status === "live";
+            return (
+              <Link key={desk.key} href={desk.path} className={open ? "desk-tile" : "desk-tile soon"}>
+                <span className="desk-name">{desk.label}</span>
+                <span className="desk-count">
+                  {open ? `${manager.team.length} specialists` : `Opens ${manager.opens}`}
+                </span>
+                <span className="desk-line">{desk.headline}</span>
+                <span className="desk-price">{deskPrice(desk)}</span>
+              </Link>
+            );
+          })}
+        </div>
+        <p className="small muted" style={{ marginTop: "0.9rem", maxWidth: "72ch" }}>
+          A desk is the work. A plan is the price. The two desks that are built open on the plans below, and the two
+          that are not say so with the quarter they open rather than appearing in a grid as if they were available.{" "}
+          <Link href="/the-whole-agency">Every desk on one plan</Link>.
         </p>
       </section>
 

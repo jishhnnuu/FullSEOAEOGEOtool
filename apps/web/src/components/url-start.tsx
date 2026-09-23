@@ -9,7 +9,7 @@ import { useState } from "react";
  * It does not collect an email first. A prospect who cannot see a real finding
  * before handing over an address has been given a brochure, not a tool.
  */
-export function UrlStart({ label = "Audit my site", size = "big" }: { label?: string; size?: "big" | "small" }) {
+export function UrlStart({ label = "See what we would fix", size = "big" }: { label?: string; size?: "big" | "small" }) {
   const router = useRouter();
   const [value, setValue] = useState("");
 

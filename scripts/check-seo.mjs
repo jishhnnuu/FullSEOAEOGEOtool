@@ -40,6 +40,38 @@ function pages(dir) {
   return out;
 }
 
+/**
+ * Count the h1 elements a page renders, following the local components it
+ * imports one level deep.
+ *
+ * One level is enough for the shape this codebase uses, where a thin route
+ * file sets its metadata and returns a single shared component. Going deeper
+ * would start counting h1s in components that are never rendered on this
+ * route, which would be a worse answer than the one this gives.
+ */
+function countH1(source, file) {
+  let count = (source.match(/<h1[\s>]/g) ?? []).length;
+  const imports = [...source.matchAll(/from\s+"@\/components\/([a-z0-9-]+)"/g)].map((m) => m[1]);
+  for (const name of imports) {
+    for (const ext of [".tsx", ".ts"]) {
+      const candidate = join(ROOT, "apps/web/src/components", name + ext);
+      let body;
+      try {
+        body = readFileSync(candidate, "utf8");
+      } catch {
+        continue;
+      }
+      // Only components this page actually renders, not every import.
+      const exported = [...body.matchAll(/export function ([A-Za-z0-9_]+)/g)].map((m) => m[1]);
+      const rendered = exported.filter((fn) => new RegExp(`<${fn}[\\s/>]`).test(source));
+      if (rendered.length === 0) continue;
+      count += (body.match(/<h1[\s>]/g) ?? []).length;
+      break;
+    }
+  }
+  return count;
+}
+
 const problems = [];
 
 for (const file of pages(APP)) {
@@ -62,8 +94,14 @@ for (const file of pages(APP)) {
 
   // Every page needs exactly one H1. More than one means the page has not
   // decided what it is about; none means a model has no title to anchor on.
-  const h1s = (source.match(/<h1[\s>]/g) ?? []).length;
-  if (h1s === 0) problems.push(`${label}: no <h1>.`);
+  //
+  // A page that delegates its whole body to one shared component still renders
+  // exactly one h1, so the count follows the local components it imports. The
+  // alternative is duplicating markup into four near-identical files purely to
+  // satisfy a static check, which is the check distorting the code rather than
+  // measuring it.
+  const h1s = countH1(source, file);
+  if (h1s === 0) problems.push(`${label}: no <h1>, in the page or in the components it imports.`);
   if (h1s > 1) problems.push(`${label}: ${h1s} <h1> elements. There should be one.`);
 
   // A description seeds the snippet. Dynamic routes set it in generateMetadata.

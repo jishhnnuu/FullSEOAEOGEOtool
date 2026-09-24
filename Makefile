@@ -54,15 +54,17 @@ web:
 docs: $(VENV)
 	$(PY) scripts/generate_reference.py
 	$(PY) scripts/roster_to_ts.py
+	$(PY) scripts/ads_to_ts.py
 
 # Fails if the committed reference is stale. Run in CI so a change to a tool,
 # check, agent or mission cannot land without its documentation.
 docs-check: $(VENV)
 	$(PY) scripts/generate_reference.py
 	$(PY) scripts/roster_to_ts.py
-	@git diff --quiet -- docs/reference apps/web/src/lib/roster.generated.ts || \
+	$(PY) scripts/ads_to_ts.py
+	@git diff --quiet -- docs/reference apps/web/src/lib/roster.generated.ts apps/web/src/engine/ads.generated.ts || \
 		(echo "Generated files are stale. Run 'make docs' and commit."; \
-		 git diff --stat -- docs/reference apps/web/src/lib/roster.generated.ts; exit 1)
+		 git diff --stat -- docs/reference apps/web/src/lib/roster.generated.ts apps/web/src/engine/ads.generated.ts; exit 1)
 
 test: $(VENV)
 	$(PY) -m pytest tests/ -q

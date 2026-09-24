@@ -2,7 +2,7 @@
 
 # Mission reference
 
-**14 missions.** A mission is a declarative workflow in
+**17 missions.** A mission is a declarative workflow in
 `packages/seoos/missions/workflows/`. Its steps are either deterministic
 tool calls or agents, arranged by dependency. Steps whose dependencies
 are all satisfied run concurrently, in waves.
@@ -25,6 +25,9 @@ rather than restarting.
 | `local_cycle` | 8 | 5 | $8 | `0 8 * * 2` | local |
 | `monthly_audit` | 14 | 6 | $20 | `0 5 1 * *` | any business |
 | `onboard_site` | 11 | 7 | $12 | on demand | any business |
+| `paid_build` | 9 | 7 | $26 | on demand | any business |
+| `paid_readiness` | 8 | 6 | $16 | on demand | any business |
+| `paid_run` | 6 | 3 | $14 | on demand | any business |
 | `social_discovery` | 8 | 7 | $18 | on demand | any business |
 | `social_engine` | 7 | 6 | $20 | on demand | any business |
 | `social_pulse` | 3 | 3 | $10 | on demand | any business |
@@ -323,6 +326,87 @@ Takes a new site from signup to a running programme. Produces a real audit befor
 | `schedule` | tool | `workflow.schedule_mission` | `report` | - | resolve |
 | `schedule_audit` | tool | `workflow.schedule_mission` | `report` | - | resolve |
 | `notify` | tool | `report.notify` | `schedule` | - | resolve |
+
+## `paid_build` — Build the campaigns, paused, and get them approved
+
+Turns an approved plan into real campaigns in the real platforms, every one of them paused. The offer is written first, the creative is produced to each placement's exact size and safe zone, every advert is checked against policy and character limits before submission, and the whole tree is verified against the plan before a person is asked to activate anything. Nothing here can spend a penny.
+
+**Budget:** $26.00 · **Timeout:** 70 min · **Concurrency:** 3
+
+### Execution order
+
+1. `offer`
+2. `audience`, `creative_concepts` (concurrent)
+3. `copy`, `renders` (concurrent)
+4. `policy`
+5. `build`
+6. `inspect`
+7. `gate`
+
+### Steps
+
+| Step | Type | Runs | Depends on | Condition | On error |
+|---|---|---|---|---|---|
+| `offer` | agent | `offer-strategist` | - | - | resolve |
+| `audience` | agent | `audience-architect` | `offer` | - | resolve |
+| `creative_concepts` | agent | `paid-creative-director` | `offer` | - | resolve |
+| `copy` | agent | `ad-copywriter` | `creative_concepts`, `audience` | - | resolve |
+| `renders` | agent | `creative-producer` | `creative_concepts` | - | resolve |
+| `policy` | agent | `policy-checker` | `copy`, `renders` | - | resolve |
+| `build` | agent | `campaign-builder` | `policy` | - | resolve |
+| `inspect` | agent | `launch-inspector` | `build` | - | resolve |
+| `gate` | gate | - | `inspect` | `inspect exists` | resolve |
+
+## `paid_readiness` — Can this account spend money yet
+
+The first mission of the paid desk, and the one that can stop the rest of it. Verifies conversion tracking by round trip, reads any advertising that already exists, checks whether the budget can buy what it is being asked to buy, and produces one verdict the client reads before money is discussed. Nothing else on this desk runs until this has finished.
+
+**Budget:** $16.00 · **Timeout:** 45 min · **Concurrency:** 3
+
+### Execution order
+
+1. `access`
+2. `state`
+3. `measurement`, `existing`, `demand` (concurrent)
+4. `budget`
+5. `verdict`
+6. `gate`
+
+### Steps
+
+| Step | Type | Runs | Depends on | Condition | On error |
+|---|---|---|---|---|---|
+| `access` | tool | `ads.platforms` | - | - | resolve |
+| `state` | tool | `report.site_state` | `access` | - | resolve |
+| `measurement` | agent | `measurement-engineer` | `state` | - | resolve |
+| `existing` | agent | `paid-auditor` | `state` | - | resolve |
+| `demand` | agent | `demand-analyst` | `state` | - | resolve |
+| `budget` | agent | `budget-planner` | `demand`, `existing` | - | resolve |
+| `verdict` | agent | `paid-director` | `measurement`, `budget` | - | resolve |
+| `gate` | gate | - | `verdict` | `verdict exists` | resolve |
+
+## `paid_run` — The daily and weekly work of a live account
+
+What happens after launch. Pacing against the curve and the ceiling we enforce ourselves, waste removed weekly rather than reported, creative judged only once it has enough impressions to judge, and a report whose headline is the business's own number rather than the sum of what the platforms claim.
+
+**Budget:** $14.00 · **Timeout:** 40 min · **Concurrency:** 3
+
+### Execution order
+
+1. `pace`, `waste`, `creative`, `landing` (concurrent)
+2. `reconcile`
+3. `report`
+
+### Steps
+
+| Step | Type | Runs | Depends on | Condition | On error |
+|---|---|---|---|---|---|
+| `pace` | agent | `pacing-manager` | - | - | resolve |
+| `waste` | agent | `waste-hunter` | - | - | resolve |
+| `creative` | agent | `creative-analyst` | - | - | resolve |
+| `landing` | agent | `landing-experience-analyst` | - | - | resolve |
+| `reconcile` | agent | `attribution-analyst` | `pace`, `waste` | - | resolve |
+| `report` | agent | `paid-reporter` | `reconcile`, `creative`, `landing` | - | resolve |
 
 ## `social_discovery` — Read the field before posting anything
 

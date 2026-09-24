@@ -64,6 +64,10 @@ ALWAYS_HUMAN = {
     # recalled, the audience is theirs, and a bad one is screenshotted before
     # it is deleted. No autonomy level authorises it.
     "social_publish",
+    # Starting or increasing paid spend. The only actions in this product that
+    # turn a mistake straight into an invoice. No autonomy level authorises
+    # either, on any plan, ever.
+    "ads_spend",
 }
 
 

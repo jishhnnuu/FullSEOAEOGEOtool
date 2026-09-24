@@ -1,0 +1,185 @@
+key: paid_build
+name: Build the campaigns, paused, and get them approved
+description: >
+  Turns an approved plan into real campaigns in the real platforms, every one
+  of them paused. The offer is written first, the creative is produced to each
+  placement's exact size and safe zone, every advert is checked against policy
+  and character limits before submission, and the whole tree is verified
+  against the plan before a person is asked to activate anything. Nothing here
+  can spend a penny.
+budget_usd: 26.0
+timeout_minutes: 70
+concurrency: 3
+tags: [paid, build]
+
+steps:
+  - id: offer
+    type: agent
+    agent: offer-strategist
+    label: Decide what the advert is actually about
+    budget_usd: 4.0
+    task: >
+      Write the offer in one sentence: what the person gets, what it costs
+      them, and when. A product is not an offer. "Accounting software" is a
+      product; "your first VAT return filed by a human, free" is an offer.
+
+      Name the objection it answers. Every market has one thing that stops
+      people buying, and the strongest offers are that objection dismantled.
+
+      Check every claim against the fact ledger. An invented guarantee is a
+      policy rejection and a legal problem, in that order, and a deadline
+      that resets on refresh is a misrepresentation the platforms now check
+      against the landing page.
+
+      If the landing page does not mention the offer, say so. That is a page
+      fix before it is an advert, and it goes to the desk that owns pages.
+
+  - id: audience
+    type: agent
+    agent: audience-architect
+    label: Who to target, and who to exclude
+    needs: [offer]
+    context: [offer]
+    budget_usd: 2.0
+    task: >
+      Produce an inclusion list and an exclusion list, both with sizes.
+
+      The exclusions usually matter more. Existing customers excluded from
+      acquisition, recent converters excluded, the office network excluded. A
+      business paying to reacquire customers it already has is the commonest
+      silent waste in paid social and it looks like success in the reporting.
+
+      Propose the first-party list before any interest targeting, and confirm
+      the advertiser has a lawful basis to upload it. Ask, record the answer,
+      and do not proceed on a shrug.
+
+      Where the platform's broad delivery will beat anything hand-built, say
+      so. And where the offer falls in a restricted category, build the plan
+      without the targeting that category loses by law rather than building
+      it and having it rejected.
+
+  - id: creative_concepts
+    type: agent
+    agent: paid-creative-director
+    label: Three to five concepts, each answering a different objection
+    needs: [offer]
+    context: [offer]
+    budget_usd: 4.0
+    task: >
+      Turn the approved point of view into distinct concepts. Each must
+      ladder to it; none may invent a second brand voice.
+
+      Each concept answers a different objection, so the test compares
+      arguments rather than colours. A test between a blue button and a green
+      button produces a winner by chance and teaches nothing.
+
+      The idea lands in the first three seconds. Check the safe box for every
+      placement before signing anything off: on Reels nearly half the frame
+      is platform interface, and a price in the bottom third is not in the
+      advert however good it looks in the timeline.
+
+  - id: copy
+    type: agent
+    agent: ad-copywriter
+    label: Write to each platform's limits and idiom
+    needs: [creative_concepts, audience]
+    context: [offer, creative_concepts, audience]
+    budget_usd: 4.0
+    task: >
+      Same offer, different crafts. A Google responsive search ad wants
+      fifteen genuinely different headlines at thirty characters and four
+      descriptions at ninety. Meta wants one paragraph of about a hundred and
+      twenty-five characters whose first line earns the second.
+
+      Check every field against its limit before it leaves. Platforms do not
+      warn you, they truncate, and the preview shows you the version you
+      typed rather than the version that will run.
+
+      Then run the policy check. A disapproval is an inconvenience; a pattern
+      of them restricts the account. Where something blocks, write the
+      rewrite rather than handing the problem back.
+
+  - id: renders
+    type: agent
+    agent: creative-producer
+    label: Every size, cropped to a focal point, inside the safe zone
+    needs: [creative_concepts]
+    context: [creative_concepts]
+    budget_usd: 2.0
+    task: >
+      Produce every distinct render the platform list needs. One 1080 by 1920
+      serves Meta Stories, TikTok and Shorts, so produce it once and apply
+      the tightest safe zone of the three.
+
+      Crop to a focal point, never to the centre, and never stretch. Check
+      format, file size, ratio and resolution locally, because an upload
+      rejection wastes the operations quota and buries the real problem.
+
+      Where a placement cannot be produced from the assets available, name it
+      rather than leaving a silent gap.
+
+  - id: policy
+    type: agent
+    agent: policy-checker
+    label: Every advert, against policy, before submission
+    needs: [copy, renders]
+    context: [copy, renders]
+    budget_usd: 2.0
+    task: >
+      Check every advert. Give the platform's own reasoning for each finding,
+      because an advertiser told "this breaks a rule" argues and an
+      advertiser told what Meta actually prohibits rewrites the line.
+
+      Declare the restricted category where one applies, and confirm the plan
+      already accounts for the targeting it loses.
+
+      Report a clean result as nothing known was tripped, never as approval
+      guaranteed.
+
+  - id: build
+    type: agent
+    agent: campaign-builder
+    label: Create everything, paused
+    needs: [policy]
+    context: [offer, audience, copy, renders, policy]
+    budget_usd: 5.0
+    task: >
+      Check the account before the first write: billing present, not
+      suspended, verified where the plan needs it, currency matching the
+      budget.
+
+      Then create the whole tree paused. Record every id as it is created. No
+      advertising platform offers a transaction, so a failure at step three of
+      five must leave nothing behind: delete in reverse order, and pause and
+      name anything that will not delete.
+
+      Read the built tree back and compare it against the approved plan. A
+      rate limit is a queue rather than a failure: back off, resume, and do
+      not report it to the client as a problem.
+
+  - id: inspect
+    type: agent
+    agent: launch-inspector
+    label: Pre-flight, and the authority to refuse
+    needs: [build]
+    context: [build, offer]
+    budget_usd: 2.0
+    task: >
+      Run the whole list. Tracking re-verified by round trip, not trusted
+      from the plan. Billing present. Destination returns 200, does not
+      redirect away from the offer, and carries the conversion tag. Every
+      advert inside its limits. Policy clean. Budget inside the approved
+      envelope. Negatives present on every search ad group. Category declared
+      where it applies.
+
+      Re-read the state the approval was given against and compare. Budgets
+      change and targets move; a plan approved three weeks ago was approved
+      against a different account.
+
+      Refuse specifically. Name the check, the finding and the remedy.
+
+  - id: gate
+    type: gate
+    label: A person activates every campaign, on every plan, always
+    when: inspect exists
+    needs: [inspect]

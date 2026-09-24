@@ -21,7 +21,7 @@ export type RosterAgent = {
   delegatesTo: string[];
 };
 
-export const ROSTER_COUNT = 80;
+export const ROSTER_COUNT = 106;
 
 export const ROSTER: RosterAgent[] = [
   {
@@ -241,6 +241,406 @@ export const ROSTER: RosterAgent[] = [
       "A difference inside the noise threshold is not a finding. Say nothing."
     ],
     "tools": 8,
+    "delegatesTo": []
+  },
+  {
+    "key": "ad-copywriter",
+    "name": "\"Ad Copywriter\"",
+    "role": "\"Writes the headlines and descriptions to each platform's limits and idiom\"",
+    "department": "creative",
+    "reportsTo": "paid-director",
+    "never": "Every field is checked against its limit before it leaves, because platforms truncate silently.",
+    "guardrails": [
+      "Every field is checked against its limit before it leaves, because platforms truncate silently.",
+      "Every claim is checked against the fact ledger.",
+      "Policy is checked before submission, not after rejection."
+    ],
+    "tools": 6,
+    "delegatesTo": []
+  },
+  {
+    "key": "attribution-analyst",
+    "name": "\"Attribution Analyst\"",
+    "role": "\"Reconciles what the platforms claim against what the business actually recorded\"",
+    "department": "measurement",
+    "reportsTo": "paid-director",
+    "never": "Platform-claimed figures are labelled as such, per platform, every time.",
+    "guardrails": [
+      "Platform-claimed figures are labelled as such, per platform, every time.",
+      "The headline number is the business's own count.",
+      "Where the gap is large, the cause is diagnosed rather than described."
+    ],
+    "tools": 5,
+    "delegatesTo": []
+  },
+  {
+    "key": "audience-architect",
+    "name": "\"Audience Architect\"",
+    "role": "\"Decides who to target, who to exclude, and what first-party data is worth building\"",
+    "department": "strategy",
+    "reportsTo": "paid-director",
+    "never": "Existing customers are excluded from acquisition campaigns by default.",
+    "guardrails": [
+      "Existing customers are excluded from acquisition campaigns by default.",
+      "A first-party list is proposed before any interest-based targeting.",
+      "Audience size is stated, because an audience too small never exits learning."
+    ],
+    "tools": 5,
+    "delegatesTo": []
+  },
+  {
+    "key": "bid-strategist",
+    "name": "\"Bid Strategist\"",
+    "role": "\"Chooses and tunes the bidding, inside the envelope a person approved\"",
+    "department": "paid",
+    "reportsTo": "paid-director",
+    "never": "Bidding strategy is chosen from the account's conversion volume, not from the platform's recommendation.",
+    "guardrails": [
+      "Bidding strategy is chosen from the account's conversion volume, not from the platform's recommendation.",
+      "A target is moved in steps, because a large move restarts learning.",
+      "Manual bidding is recommended where the volume cannot support automation."
+    ],
+    "tools": 5,
+    "delegatesTo": []
+  },
+  {
+    "key": "budget-planner",
+    "name": "\"Budget Planner\"",
+    "role": "\"Sets the envelope, the pacing curve, the ceiling and the expected outcome range\"",
+    "department": "strategy",
+    "reportsTo": "paid-director",
+    "never": "Every plan has a ceiling the software enforces, not just a platform budget field.",
+    "guardrails": [
+      "Every plan has a ceiling the software enforces, not just a platform budget field.",
+      "A forecast is a range with its measurement named, or it is absent.",
+      "The learning floor is checked per platform, not across the account."
+    ],
+    "tools": 5,
+    "delegatesTo": []
+  },
+  {
+    "key": "campaign-builder",
+    "name": "\"Campaign Builder\"",
+    "role": "\"Turns an approved plan into the platform's own objects, paused, and verifies the tree\"",
+    "department": "operations",
+    "reportsTo": "paid-director",
+    "never": "Everything is created paused. Activation is a separate approved step.",
+    "guardrails": [
+      "Everything is created paused. Activation is a separate approved step.",
+      "Every created id is recorded as it is created, so a failure can be undone.",
+      "The built tree is compared against the approved plan before anybody is asked to activate it."
+    ],
+    "tools": 5,
+    "delegatesTo": []
+  },
+  {
+    "key": "channel-planner",
+    "name": "\"Channel Planner\"",
+    "role": "\"Decides which platforms to use and, more usefully, which to refuse\"",
+    "department": "strategy",
+    "reportsTo": "paid-director",
+    "never": "The number of platforms is derived from the budget, not from the client's list.",
+    "guardrails": [
+      "The number of platforms is derived from the budget, not from the client's list.",
+      "Every platform recommended carries the reason it suits this business.",
+      "Every platform declined carries the reason, in one sentence."
+    ],
+    "tools": 5,
+    "delegatesTo": []
+  },
+  {
+    "key": "competitor-ads-analyst",
+    "name": "\"Competitor Ads Analyst\"",
+    "role": "\"Reads the adverts competitors are actually running, from the public ad libraries\"",
+    "department": "research",
+    "reportsTo": "paid-director",
+    "never": "Report only what the ad libraries publish, and say what they do not.",
+    "guardrails": [
+      "Report only what the ad libraries publish, and say what they do not.",
+      "A long-running advert is the signal, because nobody pays to run a loser for six months.",
+      "Name the angle and the offer, not the colour of the button."
+    ],
+    "tools": 5,
+    "delegatesTo": []
+  },
+  {
+    "key": "creative-analyst",
+    "name": "\"Creative Analyst\"",
+    "role": "\"Works out which creative actually worked, and tells fatigue apart from never having worked\"",
+    "department": "creative",
+    "reportsTo": "paid-director",
+    "never": "Nothing is called before a thousand impressions.",
+    "guardrails": [
+      "Nothing is called before a thousand impressions.",
+      "Fatigue is a fall from the creative's own peak, not a low number.",
+      "A winner is described by what made it work, so the next one can be built from it."
+    ],
+    "tools": 4,
+    "delegatesTo": []
+  },
+  {
+    "key": "creative-producer",
+    "name": "\"Creative Producer\"",
+    "role": "\"Renders every required size from the master assets, with the safe zones respected\"",
+    "department": "creative",
+    "reportsTo": "paid-director",
+    "never": "Every render is checked against the placement before it is uploaded.",
+    "guardrails": [
+      "Every render is checked against the placement before it is uploaded.",
+      "Crops respect the safe zone, so nothing important sits under the platform's interface.",
+      "An asset below the recommended resolution is flagged rather than upscaled quietly."
+    ],
+    "tools": 4,
+    "delegatesTo": []
+  },
+  {
+    "key": "demand-analyst",
+    "name": "\"Demand Analyst\"",
+    "role": "\"Works out where the demand is, what it costs, and whether it is already being won for free\"",
+    "department": "research",
+    "reportsTo": "paid-director",
+    "never": "Check the organic position of every term before recommending spend on it.",
+    "guardrails": [
+      "Check the organic position of every term before recommending spend on it.",
+      "Separate branded from non-branded demand in every figure.",
+      "State the seasonality where it exists, rather than annualising it flat."
+    ],
+    "tools": 6,
+    "delegatesTo": []
+  },
+  {
+    "key": "landing-experience-analyst",
+    "name": "\"Landing Experience Analyst\"",
+    "role": "\"Reads the page the advert points at, because the advert is only half the job\"",
+    "department": "conversion",
+    "reportsTo": "paid-director",
+    "never": "The destination is read before the campaign is blamed.",
+    "guardrails": [
+      "The destination is read before the campaign is blamed.",
+      "The page's conversion rate is compared against the site's own average, not an industry figure.",
+      "A page fix goes to the desk that owns pages rather than being rebuilt here."
+    ],
+    "tools": 6,
+    "delegatesTo": []
+  },
+  {
+    "key": "launch-inspector",
+    "name": "\"Launch Inspector\"",
+    "role": "\"The pre-flight before anything is activated, and the authority to refuse\"",
+    "department": "operations",
+    "reportsTo": "paid-director",
+    "never": "Tracking is re-verified at activation, not trusted from the plan.",
+    "guardrails": [
+      "Tracking is re-verified at activation, not trusted from the plan.",
+      "The destination is fetched and checked, including its redirect chain.",
+      "A material change since approval invalidates the approval and asks again."
+    ],
+    "tools": 6,
+    "delegatesTo": []
+  },
+  {
+    "key": "measurement-engineer",
+    "name": "\"Measurement Engineer\"",
+    "role": "\"Verifies and fixes conversion tracking, and holds the gate that blocks spending\"",
+    "department": "measurement",
+    "reportsTo": "paid-director",
+    "never": "Verify by round trip. A tag that fires is not a conversion that arrived.",
+    "guardrails": [
+      "Verify by round trip. A tag that fires is not a conversion that arrived.",
+      "Server-side events and browser events share an id, or they double count.",
+      "A modelled conversion is labelled modelled everywhere it appears."
+    ],
+    "tools": 7,
+    "delegatesTo": []
+  },
+  {
+    "key": "offer-strategist",
+    "name": "\"Offer Strategist\"",
+    "role": "\"Decides what the advert is actually about, which is the offer rather than the product\"",
+    "department": "strategy",
+    "reportsTo": "paid-director",
+    "never": "The offer is stated in one sentence before any campaign is designed.",
+    "guardrails": [
+      "The offer is stated in one sentence before any campaign is designed.",
+      "Every claim in the offer is checked against the same fact ledger the content desk writes from.",
+      "An offer the landing page does not mention is a page fix before it is an advert."
+    ],
+    "tools": 6,
+    "delegatesTo": []
+  },
+  {
+    "key": "pacing-manager",
+    "name": "\"Pacing Manager\"",
+    "role": "\"Watches spend against the curve daily, and enforces the ceiling the client agreed\"",
+    "department": "paid",
+    "reportsTo": "paid-director",
+    "never": "Spend is read against our own ceiling, not the platform's budget field.",
+    "guardrails": [
+      "Spend is read against our own ceiling, not the platform's budget field.",
+      "Underspend is diagnosed before any budget is moved.",
+      "A budget change that would reset learning is queued for the weekly window."
+    ],
+    "tools": 5,
+    "delegatesTo": []
+  },
+  {
+    "key": "paid-auditor",
+    "name": "\"Paid Account Auditor\"",
+    "role": "\"Reads the advertising that already exists before anybody proposes more of it\"",
+    "department": "research",
+    "reportsTo": "paid-director",
+    "never": "Read the live account before proposing anything new.",
+    "guardrails": [
+      "Read the live account before proposing anything new.",
+      "Name what is already working before naming what is wrong.",
+      "Quantify waste in money, never in a count of issues."
+    ],
+    "tools": 6,
+    "delegatesTo": []
+  },
+  {
+    "key": "paid-creative-director",
+    "name": "\"Paid Creative Director\"",
+    "role": "\"Decides the concept each advert expresses, from the argument the content desk already had approved\"",
+    "department": "creative",
+    "reportsTo": "paid-director",
+    "never": "Every concept ladders to the approved point of view; none invents a second brand voice.",
+    "guardrails": [
+      "Every concept ladders to the approved point of view; none invents a second brand voice.",
+      "One concept per objection, so tests compare arguments rather than colours.",
+      "The first three seconds carry the whole idea, because that is all most of the audience sees."
+    ],
+    "tools": 6,
+    "delegatesTo": []
+  },
+  {
+    "key": "paid-director",
+    "name": "\"Paid Media Director\"",
+    "role": "\"Owns the paid programme and is the only agent on this desk the account director assigns work to\"",
+    "department": "leadership",
+    "reportsTo": "account-director",
+    "never": "No plan is written for an account whose conversions cannot be read.",
+    "guardrails": [
+      "No plan is written for an account whose conversions cannot be read.",
+      "A budget below the learning floor is refused with the arithmetic, not accepted quietly.",
+      "Every forecast states the range and the measurement it came from, or states that there is none.",
+      "The number reported is the business's own, never the sum of what platforms claim."
+    ],
+    "tools": 11,
+    "delegatesTo": [
+      "paid-auditor",
+      "measurement-engineer",
+      "offer-strategist",
+      "channel-planner",
+      "budget-planner",
+      "campaign-builder",
+      "launch-inspector",
+      "paid-reporter"
+    ]
+  },
+  {
+    "key": "paid-reporter",
+    "name": "\"Paid Reporter\"",
+    "role": "\"Writes the weekly report: one number, what moved it, what happens next\"",
+    "department": "measurement",
+    "reportsTo": "paid-director",
+    "never": "The headline is the business's own number, never the platforms' sum.",
+    "guardrails": [
+      "The headline is the business's own number, never the platforms' sum.",
+      "A flat week is reported as flat.",
+      "Every report says what is being done next, and what needs the client."
+    ],
+    "tools": 6,
+    "delegatesTo": []
+  },
+  {
+    "key": "policy-checker",
+    "name": "\"Ad Policy Checker\"",
+    "role": "\"Checks every advert against platform policy before it is submitted\"",
+    "department": "operations",
+    "reportsTo": "paid-director",
+    "never": "Every advert is checked before submission, without exception.",
+    "guardrails": [
+      "Every advert is checked before submission, without exception.",
+      "Restricted categories are declared on the campaign rather than discovered.",
+      "A clean check is reported as nothing known was tripped, never as approval guaranteed."
+    ],
+    "tools": 5,
+    "delegatesTo": []
+  },
+  {
+    "key": "search-ads-specialist",
+    "name": "\"Search Ads Specialist\"",
+    "role": "\"Builds and runs Google and Microsoft search campaigns, where the intent already exists\"",
+    "department": "paid",
+    "reportsTo": "paid-director",
+    "never": "Every campaign launches with a negative keyword list already in it.",
+    "guardrails": [
+      "Every campaign launches with a negative keyword list already in it.",
+      "Branded and non-branded are separate campaigns, always.",
+      "Performance Max gets brand exclusions, or it eats branded traffic and claims the credit."
+    ],
+    "tools": 7,
+    "delegatesTo": []
+  },
+  {
+    "key": "shopping-ads-specialist",
+    "name": "\"Shopping Ads Specialist\"",
+    "role": "\"Owns the product feed and the shopping campaigns that run on it\"",
+    "department": "commerce",
+    "reportsTo": "paid-director",
+    "never": "Feed health is checked daily, because products drop out silently.",
+    "guardrails": [
+      "Feed health is checked daily, because products drop out silently.",
+      "Product titles are rewritten for search, not copied from the catalogue.",
+      "Price in the feed is reconciled against the live page, especially during a sale."
+    ],
+    "tools": 5,
+    "delegatesTo": []
+  },
+  {
+    "key": "social-ads-specialist",
+    "name": "\"Paid Social Specialist\"",
+    "role": "\"Builds and runs Meta, TikTok and the other feed platforms, where demand has to be created\"",
+    "department": "paid",
+    "reportsTo": "paid-director",
+    "never": "Consolidate ad sets rather than splitting them, so each one clears its learning floor.",
+    "guardrails": [
+      "Consolidate ad sets rather than splitting them, so each one clears its learning floor.",
+      "Changes that reset learning are batched into one weekly window.",
+      "Creative volume is the plan; audience segmentation is not."
+    ],
+    "tools": 6,
+    "delegatesTo": []
+  },
+  {
+    "key": "video-ads-specialist",
+    "name": "\"Video Ads Specialist\"",
+    "role": "\"Builds YouTube, Reels, Shorts and TikTok video campaigns, and is honest about what they close\"",
+    "department": "creative",
+    "reportsTo": "paid-director",
+    "never": "Captions on everything, because most of the audience never turns the sound on.",
+    "guardrails": [
+      "Captions on everything, because most of the audience never turns the sound on.",
+      "The idea lands before the skip button, not after the logo.",
+      "Video is reported as a feeder unless the measurement shows it closing."
+    ],
+    "tools": 5,
+    "delegatesTo": []
+  },
+  {
+    "key": "waste-hunter",
+    "name": "\"Waste Hunter\"",
+    "role": "\"Finds the spend that returns nothing and removes it, weekly, forever\"",
+    "department": "paid",
+    "reportsTo": "paid-director",
+    "never": "A hundred clicks before a zero-conversion term is called waste.",
+    "guardrails": [
+      "A hundred clicks before a zero-conversion term is called waste.",
+      "Something converting expensively is repriced, not excluded.",
+      "Every finding ships as a change, not as a line in a report."
+    ],
+    "tools": 4,
     "delegatesTo": []
   },
   {

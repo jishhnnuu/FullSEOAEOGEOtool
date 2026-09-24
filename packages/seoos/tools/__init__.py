@@ -18,6 +18,7 @@ def load_all_tools() -> ToolRegistry:
     the moment an agent needs it.
     """
     from seoos.tools import (  # noqa: F401
+        ads_tools,
         analytics_tools,
         brand_tools,
         content_tools,

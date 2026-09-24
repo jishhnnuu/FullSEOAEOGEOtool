@@ -1,0 +1,158 @@
+key: paid_readiness
+name: Can this account spend money yet
+description: >
+  The first mission of the paid desk, and the one that can stop the rest of
+  it. Verifies conversion tracking by round trip, reads any advertising that
+  already exists, checks whether the budget can buy what it is being asked to
+  buy, and produces one verdict the client reads before money is discussed.
+  Nothing else on this desk runs until this has finished.
+budget_usd: 16.0
+timeout_minutes: 45
+concurrency: 3
+tags: [paid, readiness, onboarding]
+
+steps:
+  - id: access
+    type: tool
+    tool: ads.platforms
+
+  - id: state
+    type: tool
+    tool: report.site_state
+    needs: [access]
+
+  - id: measurement
+    type: agent
+    agent: measurement-engineer
+    label: Verify the tracking by round trip
+    needs: [state]
+    context: [access, state]
+    budget_usd: 4.0
+    task: >
+      Establish whether a conversion on this site can be counted, and prove
+      it rather than inspecting it.
+
+      A tag present in the source proves nothing. A tag that fires proves
+      nothing. Send a test conversion and read it back from the platform's
+      own reporting, with a timestamp, and report that timestamp.
+
+      Then report the four things that decide whether the measurement is
+      merely present or actually good: are server-side events configured, do
+      they deduplicate against a shared id with the browser pixel, does a
+      currency value travel with the conversion, and is Consent Mode
+      configured if any traffic comes from the UK or the EEA.
+
+      For a lead generation account, check one more thing and treat it as the
+      most important of all: is the click id captured and stored on form
+      submit. Without it a lead that becomes a customer weeks later can never
+      be reported back, so the platform optimises for enquiries rather than
+      revenue.
+
+      If the round trip fails, say so plainly and stop. The client is told
+      that we will not spend their money until we can measure what it bought,
+      and what needs installing. This is not a reduced service, it is a
+      blocked one.
+
+  - id: existing
+    type: agent
+    agent: paid-auditor
+    label: Read the advertising that already exists
+    needs: [state]
+    context: [access, state]
+    budget_usd: 4.0
+    task: >
+      If this business already advertises, read the live accounts before
+      anybody proposes anything new.
+
+      Lead with what is already working, with the numbers. An account running
+      a year almost always contains two or three things that work and are
+      invisible to its owner, and restructuring around a theory without
+      noticing which ad group was paying for everything is the fastest way to
+      destroy an account.
+
+      Then quantify the waste in currency per month, never as a count of
+      issues. "Two hundred and ten pounds a month goes to search terms
+      containing the word free, none of which has ever converted" is
+      actionable. "Forty-seven issues found" is an audit tool talking.
+
+      Then the structural problems, ranked by what each costs per month, and
+      say plainly which of the rest are ugly but harmless.
+
+      If the business has never advertised, say so in one line and read the
+      site and the search desk's keyword data instead.
+
+  - id: demand
+    type: agent
+    agent: demand-analyst
+    label: Where the demand is, and what it already costs us nothing
+    needs: [state]
+    context: [state]
+    budget_usd: 3.0
+    task: >
+      Find where the demand is, split into branded, non-branded and
+      competitor, each with volume and an estimated cost per click that is
+      labelled as an estimate.
+
+      Then do the subtraction that matters: check the organic position of
+      every term before recommending spend on it. A term the site already
+      ranks first for is one where paid mostly buys clicks the business was
+      getting free. There are exceptions and each needs an argument.
+
+      Note the seasonality where the category has one, rather than
+      annualising it flat.
+
+  - id: budget
+    type: agent
+    agent: budget-planner
+    label: Can the budget buy what it is being asked to buy
+    needs: [demand, existing]
+    context: [demand, existing]
+    budget_usd: 2.0
+    task: >
+      Run the arithmetic before anybody designs a campaign.
+
+      Automated bidding needs roughly thirty conversions a month per platform
+      to fit a model. Work out what this budget implies at this target cost,
+      across the number of platforms being considered, and if it falls short
+      say so with the arithmetic and the remedies in order: concentrate on
+      fewer platforms, raise the budget, raise the target, or use bidding
+      that does not need the volume.
+
+      Do not soften this. An agency accepts a budget it knows is too small
+      because its fee is a percentage of it, and the campaign then
+      underperforms for structural reasons that get blamed on the creative.
+
+      Where a forecast is possible, give a range and name the measurement it
+      came from. Where it is not, say that the first two weeks are the
+      measurement.
+
+  - id: verdict
+    type: agent
+    agent: paid-director
+    label: One verdict for the client
+    needs: [measurement, budget]
+    context: [access, measurement, existing, demand, budget]
+    budget_usd: 3.0
+    task: >
+      Assemble what the client reads. One message, not five.
+
+      Open with the measurement verdict, because it decides whether there is
+      anything else to discuss. If it blocks, the whole message is what is
+      broken, what it would take to fix, and the offer to fix it.
+
+      If it clears, then: what is already working in their advertising, what
+      is wasting, whether the budget can reach the target, and which
+      platforms are worth it. Name the platforms you are declining and why,
+      in one sentence each that they could repeat to their board.
+
+      Every number carries where it came from. A platform's estimated cost
+      per click is labelled an estimate. A forecast carries its range.
+
+      This is one approval: the client agrees the objective, the budget
+      envelope, the target, and the platform list, or says where it is wrong.
+
+  - id: gate
+    type: gate
+    label: Nothing is built until the measurement clears and the plan is approved
+    when: verdict exists
+    needs: [verdict]

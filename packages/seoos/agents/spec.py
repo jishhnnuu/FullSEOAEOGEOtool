@@ -32,6 +32,12 @@ DEPARTMENTS = (
     # The social desk. "community" is its own function rather than a flavour
     # of support: replying in public is where a brand earns or loses trust.
     "social", "community",
+    # The paid desk. "measurement" is deliberately not part of "analytics" or
+    # "strategy": it is the gate that decides whether money may be spent at
+    # all, and a function that can stop the work reports separately from the
+    # function that wants the work to happen. "media" buys, "measurement"
+    # verifies, and neither is allowed to be the other's junior.
+    "paid", "measurement",
 )
 
 

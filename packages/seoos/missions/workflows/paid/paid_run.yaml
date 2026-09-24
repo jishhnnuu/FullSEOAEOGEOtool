@@ -1,0 +1,128 @@
+key: paid_run
+name: The daily and weekly work of a live account
+description: >
+  What happens after launch. Pacing against the curve and the ceiling we
+  enforce ourselves, waste removed weekly rather than reported, creative
+  judged only once it has enough impressions to judge, and a report whose
+  headline is the business's own number rather than the sum of what the
+  platforms claim.
+budget_usd: 14.0
+timeout_minutes: 40
+concurrency: 3
+tags: [paid, ongoing]
+
+steps:
+  - id: pace
+    type: agent
+    agent: pacing-manager
+    label: Spend against the curve, both directions
+    budget_usd: 2.0
+    task: >
+      Read spend against the envelope the client agreed, not against the
+      platform's own budget field. Google can spend up to twice a daily
+      budget on a given day and reconcile across the month, so the only
+      ceiling that means anything is ours.
+
+      If the ceiling is passed, pause everything and say so. That is one of
+      only three things this desk does without asking first.
+
+      Underspend is the commoner problem and never triggers an alarm. Catch
+      it on the curve and diagnose before moving anything: too narrow an
+      audience, a binding bid cap, a restrictive schedule, not enough
+      approved creative, or too little conversion volume for the bidding to
+      spend confidently. Raising the budget fixes none of those.
+
+  - id: waste
+    type: agent
+    agent: waste-hunter
+    label: Remove the spend that returns nothing
+    budget_usd: 3.0
+    task: >
+      Go through the search terms, placements, audiences and products. A
+      hundred clicks, or spend at three times the target with nothing back,
+      is the bar. Three clicks and no conversion is not evidence, and an
+      account pruned on that slowly strangles itself.
+
+      Something converting at three times the target is working and priced
+      wrong. Lower the bid; do not exclude it.
+
+      Ship the change. A report of wasted spend is an audit tool. State the
+      money saved per month, because that is the easiest figure in the whole
+      programme for a client to verify.
+
+  - id: creative
+    type: agent
+    agent: creative-analyst
+    label: Which creative worked, and which never did
+    budget_usd: 2.0
+    task: >
+      Nothing is called under a thousand impressions.
+
+      Separate fatigue from never having worked. Fatigue is a fall from the
+      creative's own peak, usually with a rising frequency, and a replacement
+      recovers it. A flat low rate from the start is a creative that never
+      worked, and a replacement in the same style does the same thing.
+
+      Say what made the winners win, not which one won. Under three winners
+      there is no pattern, only a coincidence.
+
+  - id: landing
+    type: agent
+    agent: landing-experience-analyst
+    label: Read the page before blaming the advert
+    budget_usd: 2.0
+    task: >
+      Where spend produced nothing, work the order of probability: tracking,
+      then the page, then the offer, then the targeting. Creative is usually
+      fourth and is usually blamed first.
+
+      Compare the destination's conversion rate against this site's own
+      average, never against an industry benchmark, which is an average of
+      businesses that are not this one.
+
+      Route any page fix to the desk that owns pages, with the measurement
+      attached.
+
+  - id: reconcile
+    type: agent
+    agent: attribution-analyst
+    label: What the platforms claim against what the business recorded
+    needs: [pace, waste]
+    context: [pace, waste]
+    budget_usd: 2.0
+    task: >
+      Never add platform conversions together. Each platform counts a
+      conversion it touched, a customer often touches two, and the sum is
+      more customers than the business had.
+
+      Report per platform with the claimed label, then the business's own
+      count, then blended cost per acquisition, which no attribution window
+      can move.
+
+      Explain the gap rather than closing it. About one and a half claimed to
+      measured is normal for two platforms. Four is a tracking fault. A
+      healthy claimed figure against zero measured is almost always broken
+      measurement rather than fictional sales.
+
+  - id: report
+    type: agent
+    agent: paid-reporter
+    label: One number, what moved it, what happens next
+    needs: [reconcile, creative, landing]
+    context: [pace, waste, creative, landing, reconcile]
+    budget_usd: 3.0
+    task: >
+      Lead with cost per acquisition or return on spend, from the business's
+      own data, against the target. If it got worse, say so in the first
+      line.
+
+      Explain the platform gap briefly and every time, because the client can
+      see the dashboards and needs to know which number to run the business
+      on.
+
+      A flat week is reported as flat. Dressing it in the one campaign that
+      improved teaches a client to discount everything you say.
+
+      End with a next action per open problem. Where nothing needs them, say
+      "nothing needs your attention this week", which can only be said by
+      somebody who checked.

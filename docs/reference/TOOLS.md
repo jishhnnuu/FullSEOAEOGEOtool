@@ -5,7 +5,7 @@
 A tool is the only way an agent touches the world. Everything an agent
 can do is in this list; nothing outside it is reachable.
 
-**73 tools** across 12 categories. 24 of them change state.
+**89 tools** across 13 categories. 28 of them change state.
 
 ## How to read this
 
@@ -23,6 +23,207 @@ can do is in this list; nothing outside it is reachable.
 | `medium` | `managed` |
 | `high` | `autopilot` |
 | `critical` | never |
+
+## ads
+
+### `ads.budget_check`
+
+Whether a budget can buy what it is being asked to buy.
+
+**Mutates:** no · **Risk:** `none`
+
+| Parameter | Type | Required | Description |
+|---|---|---|---|
+| `monthly_budget` | number | yes | The monthly budget, in the account's currency |
+| `target_cpa` | number | yes | What one conversion is worth paying for |
+| `platforms` | integer | no | How many platforms the budget would be split across |
+
+### `ads.build_campaign`
+
+Build a complete campaign in the platform, paused, and verify the tree.
+
+**Mutates:** yes · **Risk:** `medium` · **Runs unattended from:** `managed` · **Approval type:** `ads_build`
+
+| Parameter | Type | Required | Description |
+|---|---|---|---|
+| `platform` | `google_ads` \| `microsoft_ads` \| `meta_ads` \| `tiktok_ads` \| `linkedin_ads` \| `pinterest_ads` \| `reddit_ads` \| `snapchat_ads` \| `amazon_ads` | yes | Which platform |
+| `plan` | object | yes | The approved plan |
+
+### `ads.check_creative`
+
+Check one advert's copy and one asset against a placement, before upload.
+
+**Mutates:** no · **Risk:** `none`
+
+| Parameter | Type | Required | Description |
+|---|---|---|---|
+| `placement_key` | string | yes | Which placement |
+| `copy` | object | no | Field name to text |
+| `width` | integer | no | Asset width in pixels |
+| `height` | integer | no | Asset height in pixels |
+| `size_mb` | number | no | Asset size in megabytes |
+| `format` | string | no | Asset format, such as jpg or mp4 |
+
+### `ads.creative_specs`
+
+Every image size a campaign on these platforms needs, with the safe zones.
+
+**Mutates:** no · **Risk:** `none`
+
+| Parameter | Type | Required | Description |
+|---|---|---|---|
+| `platforms` | array | yes | Platform keys |
+
+### `ads.creative_state`
+
+Whether a creative is working, burnt out, or has not run long enough.
+
+**Mutates:** no · **Risk:** `none`
+
+| Parameter | Type | Required | Description |
+|---|---|---|---|
+| `creative_id` | string | yes | Which creative |
+| `impressions` | integer | yes | Impressions so far |
+| `ctr` | number | yes | Current click-through rate as a fraction |
+| `best_ctr` | number | yes | This creative's own best click-through rate |
+| `frequency` | number | yes | Average times each person has seen it |
+| `conversions` | number | yes | Conversions |
+
+### `ads.failure_playbook`
+
+Every known way a launch can fail at this stage, and what happens instead.
+
+**Mutates:** no · **Risk:** `none`
+
+| Parameter | Type | Required | Description |
+|---|---|---|---|
+| `stage` | string | no | connect, plan, build, launch, run or report |
+| `code` | string | no | One failure code, for the full entry |
+
+### `ads.find_waste`
+
+What spent and returned nothing, with the action rather than the list.
+
+**Mutates:** no · **Risk:** `none`
+
+| Parameter | Type | Required | Description |
+|---|---|---|---|
+| `rows` | array | yes | Search terms, placements, audiences or products with their spend |
+| `target_cpa` | number | yes | What one conversion is worth paying for |
+
+### `ads.forecast`
+
+Conversions a month, as a range, or nothing at all.
+
+**Mutates:** no · **Risk:** `none`
+
+| Parameter | Type | Required | Description |
+|---|---|---|---|
+| `monthly_budget` | number | yes | The monthly budget |
+| `cost_per_click` | number | no | Measured cost per click. Omit if it has not been measured |
+| `conversion_rate` | number | no | Measured conversion rate as a fraction. Omit if unmeasured |
+
+### `ads.launch`
+
+Activate a campaign that is already built, verified and approved.
+
+**Mutates:** yes · **Risk:** `high` · **Runs unattended from:** `autopilot` · **Approval type:** `ads_launch` · **Tags:** `ads_spend`
+
+| Parameter | Type | Required | Description |
+|---|---|---|---|
+| `platform` | `google_ads` \| `microsoft_ads` \| `meta_ads` \| `tiktok_ads` \| `linkedin_ads` \| `pinterest_ads` \| `reddit_ads` \| `snapchat_ads` \| `amazon_ads` | yes | Which platform |
+| `campaign_id` | string | yes | The paused campaign to activate |
+
+### `ads.measurement_check`
+
+Whether this account may spend money yet.
+
+**Mutates:** no · **Risk:** `none`
+
+| Parameter | Type | Required | Description |
+|---|---|---|---|
+| `tag_present` | boolean | yes | A conversion tag was found and fired in a test load |
+| `round_trip_verified` | boolean | yes | A test conversion was sent and read back from the platform |
+| `server_side` | boolean | no | Server-side events are configured |
+| `deduplicated` | boolean | no | Browser and server events share an id |
+| `value_passed` | boolean | no | A currency value travels with the conversion |
+| `consent_mode` | boolean | no | Consent Mode v2 or equivalent is configured |
+| `serves_eea` | boolean | no | The advertiser sells into the UK or the EEA |
+| `click_id_captured` | boolean | no | The click id is captured and stored on form submit |
+| `objective` | `lead_gen` \| `ecommerce` | no | What the account is for |
+
+### `ads.pacing`
+
+Spend against the planned curve, checked daily rather than noticed at
+month end. Underspend is a constraint somewhere, not a saving.
+
+**Mutates:** no · **Risk:** `none`
+
+| Parameter | Type | Required | Description |
+|---|---|---|---|
+| `spent` | number | yes | Spent so far this month |
+| `monthly_budget` | number | yes | The month's budget |
+| `day_of_month` | integer | yes | Today's date |
+| `days_in_month` | integer | yes | Days in this month |
+
+### `ads.pause`
+
+Stop a campaign spending.
+
+**Mutates:** yes · **Risk:** `low` · **Runs unattended from:** `assisted` · **Approval type:** `ads_pause`
+
+| Parameter | Type | Required | Description |
+|---|---|---|---|
+| `platform` | `google_ads` \| `microsoft_ads` \| `meta_ads` \| `tiktok_ads` \| `linkedin_ads` \| `pinterest_ads` \| `reddit_ads` \| `snapchat_ads` \| `amazon_ads` | yes | Which platform |
+| `campaign_id` | string | yes | Which campaign |
+| `reason` | string | yes | Which catalogued failure prompted this |
+
+### `ads.platforms`
+
+What each advertising platform allows, what the advertiser has to do, and
+what we have to clear first.
+
+**Mutates:** no · **Risk:** `none`
+
+| Parameter | Type | Required | Description |
+|---|---|---|---|
+| `platform` | `google_ads` \| `microsoft_ads` \| `meta_ads` \| `tiktok_ads` \| `linkedin_ads` \| `pinterest_ads` \| `reddit_ads` \| `snapchat_ads` \| `amazon_ads` | no | One platform, or empty for the whole map |
+| `objective` | `lead_gen` \| `ecommerce` | no | Narrow to platforms worth money for this kind of business |
+
+### `ads.policy_check`
+
+Check copy against the rules that cause rejections in volume.
+
+**Mutates:** no · **Risk:** `none`
+
+| Parameter | Type | Required | Description |
+|---|---|---|---|
+| `copy` | object | yes | The advert's text fields |
+| `platform` | `google_ads` \| `microsoft_ads` \| `meta_ads` \| `tiktok_ads` \| `linkedin_ads` \| `pinterest_ads` \| `reddit_ads` \| `snapchat_ads` \| `amazon_ads` | no | Narrow to one platform's rules |
+
+### `ads.reconcile`
+
+Platform claims, the measured truth, and the distance between them.
+
+**Mutates:** no · **Risk:** `none`
+
+| Parameter | Type | Required | Description |
+|---|---|---|---|
+| `results` | array | yes | One row per platform |
+| `site_conversions` | integer | no | What the business itself recorded. Omit if not connected |
+| `site_revenue` | number | no | What the business itself recorded in revenue |
+
+### `ads.set_budget`
+
+Change a budget inside the envelope a person already approved.
+
+**Mutates:** yes · **Risk:** `high` · **Runs unattended from:** `autopilot` · **Approval type:** `ads_budget` · **Tags:** `ads_spend`
+
+| Parameter | Type | Required | Description |
+|---|---|---|---|
+| `platform` | `google_ads` \| `microsoft_ads` \| `meta_ads` \| `tiktok_ads` \| `linkedin_ads` \| `pinterest_ads` \| `reddit_ads` \| `snapchat_ads` \| `amazon_ads` | yes | Which platform |
+| `campaign_id` | string | yes | Which campaign |
+| `daily_budget` | number | yes | The new daily budget |
 
 ## analytics
 

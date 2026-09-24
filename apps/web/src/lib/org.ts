@@ -78,6 +78,16 @@ export type Manager = {
   name: string;
   title: string;
   status: Status;
+  /**
+   * What this desk can carry end to end today, and where it stops.
+   *
+   * A binary live-or-planned was too coarse the moment four desks existed.
+   * Search publishes to a CMS; paid can plan a campaign and cannot launch one
+   * until each network approves this software. Both were rendering as "built
+   * and running", which is the class of claim this product exists not to
+   * make. One honest sentence per desk, shown wherever the desk is offered.
+   */
+  delivers: string;
   /** When a planned desk opens. Null for the live ones. */
   opens: string | null;
   /** One sentence the director would use for this desk's remit. */
@@ -112,6 +122,8 @@ export const MANAGERS: Manager[] = [
     title: "Head of search",
     status: "live",
     opens: null,
+    delivers:
+      "End to end. Crawls, scores, writes the fixes, and publishes approved changes straight into WordPress, Shopify or Webflow. Nothing here waits on anybody else.",
     remit:
       "Everything that decides whether a page can be found and trusted: the crawl, the fixes, structured data, internal links, listings, links, and visibility inside AI answers.",
     method: [
@@ -147,6 +159,8 @@ export const MANAGERS: Manager[] = [
     title: "Head of content marketing",
     status: "live",
     opens: null,
+    delivers:
+      "Research, the argument, the briefs and the edit gates run with nothing connected. Long-form drafting relays your own model provider key, because this platform holds none of its own.",
     remit:
       "One argument per client, written down, with everything laddering to it. Reads the business, the buyer and the field before a brief exists, and measures tone rather than asserting it.",
     method: [
@@ -177,6 +191,8 @@ export const MANAGERS: Manager[] = [
     title: "Head of paid media",
     status: "live",
     opens: null,
+    delivers:
+      "Everything up to the launch button: the measurement gate, the account audit, the budget arithmetic, the offer, the creative at every size and the policy check. Launching a campaign needs each network to approve this software first, and /paid publishes exactly where each one stands.",
     remit:
       "Search, shopping and paid social, planned against the same research the other desks run on, so paid is not bidding on demand the organic programme already owns. Verifies that a conversion can be counted before it will spend anything at all.",
     method: [
@@ -211,6 +227,8 @@ export const MANAGERS: Manager[] = [
     title: "Head of social",
     status: "live",
     opens: null,
+    delivers:
+      "Reading the field and drafting: competitor teardowns, share of voice, platform choice, the calendar and every post written for approval. Publishing to an account needs each platform to approve this software first.",
     remit:
       "The owned channels, worked from the argument the content desk already had approved. Reads what measurably worked for the competitors it can read, says plainly which platforms publish nothing, and drafts everything for a person to approve.",
     method: [

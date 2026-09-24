@@ -153,6 +153,15 @@ export function DeskPage({ desk, extra }: { desk: Desk; extra?: React.ReactNode 
         </ul>
       </section>
 
+      {open && (
+        <section className="section section-tight">
+          <div className="notice">
+            <strong>What this desk can carry today, and where it stops.</strong>{" "}
+            {manager.delivers}
+          </div>
+        </section>
+      )}
+
       {extra}
 
       <section className="section section-alt">

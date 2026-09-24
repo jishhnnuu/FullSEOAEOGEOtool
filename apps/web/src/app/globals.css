@@ -1898,3 +1898,13 @@ a.link-card h3 { color: var(--accent); }
   textarea,
   select { font-size: 16px; }
 }
+
+/* Where each desk actually stops, on the tile that offers it. A binary
+   built-or-not was too coarse the moment four desks existed. */
+.desk-delivers {
+  display: block;
+  font-size: 12px;
+  line-height: 1.45;
+  color: var(--text-faint);
+  margin-top: 0.4rem;
+}

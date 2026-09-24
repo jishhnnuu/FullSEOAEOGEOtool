@@ -12,7 +12,7 @@ export const metadata = {
   // The homepage keeps the layout's default title rather than restating it,
   // so the product name lives in exactly one place.
   description:
-    `Everything a digital marketing agency does, without the agency. ${headcount()} specialists across search, content and social do the work and you approve it. Published prices, no retainer, no call. Look inside a live account before you give us anything.`,
+    `Everything a digital marketing agency does, without the agency. ${headcount()} specialists across search, content, social and paid do the work and you approve it. Published prices, no retainer, no call. Look inside a live account before you give us anything.`,
   alternates: { canonical: "/" },
 };
 
@@ -107,8 +107,8 @@ export default function Home() {
         <div className="eyebrow">A digital marketing agency, staffed by {headcount()} agents</div>
         <h1 className="hero-title">Everything an agency does. None of the agency.</h1>
         <p className="hero-lede">
-          {headcount()} specialists across search, content and social. They do the work, you approve it, and you can
-          watch the whole thing happen. From {priceLabel(PLANS.starter)} a month. No retainer, no minimum term, and no call to book.
+          {headcount()} specialists across search, content, social and paid. They do the work, you approve it, and
+          you can watch the whole thing happen. From {priceLabel(PLANS.starter)} a month. No retainer, no minimum term, and no call to book.
         </p>
         <div className="hero-actions">
           <Link href="/inside" className="button primary big-button">Look inside a live account</Link>
@@ -133,14 +133,17 @@ export default function Home() {
                   {open ? `${manager.team.length} specialists` : `Opens ${manager.opens}`}
                 </span>
                 <span className="desk-line">{desk.headline}</span>
+                <span className="desk-delivers">{manager.delivers}</span>
                 <span className="desk-price">{deskPrice(desk)}</span>
               </Link>
             );
           })}
         </div>
         <p className="small muted" style={{ marginTop: "0.9rem" }}>
-          Of these {DESKS.length}, {live.length} are built and running today. The rest are not, and their pages say
-          so rather than implying otherwise.{" "}
+          All {DESKS.length} are built. They are not all equally finished, and each tile says where it stops:
+          search publishes straight to your CMS, while social and paid can research, plan and draft everything but
+          need each network to approve this software before they can post or launch. That is written on every desk
+          page rather than discovered later.{" "}
           <Link href={WHOLE_AGENCY.path}>All of them on one plan</Link>.
         </p>
       </section>

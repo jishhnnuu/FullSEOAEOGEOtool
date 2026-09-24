@@ -30,6 +30,13 @@ const DESK_TOOLS = [
     desk: "Social desk",
   },
   {
+    path: "/tools/ad-budget-check",
+    name: "Will this ad budget work",
+    blurb:
+      "Whether your budget clears the conversion volume the platforms' bidding needs, per platform, and what to change if it does not. The conversation an agency on a percentage will not start.",
+    desk: "Paid desk",
+  },
+  {
     path: "/tools/voice-check",
     name: "Voice against your rivals",
     blurb:
@@ -69,7 +76,7 @@ export default function ToolsPage() {
       </section>
 
       <section className="section section-tight">
-        <h2 className="section-title small-title">The two that take more than a URL</h2>
+        <h2 className="section-title small-title">The three that take more than a URL</h2>
         <div className="card-grid">
           {DESK_TOOLS.map((tool) => (
             <Link key={tool.path} href={tool.path} className="card link-card">

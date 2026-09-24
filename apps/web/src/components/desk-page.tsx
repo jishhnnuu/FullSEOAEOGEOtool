@@ -17,7 +17,14 @@ import { breadcrumbNode, faqNode, graph } from "@/lib/schema";
  * will refuse to do. That costs some visitors. The alternative, a page
  * implying a service exists, costs the only asset this business has.
  */
-export function DeskPage({ desk }: { desk: Desk }) {
+/**
+ * `extra` is a slot for the one thing a desk needs that the others do not.
+ *
+ * Paid uses it for the platform access table, because that desk is the only
+ * one whose availability depends on somebody else's review queue and the
+ * honest thing is to publish our position in it.
+ */
+export function DeskPage({ desk, extra }: { desk: Desk; extra?: React.ReactNode }) {
   const manager = managerFor(desk);
   const open = manager.status === "live";
   const plan = desk.requiresPlan ? PLANS[desk.requiresPlan] : null;
@@ -145,6 +152,8 @@ export function DeskPage({ desk }: { desk: Desk }) {
           {manager.refusals.map((line, i) => <li key={i}>{line}</li>)}
         </ul>
       </section>
+
+      {extra}
 
       <section className="section section-alt">
         <div className="eyebrow">Price</div>

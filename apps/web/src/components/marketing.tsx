@@ -87,6 +87,7 @@ export function SiteFooter() {
           <h4>Run something now</h4>
           <Link href="/tools/social-teardown">Tear down a competitor</Link>
           <Link href="/tools/voice-check">Check a page against its rivals</Link>
+          <Link href="/tools/ad-budget-check">Check an ad budget</Link>
           <Link href="/tools">All free tools</Link>
           <Link href="/app/new">Audit your own site</Link>
         </div>
@@ -101,6 +102,8 @@ export function SiteFooter() {
         <div>
           <h4>Trust</h4>
           <Link href="/security">Security and data</Link>
+          <Link href="/privacy">Privacy policy</Link>
+          <Link href="/terms">Terms of use</Link>
           <Link href="/security#standalone">Runs without us</Link>
           <Link href="/proof">Our own audit, in public</Link>
           <a href="https://github.com/jishhnnuu/fullseoaeogeotool" target="_blank" rel="noopener noreferrer">

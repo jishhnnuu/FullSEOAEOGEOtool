@@ -28,6 +28,23 @@ export type Env = {
   BILLING_PRICE_STARTER?: string;
   BILLING_PRICE_GROWTH?: string;
   BILLING_PORTAL_URL?: string;
+  /* Advertising. Absent on a deployment that does not run the paid desk, which
+     is a supported state: every other desk is unaffected and the connect
+     screen reports each missing value as a sentence a person can act on.
+
+     A developer token is not a user credential. It identifies this software to
+     the platform, one per platform, and opens nothing without an advertiser's
+     own OAuth grant alongside it. Advertisers never handle any of these.
+     See connectors/ads.py. */
+  GOOGLE_ADS_DEVELOPER_TOKEN?: string;
+  MICROSOFT_ADS_DEVELOPER_TOKEN?: string;
+  MICROSOFT_CLIENT_ID?: string;
+  MICROSOFT_CLIENT_SECRET?: string;
+  META_APP_ID?: string;
+  /* Also verifies the signature on a platform deletion callback. */
+  META_APP_SECRET?: string;
+  TIKTOK_APP_ID?: string;
+  TIKTOK_APP_SECRET?: string;
 };
 
 export async function env(): Promise<Env> {

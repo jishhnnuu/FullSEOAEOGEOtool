@@ -984,8 +984,11 @@ a.link-card h3 { color: var(--accent); }
 
 .tool-stats { display: grid; gap: 0.7rem; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); margin-bottom: 1.1rem; }
 .tool-stat { border: 1px solid var(--border); border-radius: var(--radius); padding: 0.75rem 0.85rem; background: var(--bg-alt); }
-.tool-stat-value { font-size: 1.35rem; font-weight: 650; letter-spacing: -0.02em; line-height: 1.1; }
-.tool-stat-label { font-size: 0.76rem; color: var(--text-muted); margin-top: 0.25rem; }
+/* Block, not inline. These were written for a div and later used on a span,
+   which ran the number and its label together on one line: "11.1conversions
+   a month". Declaring it here fixes every use rather than each component. */
+.tool-stat-value { display: block; font-size: 1.35rem; font-weight: 650; letter-spacing: -0.02em; line-height: 1.1; }
+.tool-stat-label { display: block; font-size: 0.76rem; color: var(--text-muted); margin-top: 0.25rem; }
 .tool-stat.good .tool-stat-value { color: var(--ok); }
 .tool-stat.warn .tool-stat-value { color: var(--warn); }
 .tool-stat.bad .tool-stat-value { color: var(--bad); }
@@ -1713,4 +1716,54 @@ a.link-card h3 { color: var(--accent); }
 
 @media (max-width: 860px) {
   .flow-steps { grid-template-columns: 1fr; }
+}
+
+/* ------------------------------------------- the platform access table */
+/*
+ * Both halves of the access model, side by side: what the advertiser does,
+ * and what we have to clear. Publishing our own queue position is the point,
+ * so the second half is never smaller than the first.
+ */
+.access-grid { display: grid; gap: 0.5rem; }
+.access-row {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+  overflow: hidden;
+}
+.access-row.on { border-color: var(--accent); }
+.access-head {
+  display: grid;
+  grid-template-columns: minmax(0, 12rem) auto minmax(0, 1fr);
+  align-items: center;
+  gap: 0.8rem;
+  width: 100%;
+  text-align: left;
+  border: 0;
+  background: none;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+  padding: 0.85rem 1rem;
+}
+.access-head:hover { background: var(--bg-alt); }
+.access-name { font-weight: 650; letter-spacing: -0.01em; }
+.access-worth { font-size: 0.82rem; color: var(--text-muted); line-height: 1.4; }
+.access-body {
+  padding: 0.2rem 1rem 1.1rem;
+  border-top: 1px solid var(--border);
+}
+.access-body h4 {
+  margin: 1rem 0 0.35rem;
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-faint);
+}
+.access-body p { margin: 0 0 0.4rem; }
+.access-body .prose-list { margin: 0 0 0.4rem; }
+
+@media (max-width: 760px) {
+  .access-head { grid-template-columns: 1fr auto; row-gap: 0.3rem; }
+  .access-worth { grid-column: 1 / -1; }
 }

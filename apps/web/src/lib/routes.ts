@@ -168,6 +168,15 @@ export const ROUTES: PublicRoute[] = [
     section: "tools",
   },
   {
+    path: "/tools/ad-budget-check",
+    title: "Will this ad budget actually work",
+    answers:
+      "Whether a monthly budget clears the conversion volume automated bidding needs, per platform, and what to change if it does not.",
+    priority: 0.85,
+    changeFrequency: "monthly",
+    section: "tools",
+  },
+  {
     path: "/tools/voice-check",
     title: "Voice and readability against your rivals",
     answers:
@@ -175,6 +184,22 @@ export const ROUTES: PublicRoute[] = [
     priority: 0.85,
     changeFrequency: "monthly",
     section: "tools",
+  },
+  {
+    path: "/privacy",
+    title: "Privacy policy",
+    answers: "What is collected, what never leaves the browser, how connected tokens are sealed, and how to delete everything.",
+    priority: 0.4,
+    changeFrequency: "yearly",
+    section: "company",
+  },
+  {
+    path: "/terms",
+    title: "Terms of use",
+    answers: "Who owns the accounts and the work, what needs a person's approval, and what is refused in writing before you pay.",
+    priority: 0.4,
+    changeFrequency: "yearly",
+    section: "company",
   },
   {
     path: "/vs",

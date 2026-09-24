@@ -12,7 +12,7 @@ It is not an audit tool. Audit tools say what is wrong and leave the fixing to
 someone else. Anything added here should do the work, not describe it.
 
 ```
-80 agents · 14 missions · 73 tools · 21 connectors · 90 checks · 43 tables · 173 tests
+106 agents · 17 missions · 89 tools · 21 connectors · 90 checks · 43 tables · 204 tests
 ```
 
 ## How to work on this
@@ -81,7 +81,7 @@ need that, stop and ask.
 packages/seoos/
   api/            FastAPI app, routes, schemas, auth. Prefix /api/v1.
   agents/         Runtime, tool-use loop, policy engine, and roster/
-                  roster/ is split by desk: shared/ 10, search/ 43, content/ 14, social/ 13
+                  roster/ is split by desk: shared/ 10, search/ 43, content/ 14, social/ 13, paid/ 26
   missions/       Declarative YAML workflows, the DAG engine, the scheduler
                   workflows/ is split the same way: shared/, search/, content/
   tools/          Everything an agent can do to the world. Registry-gated.
@@ -118,6 +118,7 @@ deploy/           Dockerfiles. wrangler.jsonc at the root is Cloudflare.
 | `docs/COMPETITORS.md` | The field, and the two facts that decide it |
 | `docs/opinion/` | A dated, versioned record of what this thing is honestly worth. Standalone: nothing imports it, nothing publishes it, and old entries are never edited. Read the newest before claiming the product is further along than it is, and add a new version rather than revising one. |
 | `docs/BACKLINKS.md` | The link programme: data, mentions, risk, and the limits |
+| `docs/ADS-ACCESS.md` | The applications that switch the paid desk on, in the order worth doing them |
 | `make docs` | Regenerate `docs/reference` from the registries |
 | `make cf-preview` | The Cloudflare Worker locally on :8788 |
 | `npm run cf:setup` | Optional. Does the Cloudflare side of `docs/ACCOUNTS.md` from a terminal |
@@ -203,6 +204,46 @@ style disagreement.
   video multiple of exactly 1x against its own median, by arithmetic. Printing
   that as a finding is printing a tautology as insight, so both engines refuse
   when `byFormat` has one entry.
+- **An advertiser never handles a credential.** They press Connect, log in on
+  the platform's own site, and approve a consent screen. A developer token is
+  not a user credential: it identifies this software to the platform, there is
+  one per platform, it belongs to us, and without an advertiser's own OAuth
+  grant alongside it, it opens nothing. `connectors/ads.py` keeps the two
+  halves in separate fields, `user_action` and `app_requirements`, so a screen
+  cannot confuse them. `/paid` publishes our position in each platform's review
+  queue rather than describing a platform as coming soon.
+- **Paid will not spend on an account it cannot measure.** `measurement_readiness`
+  is a gate, not a score, and it is the only refusal in the product with no
+  fallback. A platform optimising toward a conversion it cannot see does worse
+  than one given no target, so a broken account gets a blocked service rather
+  than a reduced one. It blocks on a missing tag and on a test conversion that
+  did not come back, and names its four degradations separately instead of
+  averaging them into a number.
+- **A budget below the learning floor is refused, with the arithmetic.**
+  `SMART_BIDDING_MONTHLY = 30` is per platform, not per account, because that
+  is what a bidding model needs to fit. An agency accepts the budget anyway
+  since its fee is a percentage of it, and the campaign then fails for
+  structural reasons that get blamed on the creative.
+- **Platform-claimed conversions are never summed.** `reconcile` keeps them per
+  platform and labelled, answers with the business's own count and the blended
+  cost per acquisition, and carries `claimed_total_if_summed` only so the gap
+  can be explained. No screen presents that sum as the result.
+- **Everything paid builds is created paused.** No ad platform offers a
+  transaction, so a campaign, its ad groups, its keywords and its creatives are
+  separate calls and a drop between any two leaves a half-built campaign with a
+  live budget. Everything is created paused, every id recorded, the tree
+  verified against the approved plan, and activated last by a different tool
+  with its own approval. `ads.launch` and `ads.set_budget` carry the
+  `ads_spend` tag, which `ALWAYS_HUMAN` matches, so no autonomy level on any
+  plan authorises either. Exactly three failures pause an account without
+  asking: the destination is broken, the money is buying nothing, or the
+  ceiling was passed.
+- **Paid is the one desk the browser-only rule does not cover, and it says so.**
+  You cannot spend money from `localStorage`, run an hourly kill switch in a
+  closed tab, or relay a server-side conversion from a page nobody has open. So
+  paid needs an account, a database and scheduled work, while every other desk
+  still runs with the server switched off. The pages state this rather than
+  implying the free tier covers it.
 - **Mentions are weighted above links.** Ahrefs measured 75,000 brands in
   2026: brand mentions correlate with AI Overview visibility at 0.664,
   backlinks at 0.218. A model has no link graph, it has text. `mentions.ts`
@@ -296,12 +337,12 @@ style disagreement.
   a competitor teardown at all, and `connectors/social.py` states which and why
   before an agent can promise the work.
 - **The roster is split by desk, and the loader walks the tree.**
-  `agents/roster/{shared,search,content,social}/` and
-  `missions/workflows/{shared,search,content,social}/`. Adding a desk is a folder.
+  `agents/roster/{shared,search,content,social,paid}/` and
+  `missions/workflows/{shared,search,content,social,paid}/`. Adding a desk is a folder.
   Search keeps its own content team under `content-strategist`, which is not a
   duplicate of the content desk: `docs/offerings/THE-ORGANISATION.md` has the
   division and who wins when both want the same page.
-- **`docs/reference` and `roster.generated.ts` are generated.** Adding a tool,
+- **`docs/reference`, `roster.generated.ts` and `ads.generated.ts` are generated.** Adding a tool,
   check, agent or mission means running `make docs` and committing the result.
   CI fails if either is stale. The browser interface reads the generated
   roster because Workers cannot run Python, and a hand-written copy drifts:

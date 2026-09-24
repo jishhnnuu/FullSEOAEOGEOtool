@@ -86,8 +86,10 @@ likes is a 0.1 ratio and also just one comment.
 
 ## The desk
 
-Thirteen agents under `social-director`, which reports to `account-director`
-like every other desk lead. The roster is in
+Twelve specialists under `social-director`, which reports to
+`account-director` like every other desk lead. Thirteen with the lead, which is
+the number the roster counts and the screens print as twelve, because the
+screens count the team a manager has rather than the manager as well. The roster is in
 `packages/seoos/agents/roster/social/`.
 
 | Group | Agents |

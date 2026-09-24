@@ -218,7 +218,7 @@ export const DESKS: Desk[] = [
     agencyPrice: "£1,200 to £3,000 a month",
     agencyBasis: "A UK social retainer for planning, production, scheduling and community management.",
     requiresPlan: "growth",
-    answers: "What a social desk of 13 agents reads, what every platform refuses to publish, and what it costs.",
+    answers: "What a social desk of 12 specialists reads, what every platform refuses to publish, and what it costs.",
   },
 ];
 

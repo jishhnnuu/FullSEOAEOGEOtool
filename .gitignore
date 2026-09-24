@@ -22,3 +22,9 @@ next-env.d.ts
 .dev.vars
 wrangler.localtest.jsonc
 .test-build/
+
+# Stamped at build time from git or the CI environment. Never committed: a
+# checked-in copy would serve a stale commit that looks plausible, and the
+# whole point of the version endpoint is that a wrong answer is worse than
+# "unknown". scripts/build-info.mjs writes it before every build.
+apps/web/src/lib/build-info.generated.ts

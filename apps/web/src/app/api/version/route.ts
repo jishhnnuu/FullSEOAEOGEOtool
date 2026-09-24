@@ -2,41 +2,33 @@
  * What is actually running, right now.
  *
  * This exists because a Cloudflare build can fail while the previous version
- * keeps being served, so the site looks fine and two commits sit undeployed.
+ * keeps being served, so the site looks fine and commits sit undeployed.
  * Checking whether a deploy landed meant grepping the rendered HTML for a
  * sentence that happened to change, which is guessing.
  *
- * One request now answers it. The commit is read at build time from whatever
- * the build environment exposes, so no step has to remember to stamp it, and
- * where nothing exposes it the answer is "unknown" rather than a stale value
- * baked in months ago.
+ * The values come from `build-info.generated.ts` rather than from
+ * `process.env`. The first version of this route read the environment
+ * directly, which looked right and was wrong: the CI variables exist in the
+ * build container and a route evaluates them at runtime on the Worker, where
+ * they are gone, so it answered "unknown" on every deploy. `new Date()` at
+ * module scope was the same mistake in a different coat, reporting when the
+ * isolate started rather than when the bundle was made.
  */
+
+import { BUILD_AT, BUILD_BRANCH, BUILD_COMMIT } from "@/lib/build-info.generated";
 
 export const dynamic = "force-dynamic";
 
-/*
- * Cloudflare Pages and Workers builds set CF_PAGES_COMMIT_SHA or
- * WORKERS_CI_COMMIT_SHA. GitHub Actions sets GITHUB_SHA. A local build sets
- * none of them, which is a true answer rather than a missing one.
- */
-const COMMIT =
-  process.env.CF_PAGES_COMMIT_SHA ??
-  process.env.WORKERS_CI_COMMIT_SHA ??
-  process.env.GITHUB_SHA ??
-  process.env.NEXT_PUBLIC_COMMIT_SHA ??
-  "unknown";
-
-const BUILT_AT = new Date().toISOString();
-
 export async function GET() {
+  const known = BUILD_COMMIT !== "unknown";
   return Response.json(
     {
-      commit: COMMIT === "unknown" ? "unknown" : COMMIT.slice(0, 12),
-      builtAt: BUILT_AT,
-      note:
-        COMMIT === "unknown"
-          ? "This build ran somewhere that exposes no commit SHA, so the version is genuinely unknown rather than guessed. builtAt still tells you when the bundle was made."
-          : "The commit this bundle was built from. If it lags the repository, a build failed and the previous version is still being served.",
+      commit: BUILD_COMMIT,
+      branch: BUILD_BRANCH,
+      builtAt: BUILD_AT,
+      note: known
+        ? "The commit this bundle was built from. If it lags the repository, a build failed and the previous version is still being served."
+        : "This build ran with no git checkout and no CI commit variable, so the version is genuinely unknown rather than guessed. builtAt still says when the bundle was made.",
     },
     { headers: { "cache-control": "no-store" } },
   );

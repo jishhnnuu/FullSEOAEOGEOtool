@@ -104,7 +104,7 @@ export const ROUTES: PublicRoute[] = [
   },
   {
     path: "/the-firm",
-    title: "The firm: 67 specialists and what each refuses to do",
+    title: "The firm: every specialist and what each refuses to do",
     answers: "The whole roster in three tiers, with every agent's role and its first guardrail.",
     priority: 0.9,
     changeFrequency: "monthly",

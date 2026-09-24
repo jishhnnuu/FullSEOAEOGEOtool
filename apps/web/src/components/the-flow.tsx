@@ -4,7 +4,7 @@ import Link from "next/link";
  * Where the product actually is.
  *
  * This exists because someone read the whole site and still asked where the
- * dashboard was. Four desk pages, a roster of sixty-seven and a check library
+ * dashboard was. Four desk pages, a roster of eighty and a check library
  * describe a company; none of them says what to click. The path was real the
  * whole time and simply never written down on a screen, which on a site whose
  * entire argument is "we do the work, watch us" is the worst possible thing to

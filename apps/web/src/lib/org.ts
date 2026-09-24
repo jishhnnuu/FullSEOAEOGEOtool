@@ -104,15 +104,6 @@ export const DIRECTOR = {
   never: directorAgent?.never ?? "Reports activity as a result.",
 };
 
-/**
- * Operations reports to the director rather than to a desk, because the work
- * is the same whichever desk commissioned it. Publishing a fix and publishing
- * a draft is one publisher.
- */
-export const OPERATIONS: TeamMember[] = ROSTER
-  .filter((a) => a.reportsTo === "account-director" && !["strategist", "content-director"].includes(a.key))
-  .map((a) => ({ ...a, runsInBrowser: IN_BROWSER.has(a.key) }));
-
 export const MANAGERS: Manager[] = [
   {
     key: "search",
@@ -254,14 +245,38 @@ export function headcount(): number {
   return ROSTER_COUNT;
 }
 
-/** Everyone this page actually shows, so the two numbers can be compared. */
+/**
+ * Operations reports to the director rather than to a desk, because the work
+ * is the same whichever desk commissioned it. Publishing a fix and publishing
+ * a draft is one publisher.
+ *
+ * Declared after MANAGERS so the desk leads can be excluded by reading the
+ * desks rather than by naming them. The hand-written exclusion list this
+ * replaces held two names and never learned the third, so social-director was
+ * counted once in operations and again as a desk lead, and the firm page
+ * reported 81 of 80.
+ */
+const DESK_LEADS = new Set(MANAGERS.map((m) => m.agent));
+
+export const OPERATIONS: TeamMember[] = ROSTER
+  .filter((a) => a.reportsTo === "account-director" && !DESK_LEADS.has(a.key))
+  .map((a) => ({ ...a, runsInBrowser: IN_BROWSER.has(a.key) }));
+
+/**
+ * Everyone this page actually shows, so the two numbers can be compared.
+ *
+ * Counted as distinct keys rather than as a sum of lengths. A sum cannot see
+ * an agent that appears in two places, which is exactly the failure it is here
+ * to catch.
+ */
 export function placed(): number {
-  return (
-    1 +
-    OPERATIONS.length +
-    MANAGERS.filter((m) => m.status === "live").length +
-    MANAGERS.reduce((n, m) => n + m.team.length, 0)
-  );
+  const keys = new Set<string>([DIRECTOR.agent]);
+  for (const member of OPERATIONS) keys.add(member.key);
+  for (const manager of MANAGERS) {
+    if (manager.status === "live") keys.add(manager.agent);
+    for (const member of manager.team) keys.add(member.key);
+  }
+  return keys.size;
 }
 
 export function managerForPath(path: string, base: string): Manager | null {

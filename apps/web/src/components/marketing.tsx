@@ -1,6 +1,7 @@
 import Link from "next/link";
 
 import { BRAND } from "@/lib/brand";
+import { headcount } from "@/lib/org";
 
 /**
  * The public site's chrome.
@@ -68,7 +69,7 @@ export function SiteFooter() {
         </div>
         <div>
           <h4>The firm</h4>
-          <Link href="/the-firm">All 67 specialists</Link>
+          <Link href="/the-firm">All {headcount()} specialists</Link>
           <Link href="/inside">Look inside a live account</Link>
           <Link href="/how-it-works">How a run works</Link>
           <Link href="/platform">Every capability</Link>

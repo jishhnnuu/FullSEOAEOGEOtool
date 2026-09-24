@@ -12,7 +12,7 @@ export const metadata = {
   // The homepage keeps the layout's default title rather than restating it,
   // so the product name lives in exactly one place.
   description:
-    "Everything a digital marketing agency does, without the agency. Sixty-seven specialists across search, content and social do the work and you approve it. Published prices, no retainer, no call. Look inside a live account before you give us anything.",
+    `Everything a digital marketing agency does, without the agency. ${headcount()} specialists across search, content and social do the work and you approve it. Published prices, no retainer, no call. Look inside a live account before you give us anything.`,
   alternates: { canonical: "/" },
 };
 
@@ -87,7 +87,7 @@ const FAQ = [
   },
   {
     q: "Is it actually AI, or is it a person with a template?",
-    a: "Sixty-seven agent specifications, each with declared tools and a published list of what it refuses to do, validated when the runtime starts. You can read all of them, and you can watch a run happen.",
+    a: `${headcount()} agent specifications, each with declared tools and a published list of what it refuses to do, validated when the runtime starts. You can read all of them, and you can watch a run happen.`,
   },
   {
     q: "What about paid ads and social?",
@@ -107,8 +107,8 @@ export default function Home() {
         <div className="eyebrow">A digital marketing agency, staffed by {headcount()} agents</div>
         <h1 className="hero-title">Everything an agency does. None of the agency.</h1>
         <p className="hero-lede">
-          Sixty-seven specialists across search, content and social. They do the work, you approve it, and you can watch
-          the whole thing happen. From {priceLabel(PLANS.starter)} a month. No retainer, no minimum term, and no call to book.
+          {headcount()} specialists across search, content and social. They do the work, you approve it, and you can
+          watch the whole thing happen. From {priceLabel(PLANS.starter)} a month. No retainer, no minimum term, and no call to book.
         </p>
         <div className="hero-actions">
           <Link href="/inside" className="button primary big-button">Look inside a live account</Link>
@@ -215,7 +215,7 @@ export default function Home() {
       {/* 05 — The differentiator, surfaced. */}
       <section className="section">
         <div className="eyebrow">The roster</div>
-        <h2 className="section-title">Sixty-seven specialists, and each one publishes what it will not do.</h2>
+        <h2 className="section-title">{headcount()} specialists, and each one publishes what it will not do.</h2>
         <p className="section-lede">
           Every agent is declared with the tools it may touch and the one thing it refuses, checked when the runtime
           starts rather than written on a page. Nobody generating slop publishes constraints.

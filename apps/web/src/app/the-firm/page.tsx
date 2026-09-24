@@ -8,7 +8,7 @@ import { breadcrumbNode, graph } from "@/lib/schema";
 export const metadata = {
   title: "The firm",
   description:
-    "All 67 specialists, in three tiers, each with the one thing it refuses to do. Read from the agent specifications the runtime validates at boot, not written on a marketing page.",
+    `All ${headcount()} specialists, in three tiers, each with the one thing it refuses to do. Read from the agent specifications the runtime validates at boot, not written on a marketing page.`,
   alternates: { canonical: "/the-firm" },
 };
 
@@ -17,7 +17,7 @@ export const metadata = {
  *
  * This was inside the logged-in product, where nobody who had not already
  * signed up could ever see it, and it is the single most unusual thing in this
- * category. Sixty-seven named specialists each publishing a constraint is what
+ * category. Eighty named specialists each publishing a constraint is what
  * makes "AI agents" read as rigour rather than as slop, because nobody
  * generating slop publishes constraints.
  *
@@ -48,7 +48,7 @@ export default function TheFirmPage() {
 
       <section className="section">
         <div className="eyebrow">The firm</div>
-        <h1 className="section-title">Sixty-seven specialists, and what each one refuses to do.</h1>
+        <h1 className="section-title">{headcount()} specialists, and what each one refuses to do.</h1>
         <p className="section-lede">
           An agency shows you four headshots and calls it a team page. This is the whole roster: every agent, the job
           it owns, and the first line of its guardrails, which is the thing it will not do whatever anybody asks. All

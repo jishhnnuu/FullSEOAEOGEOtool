@@ -55,7 +55,7 @@ export const IS_LAUNCHED = SITE_URL !== FALLBACK_URL;
 export const TAGLINE = "A digital marketing agency run by AI agents";
 
 export const DESCRIPTION =
-  "Sixty-seven agents across search and content, with one director you talk to. " +
+  "A roster of named agents across search, content and social, with one director you talk to. " +
   "Crawl a site, take the fixes already written, get a point of view argued and a " +
   "draft written against it. Covers SEO, AEO and GEO, with paid and social next. " +
   "No account, no card, no API key.";

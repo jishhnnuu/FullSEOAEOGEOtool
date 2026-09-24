@@ -1,12 +1,18 @@
 # How the organisation runs
 
-Sixty-seven agents across two offerings, one client-facing lead, and a set of
-rules about who may hand work to whom. This file covers the hierarchy, what
+Eighty agents across three desks, one client-facing lead, and a set of rules
+about who may hand work to whom. This file covers the hierarchy, what
 happens when somebody subscribes, and how information moves between agents
 without anybody having to hold it all in their head.
 
-The offerings themselves are in `docs/offerings/SEO.md` and
-`docs/offerings/CONTENT-MARKETING.md`.
+The offerings themselves are in `docs/offerings/SEO.md`,
+`docs/offerings/CONTENT-MARKETING.md` and `docs/offerings/SOCIAL.md`.
+
+The count is not maintained by hand anywhere it is shown. `headcount()` in
+`apps/web/src/lib/org.ts` reads `roster.generated.ts`, and `placed()` counts
+distinct keys rather than summing lengths, because a sum cannot see an agent
+listed in two places. A hand-written exclusion list naming two desk leads once
+missed the third, so the firm page reported eighty-one of eighty.
 
 ---
 

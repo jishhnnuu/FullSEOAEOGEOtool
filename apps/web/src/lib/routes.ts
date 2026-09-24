@@ -87,14 +87,6 @@ export const ROUTES: PublicRoute[] = [
     section: "learn",
   },
   {
-    path: "/vs-agency",
-    title: "Against an SEO agency",
-    answers: "What an agency does that software cannot, and what it charges for work that is now automatic.",
-    priority: 0.8,
-    changeFrequency: "monthly",
-    section: "compare",
-  },
-  {
     path: "/inside",
     title: "Look inside a live account",
     answers: "A real working account, audited live, with no signup and nothing to enter.",

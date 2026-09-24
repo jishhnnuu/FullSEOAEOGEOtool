@@ -78,6 +78,12 @@ for (const file of pages(APP)) {
   if (file.startsWith(SKIP_PREFIX)) continue;
   const source = readFileSync(file, "utf8");
   const route = "/" + relative(APP, file).replace(/\/?page\.tsx$/, "");
+
+  // A page whose whole job is to redirect has no h1, no description and no
+  // canonical, correctly: it never renders. Retiring a URL by redirecting it
+  // is the right move, so the checker should not punish it. It still has to
+  // be a real redirect, not a page that happens to import one.
+  if (/^\s*redirect\(/m.test(source) && !/<[A-Za-z]/.test(source)) continue;
   const label = `${relative(ROOT, file)} (${route || "/"})`;
 
   // A dynamic route declares its canonical inside generateMetadata.

@@ -1856,3 +1856,40 @@ a.link-card h3 { color: var(--accent); }
   .cmo-thread { max-height: none; }
   .cmo-turn { max-width: 100%; }
 }
+
+/* ----------------------------------------------- touch targets and sizes */
+/*
+ * Found by measuring rather than by looking. On a 390px viewport the footer
+ * links rendered 25px tall and the header's text links 20px, against the
+ * 24px minimum WCAG 2.5.8 sets and a long way under the 44px a thumb
+ * actually wants. The smallest text hit 10.5px, which is legible on a
+ * desktop monitor at arm's length and not on a phone.
+ *
+ * Padding rather than font size for the targets, so nothing reflows, and a
+ * floor on the two smallest type scales.
+ */
+@media (max-width: 760px) {
+  .site-nav a,
+  .site-footer-inner a {
+    display: inline-block;
+    padding-block: 0.45rem;
+    min-height: 44px;
+    line-height: 1.6;
+  }
+  .site-nav a.cta { padding-block: 0.55rem; }
+
+  /* A floor, not a resize: these stay smaller than body copy, just readable. */
+  .tiny,
+  .flow-cost,
+  .dt-count,
+  .cmo-desk,
+  .access-body h4 { font-size: 0.72rem; }
+}
+
+/* iOS zooms the whole page when an input under 16px takes focus, which throws
+   the layout sideways mid-typing. Sixteen is the floor for anything typed. */
+@media (max-width: 760px) {
+  input,
+  textarea,
+  select { font-size: 16px; }
+}

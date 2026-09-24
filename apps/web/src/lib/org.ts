@@ -269,7 +269,28 @@ export function headcount(): number {
 const DESK_LEADS = new Set(MANAGERS.map((m) => m.agent));
 
 export const OPERATIONS: TeamMember[] = ROSTER
-  .filter((a) => a.reportsTo === "account-director" && !DESK_LEADS.has(a.key))
+  .filter((a) => a.reportsTo === "account-director" && !DESK_LEADS.has(a.key) && a.key !== CMO_KEY)
+  .map((a) => ({ ...a, runsInBrowser: IN_BROWSER.has(a.key) }));
+
+/**
+ * The office around the client-facing lead.
+ *
+ * Not a desk, because it sells nothing and owns no channel. It is the
+ * machinery that lets one agent be the only agent a client speaks to: the
+ * interview, the brief, the arbitration when two desks want the same week,
+ * the batching of approvals, and the plain-language pass everything makes on
+ * the way out.
+ *
+ * It is a separate group rather than part of operations because the firm page
+ * has to show it. Adding these nine agents without a home on that page is how
+ * it briefly reported 107 of 115.
+ */
+const CMO_KEY = "chief-marketing-officer";
+
+export const CMO = ROSTER.find((a) => a.key === CMO_KEY) ?? null;
+
+export const CMO_OFFICE: TeamMember[] = ROSTER
+  .filter((a) => a.reportsTo === CMO_KEY)
   .map((a) => ({ ...a, runsInBrowser: IN_BROWSER.has(a.key) }));
 
 /**
@@ -281,6 +302,8 @@ export const OPERATIONS: TeamMember[] = ROSTER
  */
 export function placed(): number {
   const keys = new Set<string>([DIRECTOR.agent]);
+  if (CMO) keys.add(CMO.key);
+  for (const member of CMO_OFFICE) keys.add(member.key);
   for (const member of OPERATIONS) keys.add(member.key);
   for (const manager of MANAGERS) {
     if (manager.status === "live") keys.add(manager.agent);

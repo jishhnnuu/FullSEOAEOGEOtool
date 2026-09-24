@@ -1878,12 +1878,17 @@ a.link-card h3 { color: var(--accent); }
   }
   .site-nav a.cta { padding-block: 0.55rem; }
 
-  /* A floor, not a resize: these stay smaller than body copy, just readable. */
+  /* A floor, not a resize: these stay smaller than body copy, just readable.
+     In pixels rather than rem, because the root here is 15px and 0.72rem
+     landed at 10.8, which is under the floor this rule exists to set. A
+     minimum expressed in a relative unit is not a minimum. */
   .tiny,
   .flow-cost,
   .dt-count,
   .cmo-desk,
-  .access-body h4 { font-size: 0.72rem; }
+  .person .dept,
+  .badge,
+  .access-body h4 { font-size: 12px; }
 }
 
 /* iOS zooms the whole page when an input under 16px takes focus, which throws

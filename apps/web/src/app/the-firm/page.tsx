@@ -2,7 +2,7 @@ import Link from "next/link";
 
 import { CtaBand, MarketingChrome } from "@/components/marketing";
 import { DESKS, managerFor } from "@/lib/desks";
-import { DIRECTOR, MANAGERS, OPERATIONS, headcount, placed } from "@/lib/org";
+import { CMO_OFFICE, DIRECTOR, MANAGERS, OPERATIONS, headcount, placed } from "@/lib/org";
 import { breadcrumbNode, graph } from "@/lib/schema";
 
 export const metadata = {
@@ -101,6 +101,29 @@ export default function TheFirmPage() {
                 </Link>
               );
             })}
+          </div>
+        </div>
+
+        <div className="firm-tier" id="cmo">
+          <div className="firm-tier-head">
+            <h2>The CMO office</h2>
+            <span className="small faint mono">reports_to: chief-marketing-officer</span>
+          </div>
+          <p className="small muted" style={{ marginTop: "-0.4rem", marginBottom: "0.9rem", maxWidth: "76ch" }}>
+            Not a desk. It sells nothing and owns no channel. It is the machinery that lets one agent be the only
+            one you speak to: the interview that stops after three questions, the brief so no desk has to come back
+            to you, the arbitration when two desks want the same week, and the plain-language pass everything makes
+            on the way out.
+          </p>
+          <div className="firm-people">
+            {CMO_OFFICE.map((member) => (
+              <div className="person" key={member.key}>
+                <strong>{member.name}</strong>
+                <span className="dept">{member.department}</span>
+                <p>{member.role}</p>
+                <span className="never-line"><b>Never</b>{member.never}</span>
+              </div>
+            ))}
           </div>
         </div>
 

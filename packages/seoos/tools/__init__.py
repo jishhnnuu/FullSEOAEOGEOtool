@@ -28,6 +28,7 @@ def load_all_tools() -> ToolRegistry:
         publish_tools,
         reporting_tools,
         research_tools,
+        social_tools,
         workflow_tools,
     )
 

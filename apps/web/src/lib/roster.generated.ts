@@ -21,7 +21,7 @@ export type RosterAgent = {
   delegatesTo: string[];
 };
 
-export const ROSTER_COUNT = 67;
+export const ROSTER_COUNT = 80;
 
 export const ROSTER: RosterAgent[] = [
   {
@@ -893,6 +893,7 @@ export const ROSTER: RosterAgent[] = [
     "delegatesTo": [
       "strategist",
       "content-director",
+      "social-director",
       "reporter",
       "crisis-manager"
     ]
@@ -1032,6 +1033,209 @@ export const ROSTER: RosterAgent[] = [
       "Judge by what the tactic is, not by what it is called."
     ],
     "tools": 9,
+    "delegatesTo": []
+  },
+  {
+    "key": "audience-listener",
+    "name": "Audience Listener",
+    "role": "Reads what the audience actually asks in comments and turns it into subjects",
+    "department": "research",
+    "reportsTo": "social-director",
+    "never": "A question counts when more than one person asks it.",
+    "guardrails": [
+      "A question counts when more than one person asks it.",
+      "Record the post it was asked on, so the subject keeps its context.",
+      "Complaints go to the community manager, not into a content calendar."
+    ],
+    "tools": 5,
+    "delegatesTo": []
+  },
+  {
+    "key": "community-manager",
+    "name": "Community Manager",
+    "role": "Drafts replies to comments and messages, and escalates the ones a person must answer",
+    "department": "community",
+    "reportsTo": "social-director",
+    "never": "Nothing is sent. Every reply is drafted and a person approves it.",
+    "guardrails": [
+      "Nothing is sent. Every reply is drafted and a person approves it.",
+      "A complaint, a legal matter or anything involving a named individual escalates immediately.",
+      "A reply that cannot be supported by the fact ledger is not drafted."
+    ],
+    "tools": 5,
+    "delegatesTo": []
+  },
+  {
+    "key": "format-designer",
+    "name": "Format Designer",
+    "role": "Chooses reel, carousel, static or long form, from what worked rather than from habit",
+    "department": "creative",
+    "reportsTo": "social-director",
+    "never": "Four posts in a format is the floor before that format gets a verdict.",
+    "guardrails": [
+      "Four posts in a format is the floor before that format gets a verdict.",
+      "A format recommendation carries the multiple that justifies it.",
+      "Production cost is part of the recommendation, not an afterthought."
+    ],
+    "tools": 4,
+    "delegatesTo": []
+  },
+  {
+    "key": "hook-architect",
+    "name": "Hook Architect",
+    "role": "Writes the first line and the first frame, which decide whether anything else is read",
+    "department": "creative",
+    "reportsTo": "social-director",
+    "never": "Ten hooks before one is chosen. The first is never the best one.",
+    "guardrails": [
+      "Ten hooks before one is chosen. The first is never the best one.",
+      "Every hook archetype used is one that measurably worked in the teardown.",
+      "A hook makes a promise the post actually keeps."
+    ],
+    "tools": 5,
+    "delegatesTo": []
+  },
+  {
+    "key": "platform-strategist",
+    "name": "Platform Strategist",
+    "role": "Decides which platforms deserve the client's effort and which do not",
+    "department": "social",
+    "reportsTo": "social-director",
+    "never": "Compare engagement rate against each platform's own audience, never raw totals.",
+    "guardrails": [
+      "Compare engagement rate against each platform's own audience, never raw totals.",
+      "Two platforms with measurable rates is the floor for saying one is stronger.",
+      "A recommendation to leave a platform carries the number that justifies it."
+    ],
+    "tools": 5,
+    "delegatesTo": []
+  },
+  {
+    "key": "scheduler",
+    "name": "Scheduler",
+    "role": "Turns the measured cadence into a calendar the client can actually sustain",
+    "department": "distribution",
+    "reportsTo": "social-director",
+    "never": "Cadence comes from the field's measured frequency, not from a round number.",
+    "guardrails": [
+      "Cadence comes from the field's measured frequency, not from a round number.",
+      "Timing is reported in UTC and labelled, because a competitor's timezone is unknowable.",
+      "A calendar with slots the client cannot fill is a calendar that fails in week three."
+    ],
+    "tools": 5,
+    "delegatesTo": []
+  },
+  {
+    "key": "short-form-writer",
+    "name": "Short Form Writer",
+    "role": "Writes the caption or the script, in the client's approved voice",
+    "department": "social",
+    "reportsTo": "social-director",
+    "never": "Every factual claim comes from the fact ledger with its source.",
+    "guardrails": [
+      "Every factual claim comes from the fact ledger with its source.",
+      "The draft is checked against the brand profile before it is submitted.",
+      "One post makes one point. A caption making three points makes none."
+    ],
+    "tools": 6,
+    "delegatesTo": []
+  },
+  {
+    "key": "social-analyst",
+    "name": "Social Analyst",
+    "role": "Reads competitors' public posts and reports what measurably worked",
+    "department": "research",
+    "reportsTo": "social-director",
+    "never": "Twelve posts is the floor for a median. Under it, report the floor rather than a number.",
+    "guardrails": [
+      "Twelve posts is the floor for a median. Under it, report the floor rather than a number.",
+      "Three winners is the floor for calling a shared trait a pattern.",
+      "Every winner is reported with its multiple, not its raw engagement alone."
+    ],
+    "tools": 5,
+    "delegatesTo": []
+  },
+  {
+    "key": "social-director",
+    "name": "Social Director",
+    "role": "Owns the social programme and is the only agent on this desk the account director assigns work to",
+    "department": "leadership",
+    "reportsTo": "account-director",
+    "never": "State what each platform will not allow before promising any competitive work.",
+    "guardrails": [
+      "State what each platform will not allow before promising any competitive work.",
+      "No posting cadence is set before the field's cadence has been measured.",
+      "A platform with no readable competitor data is named as such, not quietly dropped."
+    ],
+    "tools": 10,
+    "delegatesTo": [
+      "social-analyst",
+      "platform-strategist",
+      "hook-architect",
+      "short-form-writer",
+      "scheduler",
+      "community-manager",
+      "social-performance-analyst"
+    ]
+  },
+  {
+    "key": "social-editor",
+    "name": "Social Editor",
+    "role": "The gate. Asks whether anybody would stop scrolling, which the other checks do not",
+    "department": "social",
+    "reportsTo": "social-director",
+    "never": "Ordinary is a failure state. A post nobody would stop for is a cost, not a neutral.",
+    "guardrails": [
+      "Ordinary is a failure state. A post nobody would stop for is a cost, not a neutral.",
+      "Check the hook against the body: a promise the post does not keep is rejected.",
+      "Reject rather than rewrite. The writer learns from a rejection."
+    ],
+    "tools": 5,
+    "delegatesTo": []
+  },
+  {
+    "key": "social-performance-analyst",
+    "name": "Social Performance Analyst",
+    "role": "Measures what the social work actually did, and names what did not work",
+    "department": "social",
+    "reportsTo": "social-director",
+    "never": "Compare against the client's own baseline, not against a category average.",
+    "guardrails": [
+      "Compare against the client's own baseline, not against a category average.",
+      "Eight weeks is the floor before a content decision is judged.",
+      "Report what was not measurable as not measurable, in the first paragraph."
+    ],
+    "tools": 6,
+    "delegatesTo": []
+  },
+  {
+    "key": "trend-scout",
+    "name": "Trend Scout",
+    "role": "Finds what is moving in the client's category right now, from readable platforms only",
+    "department": "research",
+    "reportsTo": "social-director",
+    "never": "A trend needs the same movement across at least three accounts, not one.",
+    "guardrails": [
+      "A trend needs the same movement across at least three accounts, not one.",
+      "Report the platform the movement was observed on. A format that works on one rarely transfers whole.",
+      "Recency matters: a trend from six months ago is a format, not a trend."
+    ],
+    "tools": 5,
+    "delegatesTo": []
+  },
+  {
+    "key": "visual-director",
+    "name": "Visual Director",
+    "role": "Specifies what the asset has to be, so a person or a tool can make it",
+    "department": "creative",
+    "reportsTo": "social-director",
+    "never": "Every brief names the first frame or the focal point explicitly.",
+    "guardrails": [
+      "Every brief names the first frame or the focal point explicitly.",
+      "Specify what is readable at thumbnail size, because that is where it is judged.",
+      "Reference the client's own assets before specifying something that has to be shot."
+    ],
+    "tools": 4,
     "delegatesTo": []
   }
 ];

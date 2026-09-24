@@ -5,7 +5,7 @@
 A tool is the only way an agent touches the world. Everything an agent
 can do is in this list; nothing outside it is reachable.
 
-**65 tools** across 11 categories. 21 of them change state.
+**73 tools** across 12 categories. 24 of them change state.
 
 ## How to read this
 
@@ -827,6 +827,104 @@ write, and say whether the tone should change.
 |---|---|---|---|
 | `site_url` | string | no | Client page to measure. Defaults to the site in context. |
 | `rival_urls` | array | yes | Competitor pages to compare against |
+
+## social
+
+### `social.calendar`
+
+Plan a posting schedule from the measured cadence, formats and windows.
+
+**Mutates:** yes · **Risk:** `low` · **Runs unattended from:** `assisted`
+
+| Parameter | Type | Required | Description |
+|---|---|---|---|
+| `platform` | `youtube` \| `instagram` \| `reddit` \| `x` \| `tiktok` \| `facebook` \| `linkedin` \| `pinterest` \| `threads` \| `snapchat` | yes | Which platform to plan |
+| `posts_per_week` | integer | yes | Target cadence |
+| `formats` | array | no | Formats to rotate |
+| `weeks` | integer | no | How many weeks to plan |
+
+### `social.capabilities`
+
+What each social platform will and will not let this desk read, and why.
+
+**Mutates:** no · **Risk:** `none`
+
+| Parameter | Type | Required | Description |
+|---|---|---|---|
+| `platform` | `youtube` \| `instagram` \| `reddit` \| `x` \| `tiktok` \| `facebook` \| `linkedin` \| `pinterest` \| `threads` \| `snapchat` | no | One platform, or leave empty for the whole map |
+
+### `social.compare`
+
+Compare up to five brands on one platform: share of voice and efficiency.
+
+**Mutates:** no · **Risk:** `none`
+
+| Parameter | Type | Required | Description |
+|---|---|---|---|
+| `platform` | `youtube` \| `instagram` \| `reddit` \| `x` \| `tiktok` \| `facebook` \| `linkedin` \| `pinterest` \| `threads` \| `snapchat` | yes | Which platform to compare on |
+| `handles` | array | yes | Two to five handles, the client's first |
+| `limit` | integer | no | Posts to read per account |
+
+### `social.hook_bank`
+
+Build a bank of hooks from what measurably worked, not from imagination.
+
+**Mutates:** no · **Risk:** `none`
+
+| Parameter | Type | Required | Description |
+|---|---|---|---|
+| `winners` | array | yes | Winner rows from social.teardown |
+| `angle` | string | no | The client's own subject, so the hooks are about something |
+
+### `social.platform_fit`
+
+Work out where one brand is actually strongest, across platforms.
+
+**Mutates:** no · **Risk:** `none`
+
+| Parameter | Type | Required | Description |
+|---|---|---|---|
+| `handles` | array | yes | One entry per platform, as platform:handle |
+| `limit` | integer | no | Posts to read per platform |
+
+### `social.queue_post`
+
+Put a finished post in the client's approval queue.
+
+**Mutates:** yes · **Risk:** `high` · **Runs unattended from:** `autopilot` · **Approval type:** `social_post` · **Tags:** `social_publish`
+
+| Parameter | Type | Required | Description |
+|---|---|---|---|
+| `platform` | `youtube` \| `instagram` \| `reddit` \| `x` \| `tiktok` \| `facebook` \| `linkedin` \| `pinterest` \| `threads` \| `snapchat` | yes | Where it goes |
+| `body` | string | yes | The caption or post text |
+| `format` | string | no | reel, video, carousel, image or text |
+| `asset_notes` | string | no | What the visual needs to be |
+| `scheduled_for` | string | no | ISO timestamp, or empty for the next open slot |
+
+### `social.reply_draft`
+
+Draft a reply to a comment or a message. Never sends it.
+
+**Mutates:** yes · **Risk:** `medium` · **Runs unattended from:** `managed`
+
+| Parameter | Type | Required | Description |
+|---|---|---|---|
+| `platform` | `youtube` \| `instagram` \| `reddit` \| `x` \| `tiktok` \| `facebook` \| `linkedin` \| `pinterest` \| `threads` \| `snapchat` | yes | Where the comment is |
+| `comment` | string | yes | What they said |
+| `context` | string | no | The post it is on |
+| `sentiment` | `positive` \| `neutral` \| `question` \| `complaint` | no | How it reads |
+
+### `social.teardown`
+
+Read one competitor's public posts on one platform and report what worked.
+
+**Mutates:** no · **Risk:** `none`
+
+| Parameter | Type | Required | Description |
+|---|---|---|---|
+| `platform` | `youtube` \| `instagram` \| `reddit` \| `x` \| `tiktok` \| `facebook` \| `linkedin` \| `pinterest` \| `threads` \| `snapchat` | yes | Which platform to read |
+| `handle` | string | yes | The competitor's handle or channel, without the @ |
+| `limit` | integer | no | How many recent posts to read |
 
 ## workflow
 

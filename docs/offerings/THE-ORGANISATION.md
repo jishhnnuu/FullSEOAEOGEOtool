@@ -36,9 +36,14 @@ strategist  content-director  reporter   crisis-manager   operations
                                                           resolver
 ```
 
-Two offering leads sit under it. `strategist` owns search. `content-director`
-owns content marketing. When the social and paid offerings are built, they
-join at the same level, and the client still talks to one agent.
+Three offering leads sit under it. `strategist` owns search,
+`content-director` owns content marketing, and `social-director` owns social.
+When paid media is built it joins at the same level, and the client still talks
+to one agent.
+
+Social is downstream of content rather than beside it: it works from the point
+of view the content desk already had approved instead of inventing a second
+brand voice, and `docs/offerings/SOCIAL.md` has the full division.
 
 ### What account-director actually does
 

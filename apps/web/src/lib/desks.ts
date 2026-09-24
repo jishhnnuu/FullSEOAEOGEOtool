@@ -176,23 +176,49 @@ export const DESKS: Desk[] = [
     key: "social",
     path: "/social",
     label: "Social",
-    headline: "Social that works from the argument you already approved.",
-    audience: "Companies who do not want a second brand voice invented at a different desk.",
+    headline: "Social that reads the field before it posts, and tells you what it cannot see.",
+    audience: "Businesses posting consistently, seeing nothing back, and being shown competitor reach figures by agencies who cannot possibly have them.",
     lede:
-      "The owned channels, downstream of the content desk rather than beside it. Not built yet. The quarter it opens is on this page, along with what it will refuse to do.",
-    worry: "Every agency we have used invented a different voice for social, and it sounds like a different company.",
+      "They read the competitors the platforms actually permit, find the posts that beat those accounts' own medians, and report what the winners had in common. Then they say plainly which platforms publish nothing at all.",
+    worry: "Our last agency showed us a competitor's reach and impressions. How did they get those, and why does our own reporting never match anything?",
     answer:
-      "Because social sat at a different desk with a different brief. Here it is downstream of an approved point of view, and the four assets inside a finished piece are pulled once rather than twice.",
+      "They did not get them. Impressions and reach are computed by the platform for the account owner and exposed only through that owner's own token, on every network without exception. Any competitor reach figure you have been shown was estimated from follower count. This desk will not print one, and it publishes the map of what each platform does and does not allow before any work starts.",
     work: [
-      { title: "One approved voice", body: "The point of view the content desk already had approved. Not a second one written for a different channel.", applied: false },
-      { title: "Rewrite, never resize", body: "Each format written for that format. A carousel is not a blog post cropped.", applied: false },
-      { title: "Named accounts and cadence", body: "Never a posting target. A number of posts is an activity metric and this platform does not report activity as a result.", applied: false },
-      { title: "Nothing posted without approval", body: "The account is yours. No engagement metric reported that the platform does not actually expose.", applied: false },
+      {
+        title: "The teardown, against their own median",
+        body: "For each competitor: the median engagement, every post that cleared twice it, and the traits those winners share. A post at 6x its own account's median is the finding. Four thousand likes on a large account is not.",
+        applied: true,
+      },
+      {
+        title: "What the winners had in common",
+        body: "Format, hook archetype, opening length, and whether their best posts carry more or less call-to-action machinery than their average. Twelve posts is the floor for a median and three winners is the floor for a pattern, and below either the desk says so instead of assembling a playbook.",
+        applied: true,
+      },
+      {
+        title: "Share of voice, with the gap that matters",
+        body: "Up to five brands at once. Share of posts is how loud a brand is, share of engagement is how much anyone cared, and the gap between them is the useful number. Forty per cent of the posts and twelve per cent of the engagement is not winning, it is shouting.",
+        applied: true,
+      },
+      {
+        title: "Which platform to leave",
+        body: "Ranked by engagement rate against each platform's own audience, which is the only cross-platform comparison that survives. Usually the most valuable sentence here is that one platform is not worth the effort.",
+        applied: true,
+      },
+      {
+        title: "Hooks built from evidence",
+        body: "Ten openings per post, in the archetypes that measurably cleared the bar in this category, about the client's own subject. Reuse the shape, never the sentence.",
+        applied: true,
+      },
+      {
+        title: "Replies drafted, never sent",
+        body: "Community management in the approved voice, with complaints, legal matters and anything involving a named individual escalated to a person. Nothing leaves the account without approval, at any autonomy level.",
+        applied: false,
+      },
     ],
     agencyPrice: "£1,200 to £3,000 a month",
-    agencyBasis: "A social retainer for planning, production and community management.",
-    requiresPlan: null,
-    answers: "What the social desk will do, what it refuses, and the quarter it opens.",
+    agencyBasis: "A UK social retainer for planning, production, scheduling and community management.",
+    requiresPlan: "growth",
+    answers: "What a social desk of 13 agents reads, what every platform refuses to publish, and what it costs.",
   },
 ];
 

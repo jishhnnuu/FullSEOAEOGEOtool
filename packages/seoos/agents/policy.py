@@ -60,6 +60,10 @@ ALWAYS_HUMAN = {
     "hreflang_topology_change",
     "cms_credential_change",
     "billing_increase",
+    # Posting or replying on a client's own social account. A post cannot be
+    # recalled, the audience is theirs, and a bad one is screenshotted before
+    # it is deleted. No autonomy level authorises it.
+    "social_publish",
 }
 
 

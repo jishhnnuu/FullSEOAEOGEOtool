@@ -187,6 +187,26 @@ export type Workspace = {
    * changes without anyone touching a page.
    */
   visibility: VisibilityHistory[];
+  /**
+   * The tenant's own social platform credentials.
+   *
+   * Held here for the same reason the model key is: the platform has no API
+   * key of its own for any social network, so the client supplies theirs, the
+   * browser keeps them, and the read route uses them once without writing
+   * them down. Optional because every site created before the social desk
+   * existed has none, and because the desk degrades to what needs no
+   * credential rather than refusing to open.
+   */
+  social?: SocialCredentials | null;
+};
+
+export type SocialCredentials = {
+  /** A YouTube Data API v3 key. Free to create in Google Cloud. */
+  youtubeApiKey?: string;
+  /** The client's own Instagram Business account id, used to query through. */
+  igUserId?: string;
+  /** A Meta access token with instagram_basic on that account. */
+  igAccessToken?: string;
 };
 
 /** One reading of how often the answer engines named the site. */

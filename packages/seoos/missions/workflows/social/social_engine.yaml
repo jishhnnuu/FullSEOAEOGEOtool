@@ -1,0 +1,137 @@
+key: social_engine
+name: Make the posts
+description: >
+  The production loop, run per batch. Works only from an approved platform
+  decision and an approved point of view: the hook comes from archetypes that
+  measurably won in this category, the claims come from the fact ledger, and
+  three gates check different things before anything reaches the client.
+budget_usd: 20.0
+timeout_minutes: 60
+concurrency: 2
+tags: [social, production]
+
+steps:
+  - id: hooks
+    type: agent
+    agent: hook-architect
+    label: Ten hooks before one
+    budget_usd: 3.0
+    task: >
+      Build the hooks for this batch from the archetypes that earned a
+      multiple in the teardown, not from a copywriting blog.
+
+      Ten per post before you choose one. The first is never the best one.
+
+      Reuse the shape, never the sentence. A competitor's line was about
+      their subject and copying it is both obvious and useless.
+
+      Every hook must be a promise the post can keep. A hook the body does
+      not deliver costs more than a dull opening, because the audience learns
+      the account overpromises and stops reading the next one.
+
+  - id: formats
+    type: agent
+    agent: format-designer
+    label: Choose the format from the data
+    needs: [hooks]
+    context: [hooks]
+    budget_usd: 2.0
+    task: >
+      Assign a format to each post from the measured multiples, not from
+      habit.
+
+      Four posts in a format is the floor before that format has a verdict.
+      A format running under the account's own median is costing reach every
+      time it goes out, and you say so.
+
+      Include what each format costs the client to produce, weekly, in their
+      actual capacity. A mix that collapses in week three is worse than a
+      duller one that runs all year.
+
+  - id: visuals
+    type: agent
+    agent: visual-director
+    label: Brief the assets
+    needs: [formats]
+    context: [formats]
+    budget_usd: 2.5
+    task: >
+      Write the asset brief for each post. Name the first frame or focal
+      point, the exact text on screen, the aspect ratio, and what has to be
+      legible at thumbnail size, because that is the size the decision is
+      made at.
+
+      Check the client's existing assets before specifying anything that has
+      to be shot. A business with three hundred product photographs does not
+      need new ones for a carousel.
+
+      Where a post needs footage that does not exist, mark it blocked on
+      production and say roughly what it would take. A calendar full of posts
+      nobody can make is a calendar that lies.
+
+  - id: write
+    type: agent
+    agent: short-form-writer
+    label: Write the captions
+    needs: [hooks, formats]
+    context: [hooks, formats]
+    budget_usd: 4.0
+    task: >
+      Write the caption or script for each post, in the voice the brand
+      profile sanctions.
+
+      Every factual claim comes from the fact ledger with its source. If the
+      ledger does not have it, the post does not say it, and a thin ledger
+      produces thin posts rather than invented ones.
+
+      One post, one point. A caption making three points makes none.
+
+      Run every draft through the voice gate before submitting. A draft that
+      fails comes back.
+
+  - id: edit
+    type: agent
+    agent: social-editor
+    label: Would anyone stop scrolling
+    needs: [write, visuals]
+    context: [write, visuals]
+    budget_usd: 3.0
+    task: >
+      The facts and the voice were already checked. Ask the question neither
+      of those gates asks: would a person stop for this, and would they be
+      glad they did?
+
+      Correct, on-brand and boring is the most common output of a content
+      operation and the hardest thing to reject. Reject it anyway. A post
+      nobody engages with teaches the platform the account is not worth
+      distributing, which costs the next post too.
+
+      Check every hook against its body. A hook promising a number the post
+      never gives is the most common real defect and the audience notices
+      immediately.
+
+      Return with the specific reason rather than rewriting it yourself.
+
+  - id: schedule
+    type: agent
+    agent: scheduler
+    label: Put them in the calendar
+    needs: [edit]
+    context: [edit]
+    budget_usd: 2.0
+    task: >
+      Place the approved posts into slots at the cadence the discovery
+      mission established from the field's measured frequency.
+
+      Report timing in UTC and label it. A competitor's local timezone is not
+      in any public data, and the real answer to when this client should post
+      comes from their own account analytics once connected.
+
+      A slot with no asset and no draft is marked blocked, not filled. Let
+      the calendar show the truth.
+
+  - id: gate
+    type: gate
+    label: Every post waits for a person
+    when: schedule exists
+    needs: [schedule]

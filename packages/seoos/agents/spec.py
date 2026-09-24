@@ -29,6 +29,9 @@ DEPARTMENTS = (
     # that department produces pages for search, these decide what a company
     # should say and why anyone would care.
     "creative", "distribution",
+    # The social desk. "community" is its own function rather than a flavour
+    # of support: replying in public is where a brand earns or loses trust.
+    "social", "community",
 )
 
 

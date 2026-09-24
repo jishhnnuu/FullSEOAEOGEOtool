@@ -43,6 +43,10 @@ const IN_BROWSER = new Set([
   "link-architect", "content-refresher",
   "content-researcher", "rival-reader", "voice-analyst", "angle-finder",
   "distribution-planner", "repurposer",
+  // The social desk. The measurement half runs in the browser off public
+  // platform APIs; the production half needs the server installation.
+  "social-director", "social-analyst", "platform-strategist", "trend-scout",
+  "audience-listener", "scheduler",
 ]);
 
 function agent(key: string): RosterAgent | undefined {
@@ -204,24 +208,32 @@ export const MANAGERS: Manager[] = [
     agent: "social-director",
     name: "Social",
     title: "Head of social",
-    status: "planned",
-    opens: "Q2",
+    status: "live",
+    opens: null,
     remit:
-      "The owned channels, working from the point of view the content desk already had approved, rather than inventing a second brand voice at a different desk.",
+      "The owned channels, worked from the argument the content desk already had approved. Reads what measurably worked for the competitors it can read, says plainly which platforms publish nothing, and drafts everything for a person to approve.",
     method: [
-      "One approved point of view, not a second voice",
-      "Rewrite per format rather than resize",
-      "Named accounts and named cadence, never a posting target",
-      "Measure replies and saves, not impressions",
+      "State what each platform will not allow, before promising any of it",
+      "Measure the field against its own median, not against follower counts",
+      "Decide which platforms to leave, not only which to join",
+      "Draft everything, send nothing",
     ],
-    nav: [],
+    nav: [
+      { href: "/social", label: "Overview" },
+      { href: "/social/teardown", label: "Competitor teardown" },
+      { href: "/social/compare", label: "Compare brands" },
+      { href: "/social/platforms", label: "What each platform allows" },
+    ],
     refusals: [
-      "No posting on your behalf without approval. The account is yours.",
-      "No engagement metric reported that the platform does not actually expose.",
+      "No competitor impressions, reach or saves, on any platform, ever. They are computed for the account owner and exposed only through the owner's own token, so every rival reach figure in this category is an estimate presented as data.",
+      "No median from fewer than twelve posts, and no pattern from fewer than three winners. Either would be one post's luck written up as a playbook.",
+      "No share of voice from one readable account. A share of one is not a share.",
+      "Nothing posted or replied to without a person approving it, at any autonomy level. The account is the client's and a post cannot be recalled.",
+      "No claim to know which platform produced a competitor's leads. Nobody outside that business can see it, and the call-to-action density this desk does measure is trying rather than succeeding.",
     ],
     overlap:
-      "Social is downstream of the content desk's repurposer rather than beside it. The four assets inside a finished piece are pulled once, not twice.",
-    team: [],
+      "Social is downstream of the content desk rather than beside it. It works from the point of view already approved instead of inventing a second brand voice, and the four assets inside a finished piece are pulled once by the repurposer rather than twice. Where social research turns up demand nobody has satisfied, it goes to the content desk as a subject rather than being written twice.",
+    team: subtree("social-director"),
   },
 ];
 

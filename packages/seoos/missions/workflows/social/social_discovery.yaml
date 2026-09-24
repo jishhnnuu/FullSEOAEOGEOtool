@@ -1,0 +1,147 @@
+key: social_discovery
+name: Read the field before posting anything
+description: >
+  The first mission of the social desk. States what each platform will and
+  will not allow, tears down every named competitor on the platforms that
+  permit it, decides where the client should actually be, and produces one
+  decision for the client to approve. Nothing else on this desk runs until
+  this has finished and been approved.
+budget_usd: 18.0
+timeout_minutes: 50
+concurrency: 3
+tags: [social, discovery, onboarding]
+
+steps:
+  - id: limits
+    type: tool
+    tool: social.capabilities
+
+  - id: state
+    type: tool
+    tool: report.site_state
+    needs: [limits]
+
+  - id: teardown
+    type: agent
+    agent: social-analyst
+    label: Tear down the competitors
+    needs: [state]
+    context: [limits, state]
+    budget_usd: 5.0
+    task: >
+      Read every named competitor on every platform the capability map says
+      is readable, and report what measurably worked for each.
+
+      For each account: the median engagement, the posts that cleared twice
+      it, and the traits those winners share. Format, hook archetype, opening
+      length, and whether the winners carry more or less call-to-action
+      machinery than that account's average post.
+
+      Report the multiple, never the raw count alone. A post at 6x an
+      account's own median is the finding; four thousand likes on a large
+      account is not.
+
+      Under twelve posts there is no median and you say so. Under three
+      winners there is no pattern and you say that too, rather than
+      assembling a playbook out of one lucky post.
+
+      Name every account you could not read and why. A personal Instagram
+      account cannot be read at all, and a TikTok competitor cannot be read
+      commercially. The client needs that in writing rather than a report
+      that quietly covers three platforms and implies seven.
+
+  - id: listening
+    type: agent
+    agent: audience-listener
+    label: Read what the audience asks
+    needs: [teardown]
+    context: [teardown]
+    budget_usd: 2.0
+    task: >
+      Go through the comments on the competitors' winning posts and find the
+      questions people are actually asking.
+
+      A question counts when more than one person asks it. Record how often
+      each appeared and the post it appeared under, because a subject without
+      its context becomes a generic topic.
+
+      The most valuable output here is demand a competitor has raised and not
+      satisfied. Find it and write it as a subject somebody could make.
+
+  - id: trends
+    type: agent
+    agent: trend-scout
+    label: What is moving in this category
+    needs: [teardown]
+    context: [limits, teardown]
+    budget_usd: 2.0
+    task: >
+      Identify formats or subjects gaining traction across at least three
+      separate accounts in this category within the last quarter.
+
+      One account spiking is that account's story. Three is a movement.
+
+      Name the platform each was observed on. A format that works on one
+      platform rarely transfers whole, and saying which one you saw it on is
+      the difference between a trend report and a guess.
+
+      State the blind spots. TikTok is where a great deal of format movement
+      starts and there is no commercial API to observe it, so anything you
+      cannot see is reported as unseen rather than omitted.
+
+  - id: platform
+    type: agent
+    agent: platform-strategist
+    label: Decide where to be, and where to stop
+    needs: [teardown, trends]
+    context: [limits, teardown, trends]
+    budget_usd: 3.0
+    task: >
+      Rank the platforms for this client by engagement rate against each
+      platform's own audience, which is the only cross-platform comparison
+      that survives scrutiny.
+
+      Report where the conversation is, using comments per like, because that
+      is where enquiries start. Report where the field puts its
+      call-to-action machinery, and label that as trying rather than
+      succeeding: nobody outside a business can see which platform produced
+      its leads.
+
+      Name at least one platform not worth the effort if the data supports
+      it. A business spreading four posts a week across six platforms is
+      doing nothing well, and telling them to stop is usually the most
+      valuable sentence on this desk.
+
+      Platforms that could not be scored go in a separate list with the
+      reason, never ranked on something else.
+
+  - id: brief_the_client
+    type: agent
+    agent: social-director
+    label: One decision for the client
+    needs: [platform, listening]
+    context: [limits, teardown, trends, platform, listening]
+    budget_usd: 3.0
+    task: >
+      Assemble what the client sees. One message, not five.
+
+      Open with the limits: which platforms allow a competitor teardown and
+      which do not, and the fact that impressions and reach are owner-only
+      everywhere. A client who has been shown a rival's reach by a previous
+      agency needs to know that number was estimated.
+
+      Then the field: what worked for each competitor, with the multiples.
+      Then the recommendation: which platforms, at what cadence, in what
+      formats, and which platform to leave.
+
+      Every number carries its sample size. Where the read was thin, mark the
+      recommendation provisional and name what would firm it up.
+
+      This is one approval. The client agrees with the platform decision and
+      the cadence, or says where it is wrong.
+
+  - id: gate
+    type: gate
+    label: Nothing is scheduled until the platform decision is approved
+    when: brief_the_client exists
+    needs: [brief_the_client]

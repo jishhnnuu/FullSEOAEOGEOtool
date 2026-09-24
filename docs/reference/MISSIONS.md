@@ -2,7 +2,7 @@
 
 # Mission reference
 
-**11 missions.** A mission is a declarative workflow in
+**14 missions.** A mission is a declarative workflow in
 `packages/seoos/missions/workflows/`. Its steps are either deterministic
 tool calls or agents, arranged by dependency. Steps whose dependencies
 are all satisfied run concurrently, in waves.
@@ -25,6 +25,9 @@ rather than restarting.
 | `local_cycle` | 8 | 5 | $8 | `0 8 * * 2` | local |
 | `monthly_audit` | 14 | 6 | $20 | `0 5 1 * *` | any business |
 | `onboard_site` | 11 | 7 | $12 | on demand | any business |
+| `social_discovery` | 8 | 7 | $18 | on demand | any business |
+| `social_engine` | 7 | 6 | $20 | on demand | any business |
+| `social_pulse` | 3 | 3 | $10 | on demand | any business |
 | `weekly_growth_cycle` | 13 | 6 | $10 | `0 6 * * 1` | any business |
 
 ## `aeo_tracking` — AI answer visibility tracking
@@ -320,6 +323,82 @@ Takes a new site from signup to a running programme. Produces a real audit befor
 | `schedule` | tool | `workflow.schedule_mission` | `report` | - | resolve |
 | `schedule_audit` | tool | `workflow.schedule_mission` | `report` | - | resolve |
 | `notify` | tool | `report.notify` | `schedule` | - | resolve |
+
+## `social_discovery` — Read the field before posting anything
+
+The first mission of the social desk. States what each platform will and will not allow, tears down every named competitor on the platforms that permit it, decides where the client should actually be, and produces one decision for the client to approve. Nothing else on this desk runs until this has finished and been approved.
+
+**Budget:** $18.00 · **Timeout:** 50 min · **Concurrency:** 3
+
+### Execution order
+
+1. `limits`
+2. `state`
+3. `teardown`
+4. `listening`, `trends` (concurrent)
+5. `platform`
+6. `brief_the_client`
+7. `gate`
+
+### Steps
+
+| Step | Type | Runs | Depends on | Condition | On error |
+|---|---|---|---|---|---|
+| `limits` | tool | `social.capabilities` | - | - | resolve |
+| `state` | tool | `report.site_state` | `limits` | - | resolve |
+| `teardown` | agent | `social-analyst` | `state` | - | resolve |
+| `listening` | agent | `audience-listener` | `teardown` | - | resolve |
+| `trends` | agent | `trend-scout` | `teardown` | - | resolve |
+| `platform` | agent | `platform-strategist` | `teardown`, `trends` | - | resolve |
+| `brief_the_client` | agent | `social-director` | `platform`, `listening` | - | resolve |
+| `gate` | gate | - | `brief_the_client` | `brief_the_client exists` | resolve |
+
+## `social_engine` — Make the posts
+
+The production loop, run per batch. Works only from an approved platform decision and an approved point of view: the hook comes from archetypes that measurably won in this category, the claims come from the fact ledger, and three gates check different things before anything reaches the client.
+
+**Budget:** $20.00 · **Timeout:** 60 min · **Concurrency:** 2
+
+### Execution order
+
+1. `hooks`
+2. `formats`
+3. `visuals`, `write` (concurrent)
+4. `edit`
+5. `schedule`
+6. `gate`
+
+### Steps
+
+| Step | Type | Runs | Depends on | Condition | On error |
+|---|---|---|---|---|---|
+| `hooks` | agent | `hook-architect` | - | - | resolve |
+| `formats` | agent | `format-designer` | `hooks` | - | resolve |
+| `visuals` | agent | `visual-director` | `formats` | - | resolve |
+| `write` | agent | `short-form-writer` | `hooks`, `formats` | - | resolve |
+| `edit` | agent | `social-editor` | `write`, `visuals` | - | resolve |
+| `schedule` | agent | `scheduler` | `edit` | - | resolve |
+| `gate` | gate | - | `schedule` | `schedule exists` | resolve |
+
+## `social_pulse` — Answer the audience and report what worked
+
+The recurring loop. Drafts replies to everything that came in, escalates what a person must answer, and at week eight reports what the work actually did against the client's own baseline, with the losers named.
+
+**Budget:** $10.00 · **Timeout:** 40 min · **Concurrency:** 2
+
+### Execution order
+
+1. `community`
+2. `measure`
+3. `gate`
+
+### Steps
+
+| Step | Type | Runs | Depends on | Condition | On error |
+|---|---|---|---|---|---|
+| `community` | agent | `community-manager` | - | - | resolve |
+| `measure` | agent | `social-performance-analyst` | `community` | - | resolve |
+| `gate` | gate | - | `measure` | `measure exists` | resolve |
 
 ## `weekly_growth_cycle` — Weekly growth cycle
 

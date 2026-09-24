@@ -12,7 +12,7 @@ It is not an audit tool. Audit tools say what is wrong and leave the fixing to
 someone else. Anything added here should do the work, not describe it.
 
 ```
-67 agents · 11 missions · 65 tools · 21 connectors · 90 checks · 43 tables · 147 tests
+80 agents · 14 missions · 73 tools · 21 connectors · 90 checks · 43 tables · 171 tests
 ```
 
 ## How to work on this
@@ -81,7 +81,7 @@ need that, stop and ask.
 packages/seoos/
   api/            FastAPI app, routes, schemas, auth. Prefix /api/v1.
   agents/         Runtime, tool-use loop, policy engine, and roster/
-                  roster/ is split by desk: shared/ 10, search/ 43, content/ 14
+                  roster/ is split by desk: shared/ 10, search/ 43, content/ 14, social/ 13
   missions/       Declarative YAML workflows, the DAG engine, the scheduler
                   workflows/ is split the same way: shared/, search/, content/
   tools/          Everything an agent can do to the world. Registry-gated.
@@ -267,9 +267,17 @@ style disagreement.
   the product: an agent works without the client, and an agent is the best in
   the world at exactly one thing. A desk may add to the baseline. No desk may
   weaken it.
+- **A competitor's impressions do not exist.** Reach, impressions and saves are
+  computed by a platform for the account owner and exposed only through that
+  owner's own token, on every network without exception. `analysis/social.py`
+  and `engine/social.ts` therefore never carry the field, and the comparable is
+  the performance multiple: a post's engagement over that account's own median,
+  which removes follower count from the comparison. Four of ten platforms allow
+  a competitor teardown at all, and `connectors/social.py` states which and why
+  before an agent can promise the work.
 - **The roster is split by desk, and the loader walks the tree.**
-  `agents/roster/{shared,search,content}/` and
-  `missions/workflows/{shared,search,content}/`. Adding a desk is a folder.
+  `agents/roster/{shared,search,content,social}/` and
+  `missions/workflows/{shared,search,content,social}/`. Adding a desk is a folder.
   Search keeps its own content team under `content-strategist`, which is not a
   duplicate of the content desk: `docs/offerings/THE-ORGANISATION.md` has the
   division and who wins when both want the same page.

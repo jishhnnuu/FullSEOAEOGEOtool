@@ -1,0 +1,59 @@
+key: social_pulse
+name: Answer the audience and report what worked
+description: >
+  The recurring loop. Drafts replies to everything that came in, escalates
+  what a person must answer, and at week eight reports what the work actually
+  did against the client's own baseline, with the losers named.
+budget_usd: 10.0
+timeout_minutes: 40
+concurrency: 2
+tags: [social, community, reporting]
+
+steps:
+  - id: community
+    type: agent
+    agent: community-manager
+    label: Draft the replies
+    budget_usd: 3.0
+    task: >
+      Draft a reply to every comment and message that can be answered from
+      the fact ledger, in the brand's approved voice, with the answer rather
+      than a deflection to a contact form.
+
+      Escalate immediately, with context attached and a draft as a starting
+      point: complaints, anything legal, anything involving a named
+      individual, anything about safety or money already paid, and anything
+      where the honest answer is that the client got it wrong.
+
+      Nothing is sent. Every reply waits for a person, at every autonomy
+      level, and that is deliberate rather than a limitation.
+
+  - id: measure
+    type: agent
+    agent: social-performance-analyst
+    label: What the work did
+    needs: [community]
+    context: [community]
+    budget_usd: 4.0
+    task: >
+      Measure against this client's own baseline, never a category average.
+
+      Report engagement rate, comments per like, and the posts that beat the
+      client's own median. Do not report follower growth as a result: it can
+      be bought, one unrelated viral post can distort it, and it does not
+      correlate with anything the business banks.
+
+      Under eight weeks, the honest output is that it is too early. Say that
+      before any number rather than after it.
+
+      Name the losers, by name, with what they had in common. That is the
+      half of the report that changes next month's work and the half most
+      agencies leave out.
+
+      Finish with one recommended decision, not a list of observations.
+
+  - id: gate
+    type: gate
+    label: The client sees one report and one decision
+    when: measure exists
+    needs: [measure]

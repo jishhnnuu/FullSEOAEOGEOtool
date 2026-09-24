@@ -1,7 +1,8 @@
 import Link from "next/link";
 
-import { InsideAccount } from "@/components/inside-account";
+import { InsideDesks } from "@/components/inside-desks";
 import { CtaBand, MarketingChrome } from "@/components/marketing";
+import { TheFlow } from "@/components/the-flow";
 import { BRAND } from "@/lib/brand";
 import { headcount } from "@/lib/org";
 import { breadcrumbNode, graph } from "@/lib/schema";
@@ -9,7 +10,7 @@ import { breadcrumbNode, graph } from "@/lib/schema";
 export const metadata = {
   title: "Look inside a live account",
   description:
-    "A real working account, open to anyone, with no signup and no URL to enter. The director's brief, the queue, the fixes already written, and the findings on our own site we have not fixed yet.",
+    "Three desks running live, in your browser, with no signup. Crawl our site, measure any page against its rivals, and tear down a competitor's social account. Every tab takes your own input.",
   alternates: { canonical: "/inside" },
 };
 
@@ -43,16 +44,17 @@ export default function InsidePage() {
 
       <section className="section">
         <div className="eyebrow">Inside a live account</div>
-        <h1 className="section-title">This is what you get. Look at it before you give us anything.</h1>
+        <h1 className="section-title">Three desks, running. Put your own input into any of them.</h1>
         <p className="section-lede">
-          No signup, no email, no domain to type. Below is the workspace as a paying account sees it, running against
-          our own site, right now, in your browser. The findings we have not fixed are still in it, because taking
-          them out would make this a screenshot rather than an account.
+          No signup, no email, no card. Each tab below is a desk that exists, doing the thing it claims to do, in
+          your browser, right now. Search crawls our own site with the findings we have not fixed left in it.
+          Content measures any page you name against the pages you lose to. Social reads a competitor&rsquo;s posts
+          and tells you which ones beat their own median and why.
         </p>
       </section>
 
       <section className="section section-tight">
-        <InsideAccount />
+        <InsideDesks />
       </section>
 
       <section className="section">
@@ -66,21 +68,25 @@ export default function InsidePage() {
             </p>
           </div>
           <div className="card">
-            <h3>One row says blocked</h3>
+            <h3>Things refuse to answer</h3>
             <p>
-              Authority is not scored, because nothing measures query demand without Search Console. The stage steps
-              aside and names what would unblock it rather than scoring itself from a proxy. That is the product
-              working correctly, not an error.
+              Authority is not scored without Search Console. A voice comparison is refused under three readable
+              rivals. A social account under twelve posts gets no median. Each one names what would unblock it
+              rather than producing a number from a proxy.
             </p>
           </div>
           <div className="card">
             <h3>Coverage sits above the count</h3>
             <p>
-              You are told how many pages were read before you read any number derived from them. A score over forty
-              of fifty-five pages is a score of those forty.
+              You are told how many pages or posts were read before you read any number derived from them. A score
+              over forty of fifty-five pages is a score of those forty.
             </p>
           </div>
         </div>
+      </section>
+
+      <section className="section section-tight">
+        <TheFlow />
       </section>
 
       <section className="section section-alt">
@@ -94,6 +100,11 @@ export default function InsidePage() {
           <strong>It is a partial crawl.</strong> A dozen or so of our own marketing pages rather than the full site,
           because this has to finish while you are looking at it. A paid run crawls everything the plan allows and
           states the coverage the same way.
+        </p>
+        <p>
+          <strong>The other two tabs read whatever you give them.</strong> The content tab fetches the pages you
+          name and counts them. The social tab calls the platform&rsquo;s own public endpoint. Neither has a
+          prepared answer waiting, which is why both can refuse, and sometimes will.
         </p>
         <p>
           <strong>Nothing here is pre-computed.</strong> There is no cached result and no seeded data. The page fetches

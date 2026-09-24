@@ -186,3 +186,36 @@ def test_engagement_never_counts_views():
     post = Post(id="1", platform="youtube", url="u", posted_at="2026-01-01T00:00:00Z",
                 kind="video", text="t", likes=10, comments=2, shares=3, views=1_000_000)
     assert post.engagement == 15
+
+
+def test_one_format_gets_no_verdict():
+    """A single-format account has a 1x multiple by arithmetic, not by finding."""
+    read = read_account(_profile([_post(i, kind="image") for i in range(20)]))
+    assert read.measured
+    only = read.formats[0]
+    assert only["format"] == "image"
+    assert only["measured"] is False
+    assert "nothing to compare" in only["note"]
+
+    # Two formats, both above the floor, and the comparison is real again.
+    mixed = [_post(i, kind="image") for i in range(10)]
+    mixed += [_post(i + 10, kind="video", likes=400) for i in range(10)]
+    read = read_account(_profile(mixed))
+    assert all(f["measured"] for f in read.formats)
+    assert read.formats[0]["multiple"] != read.formats[1]["multiple"]
+
+
+def test_caveats_are_reported_above_every_number():
+    """A read made by a lesser route says so before it says anything else."""
+    caveat = "Read without a key: the 15 most recent uploads only."
+    profile = _profile([_post(i) for i in range(20)])
+    profile.caveats = [caveat]
+    read = read_account(profile)
+    assert read.measured
+    assert read.notes[0] == caveat
+
+    # And it survives a refusal, because the reason a read is thin is part of
+    # the reason it could not be measured.
+    thin = _profile([_post(i) for i in range(4)])
+    thin.caveats = [caveat]
+    assert read_account(thin).notes[0] == caveat

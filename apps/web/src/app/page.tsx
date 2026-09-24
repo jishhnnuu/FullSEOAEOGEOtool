@@ -1,6 +1,7 @@
 import Link from "next/link";
 
 import { CtaBand, MarketingChrome } from "@/components/marketing";
+import { TheFlow } from "@/components/the-flow";
 import { UrlStart } from "@/components/url-start";
 import { CATALOG_SIZE } from "@/engine/catalog";
 import { DESKS, deskPrice, managerFor, WHOLE_AGENCY } from "@/lib/desks";
@@ -11,7 +12,7 @@ export const metadata = {
   // The homepage keeps the layout's default title rather than restating it,
   // so the product name lives in exactly one place.
   description:
-    "Everything a digital marketing agency does, without the agency. Sixty-seven specialists across search and content do the work and you approve it. Published prices, no retainer, no call. Look inside a live account before you give us anything.",
+    "Everything a digital marketing agency does, without the agency. Sixty-seven specialists across search, content and social do the work and you approve it. Published prices, no retainer, no call. Look inside a live account before you give us anything.",
   alternates: { canonical: "/" },
 };
 
@@ -106,8 +107,8 @@ export default function Home() {
         <div className="eyebrow">A digital marketing agency, staffed by {headcount()} agents</div>
         <h1 className="hero-title">Everything an agency does. None of the agency.</h1>
         <p className="hero-lede">
-          Sixty-seven specialists across search and content. They do the work, you approve it, and you can watch the
-          whole thing happen. From {priceLabel(PLANS.starter)} a month. No retainer, no minimum term, and no call to book.
+          Sixty-seven specialists across search, content and social. They do the work, you approve it, and you can watch
+          the whole thing happen. From {priceLabel(PLANS.starter)} a month. No retainer, no minimum term, and no call to book.
         </p>
         <div className="hero-actions">
           <Link href="/inside" className="button primary big-button">Look inside a live account</Link>
@@ -138,9 +139,15 @@ export default function Home() {
           })}
         </div>
         <p className="small muted" style={{ marginTop: "0.9rem" }}>
-          Two of these are built and running. Two are not, and their pages say so rather than implying otherwise.{" "}
+          Of these {DESKS.length}, {live.length} are built and running today. The rest are not, and their pages say
+          so rather than implying otherwise.{" "}
           <Link href={WHOLE_AGENCY.path}>All of them on one plan</Link>.
         </p>
+      </section>
+
+      {/* 02b — What to click. Added after a reader asked where the dashboard was. */}
+      <section className="section section-tight">
+        <TheFlow heading="Where the product is, and what each step costs you" />
       </section>
 
       {/* 03 — Proof before claims. */}

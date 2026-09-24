@@ -135,6 +135,10 @@ class AccountProfile:
     posts: list[Post] = field(default_factory=list)
     #: Why this account could not be read, when it could not be.
     unreadable: str | None = None
+    #: What is wrong with this read, when a lesser route produced it. A
+    #: keyless feed returns fewer posts and fewer fields than the platform's
+    #: real API, and that difference has to travel with the numbers.
+    caveats: list[str] = field(default_factory=list)
 
 
 @dataclass
@@ -267,6 +271,11 @@ def read_account(profile: AccountProfile) -> AccountRead:
         measured=False,
     )
 
+    # Caveats come first, before any number, for the same reason coverage is
+    # printed above a score: a limit read after the conclusion is a footnote,
+    # and a footnote is not a disclosure.
+    out.notes.extend(profile.caveats)
+
     if profile.unreadable:
         out.reason = profile.unreadable
         out.notes.append(profile.unreadable)
@@ -338,6 +347,10 @@ def read_account(profile: AccountProfile) -> AccountRead:
     by_format: dict[str, list[float]] = {}
     for p in posts:
         by_format.setdefault(p.kind or "unknown", []).append(float(p.engagement))
+    # One format is not a comparison. An account that posts nothing but video
+    # has a video multiple of exactly 1x against its own median, by arithmetic,
+    # and printing that as a finding is printing a tautology as insight.
+    one_format = len(by_format) < 2
     for kind, values in sorted(by_format.items(), key=lambda kv: -len(kv[1])):
         entry = {
             "format": kind,
@@ -345,9 +358,12 @@ def read_account(profile: AccountProfile) -> AccountRead:
             "median": round(_median(values), 1),
             "share_of_posts": round(len(values) / len(posts), 3),
         }
-        if len(values) >= FORMAT_FLOOR and out.median_engagement > 0:
+        if not one_format and len(values) >= FORMAT_FLOOR and out.median_engagement > 0:
             entry["multiple"] = round(_median(values) / out.median_engagement, 2)
             entry["measured"] = True
+        elif one_format:
+            entry["measured"] = False
+            entry["note"] = "Every post read is this format, so there is nothing to compare it against."
         else:
             entry["measured"] = False
             entry["note"] = f"Only {len(values)} posts in this format. {FORMAT_FLOOR} is the floor."

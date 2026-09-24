@@ -1606,3 +1606,111 @@ a.link-card h3 { color: var(--accent); }
   .vs-row .vs-cell:nth-of-type(1)::before { content: "Agency"; }
   .vs-row .vs-cell:nth-of-type(2)::before { content: "Here"; }
 }
+
+/* ------------------------------------------------- the three desk tabs */
+/*
+ * One tab per built desk, each with a tool that runs. The claim under each
+ * label is there because a bare tab strip makes a visitor guess what is
+ * behind it, and a visitor who guesses wrong clicks once and leaves.
+ */
+.desk-tabs {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.6rem;
+}
+.desk-tab {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  text-align: left;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+  padding: 0.85rem 1rem;
+  cursor: pointer;
+  font: inherit;
+  color: inherit;
+}
+.desk-tab:hover { border-color: var(--border-strong); }
+.desk-tab.on { border-color: var(--accent); background: var(--accent-soft); }
+.dt-name { font-weight: 650; font-size: 1rem; letter-spacing: -0.02em; }
+.dt-count {
+  font-size: 0.66rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-faint);
+}
+.dt-claim { font-size: 0.82rem; color: var(--text-muted); line-height: 1.4; margin-top: 0.3rem; }
+
+/* The step from watching it work to running it yourself. */
+.try-band {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.2rem;
+  flex-wrap: wrap;
+  margin-top: 1.4rem;
+  padding: 1rem 1.1rem;
+  border: 1px solid var(--border);
+  border-left: 2px solid var(--accent);
+  border-radius: 0 var(--radius) var(--radius) 0;
+  background: var(--bg-alt);
+}
+.try-band > div { flex: 1 1 320px; min-width: 0; }
+
+@media (max-width: 760px) {
+  .desk-tabs { grid-template-columns: 1fr; }
+  .desk-tab { flex-direction: row; align-items: baseline; gap: 0.6rem; flex-wrap: wrap; }
+  .dt-claim { flex: 1 1 100%; margin-top: 0; }
+}
+
+/* --------------------------------------------- the three-step path */
+/*
+ * The answer to "where is the dashboard". Each step carries what it costs
+ * before it carries what it does, because the objection a stranger has at
+ * this point is not what the step is, it is what it will ask them for.
+ */
+.flow-steps {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.9rem;
+  margin-top: 1rem;
+}
+.flow-step {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+  padding: 1.1rem 1.15rem 1.15rem;
+}
+.flow-n {
+  font-size: 0.68rem;
+  letter-spacing: 0.1em;
+  color: var(--accent);
+  font-weight: 650;
+}
+.flow-step h3 {
+  margin: 0.35rem 0 0.2rem;
+  font-size: 1.02rem;
+  letter-spacing: -0.02em;
+}
+.flow-cost {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--text-faint);
+}
+.flow-step p { margin: 0.6rem 0 0; }
+.flow-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  margin-top: auto;
+  padding-top: 1rem;
+}
+.flow-links .button { font-size: 0.8rem; padding: 0.42rem 0.8rem; }
+
+@media (max-width: 860px) {
+  .flow-steps { grid-template-columns: 1fr; }
+}

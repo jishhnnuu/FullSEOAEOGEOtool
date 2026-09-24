@@ -42,7 +42,13 @@ export function GET() {
     ),
     ...section(
       "Free tools",
-      allTools().map((t) => `- [${t.name}](${url(`/tools/${t.slug}`)}): ${t.blurb}`),
+      [
+        // The two interactive desk tools are hand-written pages rather than
+        // catalogue slices, so they come from the route table. Listing them
+        // first is deliberate: they are the two that take your own input.
+        ...ROUTES.filter((r) => r.section === "tools").map((r) => `- [${r.title}](${url(r.path)}): ${r.answers}`),
+        ...allTools().map((t) => `- [${t.name}](${url(`/tools/${t.slug}`)}): ${t.blurb}`),
+      ],
     ),
     ...section(
       "Comparisons",

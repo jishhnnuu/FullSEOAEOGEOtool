@@ -6,11 +6,37 @@ import { BRAND } from "@/lib/brand";
 import { breadcrumbNode, graph } from "@/lib/schema";
 
 export const metadata = {
-  title: "Free SEO and AEO tools",
+  title: "Free SEO, content and social tools",
   description:
-    "Ten free tools that run the real audit engine against your real site: AI crawler access, extractability, answer readiness, schema, llms.txt, robots.txt, sitemaps and headings. No signup.",
+    "Free tools that run the real engine against your real inputs: a competitor social teardown, a voice comparison against your rivals, and ten slices of the 90-check audit. No signup.",
   alternates: { canonical: "/tools" },
 };
+
+/*
+ * Two of these are not catalogue slices.
+ *
+ * The teardown and the voice check belong to the social and content desks and
+ * take an input that is not your own address: a competitor's handle, or the
+ * pages you lose to. They sit above the catalogue because they are the only
+ * two on this site that let a stranger watch a desk other than search do its
+ * work, and until they had URLs nobody could reach them at all.
+ */
+const DESK_TOOLS = [
+  {
+    path: "/tools/social-teardown",
+    name: "Competitor social teardown",
+    blurb:
+      "A competitor's public posts, the ones that beat their own median, and the hook the winners share. Up to five accounts gives you share of voice.",
+    desk: "Social desk",
+  },
+  {
+    path: "/tools/voice-check",
+    name: "Voice against your rivals",
+    blurb:
+      "Rhythm, hedging, filler, specifics and reading grade for your page and the pages you compete with, counted the same way. No model reads anything.",
+    desk: "Content desk",
+  },
+];
 
 export default function ToolsPage() {
   const tools = allTools();
@@ -29,7 +55,7 @@ export default function ToolsPage() {
       />
       <section className="section">
         <div className="eyebrow">Free tools</div>
-        <h1 className="section-title">{tools.length} tools that run on your real site.</h1>
+        <h1 className="section-title">{tools.length + DESK_TOOLS.length} tools that run on your real inputs.</h1>
         {/*
           The opening paragraph states the claim and the reason in one place,
           because that is the passage an answer engine extracts. It is also
@@ -43,6 +69,20 @@ export default function ToolsPage() {
       </section>
 
       <section className="section section-tight">
+        <h2 className="section-title small-title">The two that take more than a URL</h2>
+        <div className="card-grid">
+          {DESK_TOOLS.map((tool) => (
+            <Link key={tool.path} href={tool.path} className="card link-card">
+              <h3>{tool.name}</h3>
+              <p className="small muted">{tool.blurb}</p>
+              <span className="small">{tool.desk}</span>
+            </Link>
+          ))}
+        </div>
+      </section>
+
+      <section className="section section-tight">
+        <h2 className="section-title small-title">Ten slices of the audit, one question each</h2>
         <div className="card-grid">
           {tools.map((tool) => (
             <Link key={tool.slug} href={`/tools/${tool.slug}`} className="card link-card">

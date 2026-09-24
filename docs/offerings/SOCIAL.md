@@ -34,9 +34,9 @@ Four of ten permit a competitor teardown. The map lives in
 
 | Platform | Own account | Competitor posts | Access | Why not |
 | --- | --- | --- | --- | --- |
-| YouTube | Yes | Yes: views, likes, comments, duration, tags | Free key | — |
+| YouTube | Yes | Yes: views, likes, comments, duration, tags | **No key needed** for the last 15 uploads; free key for 100 | The keyless feed carries no comment counts and no durations, so Shorts are not separated. Both limits print above the numbers. |
 | Instagram | Yes | Yes: likes, comments, type, caption, followers | Free | Business Discovery only returns Business and Creator accounts. No impressions, reach or saves, ever. |
-| Reddit | Yes | Yes: score, ratio, comments, subreddit | Free | Vote counts are fuzzed by Reddit on purpose. |
+| Reddit | Yes | Yes: score, ratio, comments, subreddit | Free, but blocked in practice | Vote counts are fuzzed on purpose, and Reddit refuses data-centre address ranges, so a hosted deployment gets 403 rather than data. |
 | X | Yes | Yes: likes, reposts, replies, quotes | Paid, about $200/mo | Impression counts are returned only for the authenticated account. |
 | TikTok | Yes | **No** | Gated | The Research API is restricted to approved academic researchers and forbids commercial use. Everything else on the market is scraping. |
 | Facebook Pages | Yes | **No** | Gated | Page Public Content Access has been case-by-case since 2018 and is granted almost only for research and moderation. |
@@ -44,6 +44,19 @@ Four of ten permit a competitor teardown. The map lives in
 | Pinterest | Yes | **No** | Free | No competitor endpoint. |
 | Threads | Yes | **No** | Free | Own posts and insights only. |
 | Snapchat | **No** | **No** | None | No organic content API exists at all. |
+
+### The one read that needs nothing
+
+YouTube publishes an Atom feed per channel carrying the view count and the like
+count for each of the fifteen most recent uploads. Fifteen clears the
+twelve-post floor, so a median, the winners and the hooks they share are all
+available to a stranger with no account, no key and no card. That is what
+`/tools/social-teardown` runs by default.
+
+Reddit was going to be that read. The deployed Worker got a 403 from it:
+Reddit refuses data-centre traffic, which is where any hosted deployment runs,
+so the demo meant to prove the product works proved the opposite. The platform
+map says so now rather than carrying "Free" for something that fails.
 
 A client reads this before the engagement starts. It costs a slide and buys the
 rest of the relationship, because somebody who has been shown an invented

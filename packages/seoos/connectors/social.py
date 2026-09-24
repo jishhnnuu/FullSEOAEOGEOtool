@@ -66,7 +66,11 @@ PLATFORMS: tuple[PlatformCapability, ...] = (
         own_account=True,
         competitor_posts=True,
         competitor_metrics=("views", "likes", "comments", "duration", "title", "description", "tags", "published"),
-        requires="A YouTube Data API v3 key, which is free to create in Google Cloud.",
+        requires=(
+            "Nothing for a shallow read: the public channel feed carries views and likes for the "
+            "fifteen most recent uploads. A free YouTube Data API v3 key raises that to a hundred, "
+            "with comment counts and durations."
+        ),
         access="free",
         limitation="",
         can_publish=True,
@@ -97,7 +101,11 @@ PLATFORMS: tuple[PlatformCapability, ...] = (
         competitor_metrics=("score", "upvote ratio", "comments", "subreddit", "title", "body", "posted at"),
         requires="A Reddit app registration. The public JSON endpoints work without one at low volume.",
         access="free",
-        limitation="Vote counts are fuzzed by Reddit on purpose, so treat score as approximate.",
+        limitation=(
+            "Two things. Vote counts are fuzzed by Reddit on purpose, so treat score as "
+            "approximate. And Reddit refuses requests from data-centre address ranges, which is "
+            "where a hosted deployment runs, so a read from one will often answer 403."
+        ),
         can_publish=True,
     ),
     PlatformCapability(
@@ -243,6 +251,125 @@ def _unreadable(platform: str) -> AccountProfile:
 
 # ------------------------------------------------------------------ YouTube
 
+_BROWSER_UA = (
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) "
+    "Chrome/124.0.0.0 Safari/537.36"
+)
+
+
+def _attr(block: str, tag: str, name: str) -> str:
+    m = re.search(rf'<{tag}\b[^>]*\b{name}="([^"]*)"', block)
+    return m.group(1) if m else ""
+
+
+def _tag_text(block: str, tag: str) -> str:
+    m = re.search(rf"<{tag}(?:\s[^>]*)?>([\s\S]*?)</{tag}>", block)
+    if not m:
+        return ""
+    out = m.group(1)
+    for entity, char in (
+        ("&lt;", "<"), ("&gt;", ">"), ("&quot;", '"'),
+        ("&#39;", "'"), ("&apos;", "'"), ("&amp;", "&"),
+    ):
+        out = out.replace(entity, char)
+    return out
+
+
+async def read_youtube_public(handle: str) -> AccountProfile:
+    """A YouTube channel with no API key at all.
+
+    The only competitor read on any network that needs nothing. YouTube
+    publishes an Atom feed per channel carrying the view count and the like
+    count of the fifteen most recent uploads, which is above the twelve-post
+    floor and therefore enough for a median, the winners and their hooks.
+
+    It is a smaller read than the keyed one and the difference travels with
+    it: fifteen recent uploads rather than a hundred, no comment counts, and
+    no durations, so Shorts cannot be separated from long-form. Those ride in
+    ``caveats`` and are printed above the numbers rather than under them.
+
+    Reddit was going to be the no-key platform. It refuses data-centre address
+    ranges, which is where any hosted deployment runs, so the read that was
+    meant to need nothing returned a 403 instead.
+    """
+    clean = re.sub(r"[^A-Za-z0-9_\-.]", "", handle.strip().lstrip("@"))
+    async with SafeHttpClient(user_agent=_BROWSER_UA) as http:
+        if re.fullmatch(r"UC[A-Za-z0-9_-]{22}", clean):
+            channel_id = clean
+        else:
+            page = await http.get(f"https://www.youtube.com/@{clean}", check_robots=False)
+            if not page.ok:
+                return AccountProfile(
+                    handle=handle, platform="youtube",
+                    unreadable=f"YouTube answered {page.status} for @{clean}.",
+                )
+            m = (re.search(r'"externalId":"(UC[A-Za-z0-9_-]{22})"', page.text)
+                 or re.search(r'"channelId":"(UC[A-Za-z0-9_-]{22})"', page.text))
+            if not m:
+                return AccountProfile(
+                    handle=handle, platform="youtube",
+                    unreadable=f"No YouTube channel found for @{clean}.",
+                )
+            channel_id = m.group(1)
+
+        feed = await http.get(
+            f"https://www.youtube.com/feeds/videos.xml?channel_id={channel_id}",
+            check_robots=False,
+        )
+        if not feed.ok:
+            return AccountProfile(
+                handle=handle, platform="youtube",
+                unreadable=f"The public feed answered {feed.status}.",
+            )
+
+    posts: list[Post] = []
+    for entry in feed.text.split("<entry>")[1:]:
+        entry = entry.split("</entry>")[0]
+        video_id = _tag_text(entry, "yt:videoId")
+        if not video_id:
+            continue
+        posts.append(Post(
+            id=video_id,
+            platform="youtube",
+            url=f"https://www.youtube.com/watch?v={video_id}",
+            posted_at=_tag_text(entry, "published"),
+            # No duration in the feed, so a Short and a documentary arrive
+            # identical. Calling them all "video" is wrong in a way the caveat
+            # names; guessing from the title would be wrong invisibly.
+            kind="video",
+            text=f"{_tag_text(entry, 'media:title')}\n{_tag_text(entry, 'media:description')}",
+            likes=int(_attr(entry, "media:starRating", "count") or 0),
+            comments=0,
+            views=int(_attr(entry, "media:statistics", "views") or 0) or None,
+            duration_s=None,
+        ))
+
+    if not posts:
+        return AccountProfile(
+            handle=handle, platform="youtube",
+            unreadable=(
+                f"The public feed for {handle} returned no videos. A channel with no uploads, and "
+                "one that has hidden them, read the same way from outside."
+            ),
+        )
+
+    return AccountProfile(
+        handle=handle,
+        platform="youtube",
+        # The feed carries no subscriber count. Absent beats guessed.
+        followers=None,
+        posts=posts,
+        caveats=[
+            f"Read without a key, from YouTube's public feed: the {len(posts)} most recent uploads "
+            "only, so this is a read of recent work rather than of the channel.",
+            "The free feed publishes no comment counts, so engagement here is likes alone and the "
+            "comment ratio is not calculated.",
+            "It publishes no durations either, so Shorts are not separated from long-form and no "
+            "format verdict is given. A free API key fixes all three.",
+        ],
+    )
+
+
 async def read_youtube(handle: str, api_key: str, *, limit: int = 40) -> AccountProfile:
     """A public YouTube channel, through the official Data API.
 
@@ -253,8 +380,9 @@ async def read_youtube(handle: str, api_key: str, *, limit: int = 40) -> Account
     thumbnail was shown.
     """
     if not api_key:
-        return AccountProfile(handle=handle, platform="youtube",
-                              unreadable="No YouTube Data API key connected.")
+        # Not an error, a smaller read. The keyless feed is a real answer and
+        # says what it is missing.
+        return await read_youtube_public(handle)
     clean = handle.lstrip("@")
     async with SafeHttpClient() as http:
         base = "https://www.googleapis.com/youtube/v3"

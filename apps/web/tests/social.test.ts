@@ -181,3 +181,30 @@ test("social engagement never counts views", () => {
   const p = post(1, { likes: 10, comments: 2, shares: 3, views: 1_000_000 });
   assert.equal(engagementOf(p), 15);
 });
+
+test("social gives one format no verdict, because 1x is arithmetic", () => {
+  const read = readAccount(profile(many(20, { kind: "image" })));
+  assert.equal(read.measured, true);
+  assert.equal(read.formats[0].format, "image");
+  assert.equal(read.formats[0].measured, false);
+  assert.match(read.formats[0].note ?? "", /nothing to compare/);
+
+  const mixed = [
+    ...Array.from({ length: 10 }, (_, i) => post(i, { kind: "image" })),
+    ...Array.from({ length: 10 }, (_, i) => post(i + 10, { kind: "video", likes: 400 })),
+  ];
+  const both = readAccount(profile(mixed));
+  assert.ok(both.formats.every((f) => f.measured));
+  assert.notEqual(both.formats[0].multiple, both.formats[1].multiple);
+});
+
+test("social reports a lesser route's caveats above every number", () => {
+  const caveat = "Read without a key: the 15 most recent uploads only.";
+  const read = readAccount(profile(many(20), { caveats: [caveat] }));
+  assert.equal(read.measured, true);
+  assert.equal(read.notes[0], caveat);
+
+  // And it survives a refusal: why a read is thin is part of why it failed.
+  const thin = readAccount(profile(many(4), { caveats: [caveat] }));
+  assert.equal(thin.notes[0], caveat);
+});

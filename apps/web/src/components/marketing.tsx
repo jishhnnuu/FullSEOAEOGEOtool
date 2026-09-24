@@ -33,8 +33,9 @@ export function SiteHeader() {
         <nav className="site-nav">
           <Link href="/seo" className="hide-sm">Search</Link>
           <Link href="/content" className="hide-sm">Content</Link>
+          <Link href="/social" className="hide-sm">Social</Link>
+          <Link href="/tools" className="hide-sm">Free tools</Link>
           <Link href="/the-firm" className="hide-sm">The firm</Link>
-          <Link href="/inside" className="hide-sm">Look inside</Link>
           <Link href="/pricing">Pricing</Link>
           <Link href="/app/signin">Sign in</Link>
           <Link href="/inside" className="cta">Look inside</Link>
@@ -82,9 +83,15 @@ export function SiteFooter() {
           <Link href="/compare/semrush">Vs Semrush</Link>
         </div>
         <div>
+          <h4>Run something now</h4>
+          <Link href="/tools/social-teardown">Tear down a competitor</Link>
+          <Link href="/tools/voice-check">Check a page against its rivals</Link>
+          <Link href="/tools">All free tools</Link>
+          <Link href="/app/new">Audit your own site</Link>
+        </div>
+        <div>
           <h4>Learn</h4>
           <Link href="/library">The check library</Link>
-          <Link href="/tools">Free tools</Link>
           <Link href="/glossary">Glossary</Link>
           <Link href="/ai-crawlers-and-javascript">AI crawlers and JavaScript</Link>
           <Link href="/research/ai-crawler-access">The 100-site study</Link>

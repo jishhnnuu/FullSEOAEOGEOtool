@@ -38,7 +38,10 @@ export const PLATFORMS: PlatformCapability[] = [
   {
     key: "youtube", name: "YouTube", ownAccount: true, competitorPosts: true,
     competitorMetrics: ["views", "likes", "comments", "duration", "title", "description", "tags", "published"],
-    requires: "A YouTube Data API v3 key, which is free to create in Google Cloud.",
+    requires:
+      "Nothing for a shallow read: the public channel feed carries views and likes for the fifteen " +
+      "most recent uploads. A free YouTube Data API v3 key raises that to a hundred, with comment " +
+      "counts and durations, which is what separates Shorts from long-form.",
     access: "free", limitation: "", canPublish: true,
   },
   {
@@ -59,7 +62,10 @@ export const PLATFORMS: PlatformCapability[] = [
     competitorMetrics: ["score", "upvote ratio", "comments", "subreddit", "title", "body", "posted at"],
     requires: "Nothing for light use. The public JSON endpoints work without a key at low volume.",
     access: "free",
-    limitation: "Vote counts are fuzzed by Reddit on purpose, so treat score as approximate.",
+    limitation:
+      "Two things. Vote counts are fuzzed by Reddit on purpose, so treat score as approximate. And " +
+      "Reddit refuses requests from data-centre address ranges, which is where a hosted deployment " +
+      "runs, so a read from the public site will often answer 403 rather than data.",
     canPublish: true,
   },
   {

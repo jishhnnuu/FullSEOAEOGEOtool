@@ -12,7 +12,7 @@ It is not an audit tool. Audit tools say what is wrong and leave the fixing to
 someone else. Anything added here should do the work, not describe it.
 
 ```
-80 agents · 14 missions · 73 tools · 21 connectors · 90 checks · 43 tables · 171 tests
+80 agents · 14 missions · 73 tools · 21 connectors · 90 checks · 43 tables · 173 tests
 ```
 
 ## How to work on this
@@ -183,6 +183,26 @@ style disagreement.
   `@id` is a reference into the entity graph, not an incomplete copy of it.
   Proposing to "complete" one writes a second conflicting definition and breaks
   what it was fixing.
+- **A capability nobody can reach is a capability nobody built.** The social
+  teardown and the voice comparison lived three clicks inside a workspace that
+  required creating a site first, so the two most capable things the platform
+  does were invisible to anyone deciding whether to use it. Both now have
+  public URLs under `/tools`, both take the visitor's own input, and `/inside`
+  runs one per desk rather than an SEO crawl and two pages of prose. `TheFlow`
+  in `components/the-flow.tsx` states the path on screen: free tools, then a
+  live account, then your own workspace. That component exists because somebody
+  read the whole site and still asked where the dashboard was.
+- **The no-key social read is YouTube's Atom feed, not Reddit.** Reddit refuses
+  data-centre address ranges, so the deployed Worker gets 403 and the demo
+  meant to prove the product works proves the opposite. YouTube publishes views
+  and likes for the fifteen most recent uploads of any channel with no
+  credential at all, which clears `POST_FLOOR`. It is a smaller read than the
+  keyed one, so `AccountProfile.caveats` carries what is missing and
+  `readAccount` prints it above the first number, never under the last.
+- **One format gets no verdict.** An account that posts nothing but video has a
+  video multiple of exactly 1x against its own median, by arithmetic. Printing
+  that as a finding is printing a tautology as insight, so both engines refuse
+  when `byFormat` has one entry.
 - **Mentions are weighted above links.** Ahrefs measured 75,000 brands in
   2026: brand mentions correlate with AI Overview visibility at 0.664,
   backlinks at 0.218. A model has no link graph, it has text. `mentions.ts`

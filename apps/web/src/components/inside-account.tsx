@@ -301,11 +301,20 @@ export function InsideAccount() {
                   </div>
                   <div className="tiny faint desk-title">{manager.title}</div>
                   <p className="small">
-                    {open
-                      ? desk.key === "search"
+                    {/*
+                      One line per desk, and they differ because the desks do.
+                      Content reads whatever this crawl already fetched. Social
+                      reads nothing here at all: it needs an account handle,
+                      which this panel has no reason to hold, so it says so
+                      rather than borrowing the search desk's numbers.
+                    */}
+                    {!open
+                      ? `Not built. Opens ${manager.opens}.`
+                      : desk.key === "search"
                         ? `${ok} pages read, ${findings.length} findings, ${withFix} fixes written.`
-                        : "Reads the same crawl. Voice measured from the pages already fetched."
-                      : `Not built. Opens ${manager.opens}.`}
+                        : desk.key === "content"
+                          ? "Reads the same crawl. Voice measured from the pages already fetched."
+                          : "Reads competitor accounts, not pages. Needs a handle, so it runs in its own tab."}
                   </p>
                 </div>
               );

@@ -159,6 +159,24 @@ export const ROUTES: PublicRoute[] = [
     section: "learn",
   },
   {
+    path: "/tools/social-teardown",
+    title: "Competitor social teardown",
+    answers:
+      "Read a competitor's public posts, find the ones that beat their own median, and name the hook the winners share. No account.",
+    priority: 0.85,
+    changeFrequency: "monthly",
+    section: "tools",
+  },
+  {
+    path: "/tools/voice-check",
+    title: "Voice and readability against your rivals",
+    answers:
+      "Measure a page's rhythm, hedging, filler, specifics and reading grade, then compare it with the pages ranking around it.",
+    priority: 0.85,
+    changeFrequency: "monthly",
+    section: "tools",
+  },
+  {
     path: "/vs",
     title: "Against an agency, one comparison per desk",
     answers: "Four comparisons against the kind of agency each desk replaces, including the rows the agency wins.",

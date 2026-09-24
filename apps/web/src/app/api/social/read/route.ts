@@ -30,10 +30,32 @@ const ALLOWED_HOSTS = new Set([
   "www.googleapis.com",
   "graph.facebook.com",
   "www.reddit.com",
+  // The keyless YouTube route: a channel page to resolve a handle, and the
+  // public Atom feed that carries views and likes without an API key.
+  "www.youtube.com",
 ]);
 
 function bad(message: string, status = 400) {
   return Response.json({ message }, { status });
+}
+
+async function text(url: string): Promise<string> {
+  const host = new URL(url).host;
+  if (!ALLOWED_HOSTS.has(host)) throw new Error(`Refused: ${host} is not an allowed host.`);
+  const response = await fetch(url, {
+    headers: {
+      accept: "text/html,application/xhtml+xml,application/xml",
+      // A real browser string, because the channel page serves a consent
+      // interstitial to anything it does not recognise and the interstitial
+      // carries no channel id.
+      "user-agent":
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) " +
+        "Chrome/124.0.0.0 Safari/537.36",
+      "accept-language": "en-GB,en;q=0.9",
+    },
+  });
+  if (!response.ok) throw new Error(`Upstream answered ${response.status}.`);
+  return response.text();
 }
 
 async function json(url: string): Promise<unknown> {
@@ -58,6 +80,97 @@ function isoSeconds(value: string): number | null {
   if (!m) return null;
   const [h, mi, s] = [m[1], m[2], m[3]].map((g) => Number(g || 0));
   return h * 3600 + mi * 60 + s;
+}
+
+/* ------------------------------------------------- YouTube, with no key */
+/*
+ * The only competitor read on any platform that needs nothing at all.
+ *
+ * YouTube publishes an Atom feed per channel that carries the view count and
+ * the like count for each of the fifteen most recent uploads. Fifteen is a
+ * thin sample and the feed has no comment counts and no durations, so this
+ * cannot classify Shorts and cannot read the comment ratio. Those limits ride
+ * with the numbers as caveats rather than being quietly absorbed, and the
+ * keyed route below returns the whole picture for anyone who spends the two
+ * minutes it takes to mint a free key.
+ *
+ * It exists because the alternative was a public tool whose only no-key
+ * platform was Reddit, and Reddit refuses data-centre traffic outright: the
+ * demo that was meant to prove the product works returned a 403.
+ */
+
+function attr(block: string, tag: string, name: string): string {
+  const m = new RegExp(`<${tag}\\b[^>]*\\b${name}="([^"]*)"`).exec(block);
+  return m ? m[1] : "";
+}
+
+function tagText(block: string, tag: string): string {
+  const m = new RegExp(`<${tag}(?:\\s[^>]*)?>([\\s\\S]*?)</${tag}>`).exec(block);
+  if (!m) return "";
+  return m[1]
+    .replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&quot;/g, '"')
+    .replace(/&#39;/g, "'").replace(/&apos;/g, "'").replace(/&amp;/g, "&");
+}
+
+/** Resolve a handle, a channel id or a legacy username to a channel id. */
+async function youTubeChannelId(handle: string): Promise<string> {
+  const clean = handle.trim().replace(/^@/, "").replace(/[^A-Za-z0-9_\-.]/g, "");
+  if (/^UC[A-Za-z0-9_-]{22}$/.test(clean)) return clean;
+  const page = await text(`https://www.youtube.com/@${clean}`);
+  const m = /"externalId":"(UC[A-Za-z0-9_-]{22})"/.exec(page) ||
+    /"channelId":"(UC[A-Za-z0-9_-]{22})"/.exec(page);
+  if (!m) throw new Error(`No YouTube channel found for @${clean}.`);
+  return m[1];
+}
+
+async function readYouTubePublic(handle: string): Promise<AccountProfile> {
+  const channelId = await youTubeChannelId(handle);
+  const feed = await text(`https://www.youtube.com/feeds/videos.xml?channel_id=${channelId}`);
+  const entries = feed.split("<entry>").slice(1).map((e) => e.split("</entry>")[0]);
+
+  const posts: SocialPost[] = entries.map((e) => {
+    const id = tagText(e, "yt:videoId");
+    return {
+      id,
+      platform: "youtube",
+      url: `https://www.youtube.com/watch?v=${id}`,
+      postedAt: tagText(e, "published"),
+      // The feed carries no duration, so a Short and a documentary arrive
+      // looking identical. Calling every one of them "video" is wrong in a
+      // way the caveat names; guessing from the title would be wrong in a way
+      // nobody could see.
+      kind: "video",
+      text: `${tagText(e, "media:title")}\n${tagText(e, "media:description")}`,
+      likes: Number(attr(e, "media:starRating", "count") || 0),
+      comments: 0,
+      views: Number(attr(e, "media:statistics", "views") || 0) || null,
+      durationS: null,
+    };
+  }).filter((p) => p.id);
+
+  if (!posts.length) {
+    return unreadable(
+      "youtube", handle,
+      `The public feed for ${handle} returned no videos. A channel with no uploads, or one that ` +
+      "has hidden them, reads the same way from outside.",
+    );
+  }
+
+  return {
+    handle,
+    platform: "youtube",
+    // The feed does not carry subscriber count. Better absent than guessed.
+    followers: null,
+    posts,
+    caveats: [
+      `Read without a key, from YouTube's public feed: the ${posts.length} most recent uploads ` +
+      "only, so this is a read of recent work rather than of the channel.",
+      "The free feed publishes no comment counts, so engagement here is likes alone and the " +
+      "comment ratio is not calculated.",
+      "It publishes no durations either, so Shorts are not separated from long-form and no " +
+      "format verdict is given. A free API key fixes all three.",
+    ],
+  };
 }
 
 async function readYouTube(handle: string, key: string, limit: number): Promise<AccountProfile> {
@@ -239,7 +352,10 @@ export async function POST(request: NextRequest) {
   try {
     let profile: AccountProfile;
     if (platform === "youtube") {
-      profile = await readYouTube(handle, creds.youtubeApiKey ?? "", limit);
+      // No key is not an error on this platform, it is a smaller read.
+      profile = creds.youtubeApiKey
+        ? await readYouTube(handle, creds.youtubeApiKey, limit)
+        : await readYouTubePublic(handle);
     } else if (platform === "instagram") {
       profile = await readInstagram(handle, creds.igUserId ?? "", creds.igAccessToken ?? "", limit);
     } else if (platform === "reddit") {

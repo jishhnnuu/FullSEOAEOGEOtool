@@ -18,18 +18,28 @@ from __future__ import annotations
 
 from seoos.analysis.social import (
     AccountRead,
+)
+from seoos.analysis.social import (
     read_account as measure_account,
+)
+from seoos.analysis.social import (
     share_of_voice as compute_sov,
+)
+from seoos.analysis.social import (
     strongest_platform as compute_strongest,
+)
+from seoos.analysis.social import (
     what_worked as compute_what_worked,
 )
 from seoos.connectors.social import (
     capability,
     capability_report,
-    read_account as fetch_account,
     readable_for_competitors,
 )
-from seoos.tools._helpers import array, boolean, integer, load_site, schema, string
+from seoos.connectors.social import (
+    read_account as fetch_account,
+)
+from seoos.tools._helpers import array, integer, load_site, schema, string
 from seoos.tools.registry import ToolContext, ToolOutcome, tool
 
 #: Platform keys an agent may pass. Anything else is refused by name.

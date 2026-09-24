@@ -75,6 +75,15 @@ export type AccountProfile = {
   posts: SocialPost[];
   /** Why this account could not be read, when it could not be. */
   unreadable?: string | null;
+  /**
+   * What is wrong with this read, when it was read by a lesser route.
+   *
+   * A keyless feed returns fewer posts and fewer fields than the same
+   * platform's real API. Both reads are honest; only one of them is complete,
+   * and the difference has to travel with the numbers rather than sit in the
+   * documentation of the route that produced them.
+   */
+  caveats?: string[] | null;
 };
 
 export type Measured = { value: number | null; measured: boolean; note: string };
@@ -177,6 +186,11 @@ export function readAccount(profile: AccountProfile): AccountRead {
     winners: [], formats: [], hooks: [], bestWindows: [], notes: [],
   };
 
+  // Caveats come first, before any number, for the same reason coverage is
+  // printed above a score: a limit read after the conclusion is a footnote,
+  // and a footnote is not a disclosure.
+  if (profile.caveats?.length) out.notes.push(...profile.caveats);
+
   if (profile.unreadable) {
     out.reason = profile.unreadable;
     out.notes.push(profile.unreadable);
@@ -251,15 +265,24 @@ export function readAccount(profile: AccountProfile): AccountRead {
     const key = p.kind || "unknown";
     byFormat.set(key, [...(byFormat.get(key) ?? []), engagementOf(p)]);
   }
+  // One format is not a comparison. An account that posts nothing but video
+  // has a video multiple of exactly 1x against its own median, by arithmetic,
+  // and printing that as a finding is printing a tautology as insight.
+  const oneFormat = byFormat.size < 2;
   for (const [format, values] of [...byFormat.entries()].sort((a, b) => b[1].length - a[1].length)) {
-    const enough = values.length >= FORMAT_FLOOR && out.medianEngagement > 0;
+    const enough = !oneFormat && values.length >= FORMAT_FLOOR && out.medianEngagement > 0;
     out.formats.push({
       format, posts: values.length,
       median: Math.round(median(values) * 10) / 10,
       shareOfPosts: Math.round((values.length / posts.length) * 1000) / 1000,
       ...(enough
         ? { multiple: Math.round((median(values) / out.medianEngagement) * 100) / 100, measured: true }
-        : { measured: false, note: `Only ${values.length} posts in this format. ${FORMAT_FLOOR} is the floor.` }),
+        : {
+          measured: false,
+          note: oneFormat
+            ? "Every post read is this format, so there is nothing to compare it against."
+            : `Only ${values.length} posts in this format. ${FORMAT_FLOOR} is the floor.`,
+        }),
     });
   }
 

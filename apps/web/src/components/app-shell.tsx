@@ -25,6 +25,10 @@ import { Badge } from "@/components/ui";
  */
 
 const DIRECTOR_NAV = [
+  // First, because the product's claim is that you talk to one person and the
+  // desks organise themselves behind them. A rail that opened on a dashboard
+  // made that a sentence on a marketing page rather than a thing you can do.
+  { href: "/cmo", label: "Talk to your CMO" },
   { href: "", label: "The brief" },
   { href: "/approvals", label: "Approvals", badge: "approvals" as const },
   { href: "/progress", label: "Progress" },

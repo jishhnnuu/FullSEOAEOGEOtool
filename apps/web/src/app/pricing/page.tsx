@@ -3,6 +3,7 @@ import Link from "next/link";
 import { CtaBand, MarketingChrome } from "@/components/marketing";
 import { DESKS, deskPrice, managerFor } from "@/lib/desks";
 import { EXCLUDED_FOR, PLANS, PLAN_ORDER, priceLabel } from "@/lib/plans";
+import { managerByKey } from "@/lib/org";
 
 export const metadata = {
   title: "Pricing",
@@ -43,6 +44,12 @@ const CAPABILITY_LABEL: Record<string, string> = {
   answerVisibility: "AI answer visibility measurement",
   linkProgramme: "Link prospecting and outreach",
   local: "Local: profile, posts, review replies",
+  // Derived, not typed. A hand-written headcount here would drift from the
+  // roster the moment a desk gained an agent, which is the same bug that once
+  // had the firm page reporting 81 of 80.
+  contentDesk: `The content desk, ${managerByKey("content")?.team.length ?? 0} specialists`,
+  socialDesk: `The social desk, ${managerByKey("social")?.team.length ?? 0} specialists`,
+  paidDesk: `The paid desk, ${managerByKey("paid")?.team.length ?? 0} specialists`,
   whiteLabel: "Client-facing reports under your brand",
 };
 

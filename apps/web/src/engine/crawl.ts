@@ -81,7 +81,13 @@ async function post<T>(path: string, body: unknown): Promise<T> {
   });
   const data = await response.json().catch(() => ({}));
   if (!response.ok) {
-    throw new Error((data as { message?: string }).message ?? `Request failed with ${response.status}`);
+    // The engine routes answer with `reason`, the quota and validation routes
+    // with `message`. Reading only one threw away every precise diagnostic the
+    // server had written: a loopback address came back as "Request failed with
+    // 400" under a paragraph guessing that the target site blocks bots, which
+    // is the opposite of what happened and sends the user to fix their server.
+    const body = data as { reason?: string; message?: string };
+    throw new Error(body.reason ?? body.message ?? `Request failed with ${response.status}`);
   }
   return data as T;
 }

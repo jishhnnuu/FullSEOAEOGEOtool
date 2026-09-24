@@ -370,10 +370,18 @@ function RunningView({
             <Link href="/app/new" className="button primary">Try another address</Link>
             <Link href="/app" className="button">Your sites</Link>
           </div>
-          <p className="small muted" style={{ marginTop: "1rem", marginBottom: 0 }}>
-            Common causes: the site blocks automated requests, the address has a typo, or the server is behind a
-            challenge page that returns a 403 to anything without a browser fingerprint.
-          </p>
+          {/*
+            Only guess when the server did not already say. The reason above
+            comes from the route that refused, and appending a paragraph of
+            other possible causes underneath a precise diagnosis sends people
+            to check the wrong thing.
+          */}
+          {!/address|loopback|private|robots|HTTP \d|ceiling/i.test(error) && (
+            <p className="small muted" style={{ marginTop: "1rem", marginBottom: 0 }}>
+              Common causes: the site blocks automated requests, the address has a typo, or the server is behind
+              a challenge page that returns a 403 to anything without a browser fingerprint.
+            </p>
+          )}
         </Card>
       )}
     </div>

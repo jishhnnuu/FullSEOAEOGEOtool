@@ -1767,3 +1767,92 @@ a.link-card h3 { color: var(--accent); }
   .access-head { grid-template-columns: 1fr auto; row-gap: 0.3rem; }
   .access-worth { grid-column: 1 / -1; }
 }
+
+/* ------------------------------------------------------ talking to the CMO */
+/*
+ * A conversation, not a chat widget. Wide measure, generous line height, and
+ * the desk that answered named above the reply so the client can see which
+ * part of the organisation picked their question up.
+ */
+.cmo { display: flex; flex-direction: column; gap: 0.9rem; }
+.cmo-thread {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  max-height: 58vh;
+  overflow-y: auto;
+  padding-right: 0.3rem;
+}
+.cmo-turn { max-width: 62ch; }
+.cmo-turn p { margin: 0 0 0.55rem; line-height: 1.6; }
+.cmo-turn p:last-child { margin-bottom: 0; }
+.cmo-turn.you {
+  align-self: flex-end;
+  background: var(--accent-soft);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg) var(--radius-lg) 0 var(--radius-lg);
+  padding: 0.7rem 0.95rem;
+}
+.cmo-said {
+  border-left: 2px solid var(--accent);
+  padding-left: 0.95rem;
+}
+.cmo-desk {
+  display: block;
+  font-size: 0.64rem;
+  text-transform: uppercase;
+  letter-spacing: 0.09em;
+  color: var(--text-faint);
+  margin-bottom: 0.3rem;
+}
+.cmo-actions { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 0.7rem; }
+.cmo-suggestions { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+.cmo-voicenote { margin: 0; }
+
+.cmo-compose {
+  display: flex;
+  gap: 0.5rem;
+  align-items: flex-end;
+  border-top: 1px solid var(--border);
+  padding-top: 0.9rem;
+}
+.cmo-compose textarea {
+  flex: 1 1 auto;
+  min-height: 2.6rem;
+  max-height: 9rem;
+  resize: vertical;
+  margin: 0;
+}
+.cmo-mic {
+  flex: 0 0 auto;
+  width: 2.6rem;
+  height: 2.6rem;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  cursor: pointer;
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  display: grid;
+  place-items: center;
+}
+.cmo-mic:hover { border-color: var(--border-strong); }
+/* Recording is a state somebody must never be in by accident, so it is loud. */
+.cmo-mic.on {
+  border-color: var(--bad);
+  color: var(--bad);
+  background: var(--bad-soft);
+  animation: cmo-pulse 1.4s ease-in-out infinite;
+}
+@keyframes cmo-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(200, 60, 60, 0.35); }
+  50% { box-shadow: 0 0 0 6px rgba(200, 60, 60, 0); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .cmo-mic.on { animation: none; }
+}
+
+@media (max-width: 760px) {
+  .cmo-thread { max-height: none; }
+  .cmo-turn { max-width: 100%; }
+}

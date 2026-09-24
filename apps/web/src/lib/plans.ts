@@ -48,6 +48,21 @@ export type Plan = {
     local: boolean;
     /** Client-facing reports under the customer's own brand. */
     whiteLabel: boolean;
+    /*
+     * The desks beyond search.
+     *
+     * These were missing while three of the four desks shipped, so the
+     * pricing grid described an SEO tool and the desk pages quoted a plan the
+     * grid never mentioned. A visitor could not work out what content, social
+     * or paid cost, and `permits()` could not gate them because there was
+     * nothing to read. One plan definition means every desk appears in it.
+     */
+    /** The content desk: point of view, briefs, drafts, the three edit gates. */
+    contentDesk: boolean;
+    /** The social desk: teardowns, share of voice, calendar, drafted posts. */
+    socialDesk: boolean;
+    /** The paid desk: readiness, plan, creative specs, campaigns, reconciliation. */
+    paidDesk: boolean;
   };
   features: string[];
 };
@@ -70,6 +85,9 @@ export const PLANS: Record<PlanId, Plan> = {
       linkProgramme: false,
       local: false,
       whiteLabel: false,
+      contentDesk: false,
+      socialDesk: false,
+      paidDesk: false,
     },
     features: [
       "The full check catalogue on every run",
@@ -97,6 +115,9 @@ export const PLANS: Record<PlanId, Plan> = {
       linkProgramme: false,
       local: false,
       whiteLabel: false,
+      contentDesk: false,
+      socialDesk: false,
+      paidDesk: false,
     },
     features: [
       "Everything in Free",
@@ -126,6 +147,9 @@ export const PLANS: Record<PlanId, Plan> = {
       linkProgramme: true,
       local: true,
       whiteLabel: false,
+      contentDesk: true,
+      socialDesk: true,
+      paidDesk: true,
     },
     features: [
       "Everything in Starter",
@@ -134,6 +158,9 @@ export const PLANS: Record<PlanId, Plan> = {
       "Local cycle: profile, posts, review replies, citations",
       "Link prospecting and outreach from your own domain",
       "Monthly narrative report with the trace behind every claim",
+      "The content desk: one argued point of view, briefs, drafts and three edit gates",
+      "The social desk: competitor teardowns, share of voice and a drafted calendar",
+      "The paid desk: readiness gate, budget arithmetic, creative specs and reconciled reporting",
     ],
   },
   scale: {
@@ -153,6 +180,9 @@ export const PLANS: Record<PlanId, Plan> = {
       linkProgramme: true,
       local: true,
       whiteLabel: true,
+      contentDesk: true,
+      socialDesk: true,
+      paidDesk: true,
     },
     features: [
       "Everything in Growth, across every site",
@@ -217,6 +247,9 @@ const BOOLEAN_CAPABILITIES = [
   "answerVisibility",
   "linkProgramme",
   "local",
+  "contentDesk",
+  "socialDesk",
+  "paidDesk",
   "whiteLabel",
 ] as const;
 

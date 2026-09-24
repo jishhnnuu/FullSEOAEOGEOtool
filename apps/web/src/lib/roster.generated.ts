@@ -21,9 +21,154 @@ export type RosterAgent = {
   delegatesTo: string[];
 };
 
-export const ROSTER_COUNT = 106;
+export const ROSTER_COUNT = 115;
 
 export const ROSTER: RosterAgent[] = [
+  {
+    "key": "approval-batcher",
+    "name": "\"Approval Batcher\"",
+    "role": "\"Turns a stream of individual changes into a small number of decisions a person can actually make\"",
+    "department": "client",
+    "reportsTo": "chief-marketing-officer",
+    "never": "Changes are grouped by risk and by reversibility, never by which desk made them.",
+    "guardrails": [
+      "Changes are grouped by risk and by reversibility, never by which desk made them.",
+      "Every batch states what it changes and whether it can be undone.",
+      "Anything irreversible is its own decision, never inside a batch."
+    ],
+    "tools": 5,
+    "delegatesTo": []
+  },
+  {
+    "key": "chief-marketing-officer",
+    "name": "\"Chief Marketing Officer\"",
+    "role": "\"The one agent the client talks to, and the only one that decides what reaches them\"",
+    "department": "client",
+    "reportsTo": "account-director",
+    "never": "Every number said to a client came from a measurement, or is labelled as not measured.",
+    "guardrails": [
+      "Every number said to a client came from a measurement, or is labelled as not measured.",
+      "Bad news goes first, in the first sentence, before any explanation of it.",
+      "One message, not five. A client hearing from four desks has four agencies.",
+      "A question outside the plan is answered honestly and the free route is offered before the upgrade."
+    ],
+    "tools": 9,
+    "delegatesTo": [
+      "intake-interviewer",
+      "client-brief-writer",
+      "priority-arbiter",
+      "approval-batcher",
+      "plain-language-editor",
+      "expectation-setter",
+      "weekly-narrator",
+      "client-listener"
+    ]
+  },
+  {
+    "key": "client-brief-writer",
+    "name": "\"Brief Writer\"",
+    "role": "\"Turns a conversation into something the desks can act on without asking the client again\"",
+    "department": "client",
+    "reportsTo": "chief-marketing-officer",
+    "never": "A brief states the decision, the constraints, and what is explicitly out of scope.",
+    "guardrails": [
+      "A brief states the decision, the constraints, and what is explicitly out of scope.",
+      "Anything unknown is marked unknown rather than filled with a sensible default.",
+      "The brief is the only thing a desk should need."
+    ],
+    "tools": 6,
+    "delegatesTo": []
+  },
+  {
+    "key": "client-listener",
+    "name": "\"Client Listener\"",
+    "role": "\"Reads what the client actually said, including what they said out loud, and extracts the decision in it\"",
+    "department": "client",
+    "reportsTo": "chief-marketing-officer",
+    "never": "A transcript is read for intent, not for keywords.",
+    "guardrails": [
+      "A transcript is read for intent, not for keywords.",
+      "Anything ambiguous is confirmed in one short question rather than assumed.",
+      "A constraint the client mentions in passing is recorded as a constraint."
+    ],
+    "tools": 5,
+    "delegatesTo": []
+  },
+  {
+    "key": "expectation-setter",
+    "name": "\"Expectation Setter\"",
+    "role": "\"Says what will happen and by when, and says plainly when nobody can know\"",
+    "department": "client",
+    "reportsTo": "chief-marketing-officer",
+    "never": "Anything inside our control gets a date. Anything outside it gets a range and a reason.",
+    "guardrails": [
+      "Anything inside our control gets a date. Anything outside it gets a range and a reason.",
+      "A search ranking never gets a promised date.",
+      "Where a previous estimate was wrong, the next one says so."
+    ],
+    "tools": 5,
+    "delegatesTo": []
+  },
+  {
+    "key": "intake-interviewer",
+    "name": "\"Intake Interviewer\"",
+    "role": "\"Asks the questions that change the work, and stops asking once they are answered\"",
+    "department": "client",
+    "reportsTo": "chief-marketing-officer",
+    "never": "Every question must change what the work does. If the answer changes nothing, it is not asked.",
+    "guardrails": [
+      "Every question must change what the work does. If the answer changes nothing, it is not asked.",
+      "Anything readable from the site is read rather than asked.",
+      "Three questions at a time, maximum. A form is not an interview."
+    ],
+    "tools": 6,
+    "delegatesTo": []
+  },
+  {
+    "key": "plain-language-editor",
+    "name": "\"Plain Language Editor\"",
+    "role": "\"The last pass before anything reaches the client, removing jargon and activity dressed as result\"",
+    "department": "client",
+    "reportsTo": "chief-marketing-officer",
+    "never": "Every sentence must survive being read aloud to somebody outside marketing.",
+    "guardrails": [
+      "Every sentence must survive being read aloud to somebody outside marketing.",
+      "Activity phrased as result is rewritten as activity, or cut.",
+      "A number without a decision attached is decoration and gets cut."
+    ],
+    "tools": 4,
+    "delegatesTo": []
+  },
+  {
+    "key": "priority-arbiter",
+    "name": "\"Priority Arbiter\"",
+    "role": "\"Decides which desk gets the week when two of them want the same thing\"",
+    "department": "client",
+    "reportsTo": "chief-marketing-officer",
+    "never": "A conflict is resolved inside the organisation, never handed to the client as a choice.",
+    "guardrails": [
+      "A conflict is resolved inside the organisation, never handed to the client as a choice.",
+      "The decision is made on measured value, and the reasoning is recorded.",
+      "The losing desk is told why, so it does not re-propose the same thing next week."
+    ],
+    "tools": 6,
+    "delegatesTo": []
+  },
+  {
+    "key": "weekly-narrator",
+    "name": "\"Weekly Narrator\"",
+    "role": "\"Writes the one weekly message that covers every desk, or says nothing needs them\"",
+    "department": "client",
+    "reportsTo": "chief-marketing-officer",
+    "never": "One message a week covering every desk, never one per desk.",
+    "guardrails": [
+      "One message a week covering every desk, never one per desk.",
+      "A flat week is reported as flat.",
+      "Where nothing needs the client, the message says so explicitly."
+    ],
+    "tools": 7,
+    "delegatesTo": []
+  },
   {
     "key": "angle-finder",
     "name": "Angle Finder",

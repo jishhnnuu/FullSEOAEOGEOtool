@@ -12,7 +12,7 @@ It is not an audit tool. Audit tools say what is wrong and leave the fixing to
 someone else. Anything added here should do the work, not describe it.
 
 ```
-106 agents · 17 missions · 89 tools · 21 connectors · 90 checks · 43 tables · 204 tests
+115 agents · 17 missions · 89 tools · 21 connectors · 90 checks · 43 tables · 204 tests
 ```
 
 ## How to work on this
@@ -81,7 +81,7 @@ need that, stop and ask.
 packages/seoos/
   api/            FastAPI app, routes, schemas, auth. Prefix /api/v1.
   agents/         Runtime, tool-use loop, policy engine, and roster/
-                  roster/ is split by desk: shared/ 10, search/ 43, content/ 14, social/ 13, paid/ 26
+                  roster/ is split by desk: shared/ 10, cmo/ 9, search/ 43, content/ 14, social/ 13, paid/ 26
   missions/       Declarative YAML workflows, the DAG engine, the scheduler
                   workflows/ is split the same way: shared/, search/, content/
   tools/          Everything an agent can do to the world. Registry-gated.
@@ -244,6 +244,31 @@ style disagreement.
   paid needs an account, a database and scheduled work, while every other desk
   still runs with the server switched off. The pages state this rather than
   implying the free tier covers it.
+- **One person to talk to, and they work without a key.** `engine/cmo.ts` reads
+  the intent, answers from what the workspace measured, and names the next
+  action, all deterministically. A tenant's own model key makes the reply
+  conversational; it is not what makes it possible, because most people will
+  never add one. Where a key exists, the deterministic answer is composed
+  first and handed to the model as ground truth in `systemPrompt`, so the
+  model rephrases rather than answers: one left to answer freely invents a
+  number within three exchanges, and a number invented by something calling
+  itself your CMO is worse than silence because people act on it.
+- **One problem on twenty-nine pages is not twenty-nine problems.** Our own
+  deployment is deliberately noindex before launch, so every page carries the
+  same critical finding and the CMO reported "29 critical items should be
+  cleared". True, alarming, and a false positive at the message level rather
+  than the check level. Where one code covers half or more of the serious
+  findings, the reply names the code and says fixing it once fixes all of them.
+- **Voice runs in the browser or not at all.** The Web Speech API transcribes
+  locally, needs no key, costs nothing and sends no audio anywhere, which is
+  the same argument as the rest of this product. A browser without it is told
+  so rather than shown a button that fails quietly.
+- **Every desk appears in the plan definition.** `plans.ts` carried only search
+  capabilities while three other desks shipped, so the pricing grid described
+  an SEO tool, the desk pages quoted a plan the grid never mentioned, and
+  `permits()` had nothing to gate on. `contentDesk`, `socialDesk` and
+  `paidDesk` are limits like any other, and the pricing labels read the
+  headcount from the roster rather than repeating it.
 - **Mentions are weighted above links.** Ahrefs measured 75,000 brands in
   2026: brand mentions correlate with AI Overview visibility at 0.664,
   backlinks at 0.218. A model has no link graph, it has text. `mentions.ts`

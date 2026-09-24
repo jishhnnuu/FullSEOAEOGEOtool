@@ -38,6 +38,12 @@ DEPARTMENTS = (
     # function that wants the work to happen. "media" buys, "measurement"
     # verifies, and neither is allowed to be the other's junior.
     "paid", "measurement",
+    # The office around the client-facing lead. Separate from "leadership"
+    # because these agents are not leading a desk, they are the machinery that
+    # lets one person be the only person a client talks to: the interview, the
+    # brief, the arbitration when two desks want the same week, the batching of
+    # approvals, and the plain-language pass everything makes before it leaves.
+    "client",
 )
 
 

@@ -35,6 +35,21 @@ jobs:
         env:
           PYTHONPATH: ${{ github.workspace }}/packages
 
+      - name: Generated TypeScript is current
+        # roster.generated.ts and ads.generated.ts are written from the Python
+        # registries. The browser reads them, so a stale copy means the
+        # interface promises a roster or a refusal the runtime does not have.
+        run: |
+          python scripts/roster_to_ts.py
+          python scripts/ads_to_ts.py
+          git diff --quiet -- apps/web/src/lib/roster.generated.ts apps/web/src/engine/ads.generated.ts || {
+            echo "::error::Generated TypeScript is stale. Run 'make docs' and commit."
+            git diff --stat -- apps/web/src/lib/roster.generated.ts apps/web/src/engine/ads.generated.ts
+            exit 1
+          }
+        env:
+          PYTHONPATH: ${{ github.workspace }}/packages
+
       - name: Reference documentation is current
         # The reference is generated from the registries. A new tool, check,
         # agent or mission that lands without regenerating it fails here.
@@ -71,7 +86,22 @@ jobs:
       - name: Typecheck
         run: npm run typecheck
 
+      - name: Engine tests
+        # The browser engine decides what a client is told about their own
+        # site and whether their money may be spent. It is not optional here.
+        run: npm run test:engine
+
+      - name: Our own site passes our own checks
+        run: |
+          npm run seo:check
+          npm run brand:check
+
       - name: Build
+        # The one step that evaluates every module. A typecheck passes on a
+        # temporal dead zone violation, because TypeScript cannot know a
+        # filter callback is synchronous, and only the prerender throws.
+        # That exact bug reached main once and Cloudflare silently kept
+        # serving the previous version for an hour.
         run: npm run build
 
       - name: Cloudflare bundle

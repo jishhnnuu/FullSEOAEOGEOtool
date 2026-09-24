@@ -470,7 +470,19 @@ the cron handler and the log line shows what the tick actually did.
 ## Deployment
 
 Push to `main`. Cloudflare builds from `wrangler.jsonc` at the repository root
-and deploys the Worker automatically. A server installation is Docker Compose,
+and deploys the Worker automatically.
+
+**Confirm it landed, do not assume it.** A failed build leaves the previous
+version serving, so the site looks healthy while the change is nowhere. Ask
+the deployment what it is running:
+
+```bash
+curl -s https://<host>/api/version
+```
+
+If the commit lags the repository, the build failed. Grepping the rendered
+HTML for a sentence that happened to change is guessing, and it is how two
+commits once sat undeployed for an hour while being reported as live. A server installation is Docker Compose,
 or the three processes above with Postgres. `SEOOS_API_URL` on the Worker
 additionally proxies `/api/v1` to that installation, read per request, with no
 rebuild.

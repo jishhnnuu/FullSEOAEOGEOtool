@@ -433,12 +433,23 @@ same standard.
 ## Before committing
 
 ```bash
-make check && make lint && make test && make docs
+make ship
 ```
 
-Then confirm `git diff --stat docs/reference` is empty. For a change touching
-`apps/web`, also run `npx wrangler deploy --dry-run --outdir /tmp/w` so a
-broken Cloudflare build fails locally rather than on the live site.
+One target, because running the pieces by hand is how a failure gets read
+carelessly. It runs the roster and mission validation, ruff, tsc, both test
+suites, the reference generator and its staleness check, the SEO and brand
+checks, **the real Next build**, and the Worker bundle. It fails on the first
+problem and prints "Ready to push" only when every one of them passed.
+
+**The real build is in there for a reason.** `tsc --noEmit` passes on a
+temporal dead zone violation, because TypeScript cannot know that a `.filter()`
+callback runs synchronously, so a `const` referenced inside one and declared
+further down the file typechecks and then throws at module evaluation. Only
+the prerender pass catches it. That exact bug shipped twice: the typecheck
+passed, esbuild happened to hoist around it in a local script, and two commits
+reached `main` where Cloudflare's build failed and it kept serving the previous
+version. The symptom is a deploy that silently never lands.
 
 **A dry run is not enough for anything that changes `deploy/worker.js` or the
 Worker's global scope.** It bundles without ever starting the runtime, so it

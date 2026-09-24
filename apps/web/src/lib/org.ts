@@ -286,6 +286,18 @@ export function headcount(): number {
  */
 const DESK_LEADS = new Set(MANAGERS.map((m) => m.agent));
 
+/*
+ * Declared before OPERATIONS, and that ordering is load-bearing.
+ *
+ * `.filter()` runs its callback immediately, so a `const` referenced inside
+ * one and declared further down the file is read inside its temporal dead
+ * zone and throws at module evaluation. TypeScript does not catch it, because
+ * it cannot know the callback is synchronous, and esbuild happened to hoist
+ * around it, so this passed a typecheck, a bundle and a local run before
+ * failing the real build.
+ */
+const CMO_KEY = "chief-marketing-officer";
+
 export const OPERATIONS: TeamMember[] = ROSTER
   .filter((a) => a.reportsTo === "account-director" && !DESK_LEADS.has(a.key) && a.key !== CMO_KEY)
   .map((a) => ({ ...a, runsInBrowser: IN_BROWSER.has(a.key) }));
@@ -303,8 +315,6 @@ export const OPERATIONS: TeamMember[] = ROSTER
  * has to show it. Adding these nine agents without a home on that page is how
  * it briefly reported 107 of 115.
  */
-const CMO_KEY = "chief-marketing-officer";
-
 export const CMO = ROSTER.find((a) => a.key === CMO_KEY) ?? null;
 
 export const CMO_OFFICE: TeamMember[] = ROSTER

@@ -77,6 +77,28 @@ lint: $(VENV)
 	# rather than when someone runs the migration by hand and gets an old schema.
 	node scripts/d1-sql.mjs --check
 
+# The gate that has to pass before anything is pushed to main.
+#
+# `ship` exists because the pieces were being run by hand and the one that
+# mattered got read carelessly. A typecheck passes on a temporal dead zone
+# violation, because TypeScript cannot know a filter callback is synchronous,
+# and only the real build evaluates the module. Cloudflare then keeps serving
+# the previous version, so the symptom is two commits that silently never
+# deploy rather than a failure anybody sees.
+#
+# Fails loudly on the first problem, and prints nothing reassuring otherwise.
+ship: check lint test docs
+	@git diff --quiet -- docs/reference apps/web/src/lib/roster.generated.ts apps/web/src/engine/ads.generated.ts || \
+		(echo "FAIL: generated files are stale. Commit them."; exit 1)
+	node scripts/check-seo.mjs
+	npm run brand:check
+	@echo "--- the real build, which is the one that catches module-evaluation errors ---"
+	npm run build --workspace apps/web
+	@echo "--- the worker bundle ---"
+	npx wrangler deploy --dry-run --outdir /tmp/ship-check
+	@echo ""
+	@echo "Ready to push."
+
 docker:
 	docker compose up --build
 

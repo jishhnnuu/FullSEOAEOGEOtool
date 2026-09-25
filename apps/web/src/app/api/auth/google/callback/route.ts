@@ -3,6 +3,10 @@
  *
  * Spend the state, exchange the code, read the profile, find or create the
  * person, claim whatever anonymous run they left behind, and land them on it.
+ *
+ * When the trip started from a Connect button while signed out, the same
+ * grant also carries Search Console and Analytics: those are stored too, so
+ * one visit to Google both signs the person in and connects their data.
  */
 
 import { baseUrl, env } from "@/server/env";
@@ -12,6 +16,7 @@ import { exchangeCode, profileFrom, takeState } from "@/server/google";
 import { createSession, upsertUser, isSecure, readCookie, clearCookie, CLAIM_COOKIE } from "@/server/session";
 import { claimRuns } from "@/server/runs";
 import { record, sweep } from "@/server/db";
+import { landing as grantLanding, storeGoogleGrant } from "@/server/google-grant";
 
 export const dynamic = "force-dynamic";
 
@@ -59,6 +64,27 @@ export async function GET(request: Request): Promise<Response> {
       cookies.push(clearCookie(CLAIM_COOKIE, secure));
     }
 
+    // Signed in and connected on the same trip.
+    // If storing the grant fails, the sign-in still stands: the person lands
+    // signed in, with the reason written on the screen they asked for.
+    if (pending.product) {
+      try {
+        const result = await storeGoogleGrant(e, {
+          orgId,
+          userId,
+          siteId: pending.site_id,
+          product: pending.product,
+          tokens,
+          profile,
+        });
+        landing = result.connected.length
+          ? grantLanding(pending.next ?? "/app", result)
+          : withError(pending.next ?? "/app", "Nothing was ticked on Google's screen, so nothing was connected. Press Connect Google again and leave the boxes ticked.");
+      } catch (error) {
+        landing = withError(pending.next ?? "/app", error instanceof Error ? error.message : "Signed in, but the connection could not be stored.");
+      }
+    }
+
     await record(e, { orgId, userId, action: created ? "account.created" : "account.signin", target: "google" });
     await sweep(e);
     return redirect(landing, cookies);
@@ -67,4 +93,10 @@ export async function GET(request: Request): Promise<Response> {
     if (response.status === 503) return response;
     return back(request, error instanceof Error ? error.message : "Sign-in failed.");
   }
+}
+
+function withError(next: string, message: string): string {
+  const to = new URL(next.startsWith("/") ? next : "/app", "https://x.invalid");
+  to.searchParams.set("error", message);
+  return `${to.pathname}${to.search}`;
 }

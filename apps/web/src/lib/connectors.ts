@@ -40,19 +40,16 @@ export const CONNECTORS: ConnectorSpec[] = [
     summary: "The only first-party record of what people searched before they reached you.",
     unlocks: [
       "Real query data instead of a keyword model derived from your own copy",
-      "Indexing status per URL, and why a page is not indexed",
+      "Indexing status of your top pages, and whether Google agrees with your canonical",
       "Click and impression movement attributed to each change",
-      "A sample of referring domains, free",
+      "16 months of daily clicks and impressions, across web, image, video, news and Discover",
     ],
     withoutIt: "Keywords are inferred from the site's own content, and results cannot be attributed to the work.",
     authKind: "oauth",
     docsUrl: "https://search.google.com/search-console",
     setupNotes:
-      "Create a service account in Google Cloud, enable the Search Console API, then add the service account email as a user on the property. Paste the JSON key below. It is held in this browser only.",
-    fields: [
-      { key: "property", label: "Property URL", kind: "url", required: true, help: "Exactly as it appears in Search Console, including the protocol.", placeholder: "https://example.com/" },
-      { key: "service_account_json", label: "Service account JSON", kind: "textarea", required: true, help: "The whole key file. Stored in this browser, sent only to Google." },
-    ],
+      "Press Connect Google, choose the Google account that owns the property, and leave Search Console ticked. The property matching this site is picked for you. Nothing to create, download or paste.",
+    fields: [],
     essential: true,
   },
   {
@@ -66,13 +63,11 @@ export const CONNECTORS: ConnectorSpec[] = [
       "Traffic segmented by the channel that actually brought it",
     ],
     withoutIt: "Reporting shows crawl and ranking movement but cannot say what it earned.",
-    authKind: "service_account",
+    authKind: "oauth",
     docsUrl: "https://analytics.google.com",
-    setupNotes: "Same service account as Search Console works. Add it as a Viewer on the GA4 property, then paste the numeric property ID.",
-    fields: [
-      { key: "property_id", label: "Property ID", kind: "text", required: true, help: "The numeric ID from Admin, Property Settings.", placeholder: "123456789" },
-      { key: "service_account_json", label: "Service account JSON", kind: "textarea", required: true, help: "The whole key file." },
-    ],
+    setupNotes:
+      "Connected by the same Connect Google button as Search Console, in the same trip to Google. The property whose web stream matches this site is picked for you.",
+    fields: [],
     essential: true,
   },
   {
@@ -91,10 +86,7 @@ export const CONNECTORS: ConnectorSpec[] = [
     docsUrl: "https://developers.google.com/my-business",
     setupNotes:
       "One access request to Google, once, for the whole account. It takes a few days and it is free. After that nothing needs approving again: posting, replying to reviews and editing the profile all run on the business.manage scope you granted at connection, and Google does not review individual posts. Until the request clears, posts and replies are drafted here for you to paste in.",
-    fields: [
-      { key: "location_id", label: "Location ID", kind: "text", required: true, help: "From the Business Profile API, or the profile URL." },
-      { key: "oauth_token", label: "OAuth refresh token", kind: "password", required: true, help: "Held in this browser only." },
-    ],
+    fields: [],
     essential: false,
   },
   {

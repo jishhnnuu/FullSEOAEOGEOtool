@@ -69,6 +69,10 @@ function ensureDatabase() {
 function writeBinding(databaseId) {
   const source = readFileSync(CONFIG, "utf8");
   if (/"d1_databases"\s*:\s*\[/.test(source)) {
+    if (!/"database_id"/.test(source)) {
+      say("wrangler.jsonc names the database without an id, so the next deploy connects to it by name.");
+      return;
+    }
     if (source.includes(databaseId)) {
       say("The binding is already in wrangler.jsonc.");
       return;
@@ -151,7 +155,7 @@ async function main() {
   say("     https://<your-worker>.workers.dev/api/connections/google/callback");
   say("   On the consent screen add these scopes:");
   say("     openid, email, profile");
-  say("     .../auth/webmasters.readonly       (non-sensitive since 2024, no review)");
+  say("     .../auth/webmasters.readonly       (read only)");
   say("     .../auth/analytics.readonly        (sensitive: add yourself as a test user)");
   say("   Add your own Gmail address under Test users while the app is unverified.");
   say("");

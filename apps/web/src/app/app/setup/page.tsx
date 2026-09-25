@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useEffect, useState } from "react";
 import useSWR from "swr";
 
 import { Card, CopyButton, Notice, PageHeader } from "@/components/ui";
@@ -19,10 +20,12 @@ type Setup = {
 /**
  * Setup, readable from any browser on any device.
  *
- * Provisioning this product is four things, and not one of them needs a
- * terminal. The database builds its own tables, the secrets are fields in the
- * Cloudflare dashboard, and the only value that is hard to get right, the pair
- * of redirect URLs, is printed here with a copy button rather than described.
+ * Switching on Google for this deployment is two accounts' worth of clicks:
+ * one OAuth client in Google Cloud, and three secrets on the Worker. Nothing
+ * needs a terminal. The database creates itself on deploy, the tables build
+ * themselves on the first request, the master key is generated on this page,
+ * and the values that are easy to get wrong (the redirect URLs and scopes) are
+ * printed with copy buttons rather than described.
  *
  * It is deliberately reachable without signing in. The person who has to fix a
  * gap is, by definition, standing outside one.
@@ -32,6 +35,15 @@ export default function SetupPage() {
     const response = await fetch(url);
     return (await response.json()) as Setup;
   }, { refreshInterval: 15_000 });
+
+  // Generated here, in this browser, and never sent anywhere: the only copy
+  // is the one pasted into Cloudflare.
+  const [masterKey, setMasterKey] = useState("");
+  useEffect(() => {
+    const bytes = new Uint8Array(32);
+    crypto.getRandomValues(bytes);
+    setMasterKey(btoa(String.fromCharCode(...bytes)));
+  }, []);
 
   if (isLoading || !data) {
     return (
@@ -43,22 +55,24 @@ export default function SetupPage() {
 
   const required = data.steps.filter((s) => !s.optional);
   const outstanding = required.filter((s) => !s.done);
+  const done = (key: string) => data.steps.find((s) => s.key === key)?.done ?? false;
+  const allScopes = [...data.scopes.identity, ...data.scopes.searchConsole, ...data.scopes.analytics];
 
   return (
-    <div style={{ maxWidth: "820px", margin: "0 auto", padding: "2rem 1rem" }}>
+    <div style={{ maxWidth: "820px", margin: "0 auto", padding: "2rem 1rem" }} className="stack">
       <PageHeader
-        title="Setup"
-        description="Four things, none of which needs a command line. This screen re-checks itself every fifteen seconds."
+        title="Switch on Google"
+        description="About fifteen minutes, once, in a browser. After this, connecting Search Console and Analytics is one button for everyone. This page re-checks itself every fifteen seconds."
       />
 
       {data.ready ? (
         <Notice kind="ok" title="Everything required is in place">
-          Sign-in works, and so does connecting Search Console and Analytics.{" "}
-          <Link href="/app/signin">Go and sign in</Link>.
+          Sign-in works, and so does Connect Google. Open a site, go to Connections, and press Connect Google.{" "}
+          <Link href="/app">Go to your sites</Link>.
         </Notice>
       ) : (
         <Notice kind="warn" title={`${outstanding.length} of ${required.length} still to do`}>
-          The audit works regardless. These are what accounts and connections need.
+          The audit works regardless. These are what sign-in and Connect Google need.
         </Notice>
       )}
 
@@ -78,80 +92,152 @@ export default function SetupPage() {
         ))}
       </Card>
 
-      <Card title="The two redirect URLs">
-        <p className="small muted">
-          Paste both into the Google OAuth client, under Authorised redirect URIs. Two rather than one on
-          purpose: signing in and connecting a product are separate round trips, which means a callback for one
-          cannot be replayed against the other.
-        </p>
-        {data.redirectUris.map((uri) => (
-          <div key={uri} className="connection-row">
-            <div className="meta">
-              <span className="mono small" style={{ wordBreak: "break-all" }}>{uri}</span>
+      <Card title={`1. In Google Cloud: make the OAuth client${done("google_client") ? " (done)" : ""}`}>
+        <ol className="small" style={{ paddingLeft: "1.2rem", display: "grid", gap: "0.7rem" }}>
+          <li>
+            <a href="https://console.cloud.google.com/projectcreate" target="_blank" rel="noopener noreferrer">Create a project</a>.
+            Any name. Sign in with the Google account you want to own this app.
+          </li>
+          <li>
+            Turn on the three APIs, pressing Enable on each:{" "}
+            <a href="https://console.cloud.google.com/apis/library/searchconsole.googleapis.com" target="_blank" rel="noopener noreferrer">Search Console API</a>,{" "}
+            <a href="https://console.cloud.google.com/apis/library/analyticsdata.googleapis.com" target="_blank" rel="noopener noreferrer">Analytics Data API</a>,{" "}
+            <a href="https://console.cloud.google.com/apis/library/analyticsadmin.googleapis.com" target="_blank" rel="noopener noreferrer">Analytics Admin API</a>.
+            A scope granted against an API nobody enabled fails at the first call, not at the consent screen.
+          </li>
+          <li>
+            Open the{" "}
+            <a href="https://console.cloud.google.com/auth/overview" target="_blank" rel="noopener noreferrer">Google Auth Platform</a>{" "}
+            and press Get started. App name: your brand. Support email: yours. Audience: <strong>External</strong>. Contact
+            email: yours. Agree, and Create.
+          </li>
+          <li>
+            Under{" "}
+            <a href="https://console.cloud.google.com/auth/audience" target="_blank" rel="noopener noreferrer">Audience</a>, leave the
+            status on <strong>Testing</strong> and add every Gmail that will connect under <strong>Test users</strong>, including
+            the one that owns your Search Console. Up to 100.
+          </li>
+          <li>
+            Under{" "}
+            <a href="https://console.cloud.google.com/auth/scopes" target="_blank" rel="noopener noreferrer">Data access</a>, Add
+            or remove scopes, and paste these into &ldquo;Manually add scopes&rdquo;:
+            <div className="connection-row" style={{ marginTop: "0.4rem" }}>
+              <div className="meta">
+                <span className="mono tiny" style={{ wordBreak: "break-all" }}>{allScopes.join(", ")}</span>
+              </div>
+              <CopyButton text={allScopes.join(",")} />
             </div>
-            <CopyButton text={uri} />
-          </div>
-        ))}
+          </li>
+          <li>
+            Under{" "}
+            <a href="https://console.cloud.google.com/auth/clients" target="_blank" rel="noopener noreferrer">Clients</a>, Create
+            client. Type: <strong>Web application</strong>. Under Authorised redirect URIs, add both of these, exactly:
+            {data.redirectUris.map((uri) => (
+              <div key={uri} className="connection-row" style={{ marginTop: "0.4rem" }}>
+                <div className="meta">
+                  <span className="mono small" style={{ wordBreak: "break-all" }}>{uri}</span>
+                </div>
+                <CopyButton text={uri} />
+              </div>
+            ))}
+          </li>
+          <li>
+            Create. Google shows a <strong>Client ID</strong> and a <strong>Client secret</strong>. Keep that tab open for the
+            next step. The secret is shown in full only once, so copy it now.
+          </li>
+        </ol>
       </Card>
 
-      <Card title="Scopes to add on the consent screen">
-        <div className="connection-row">
-          <div className="meta">
-            <strong>Identity</strong>
-            <span className="mono tiny">{data.scopes.identity.join("  ")}</span>
-            <span className="muted small">No review. This is all sign-in needs.</span>
-          </div>
-        </div>
-        <div className="connection-row">
-          <div className="meta">
-            <strong>Search Console</strong>
-            <span className="mono tiny" style={{ wordBreak: "break-all" }}>{data.scopes.searchConsole.join(" ")}</span>
-            <span className="muted small">
-              No review either. Google reclassified this one as non-sensitive in 2024, so it works for anyone
-              the day the client exists.
-            </span>
-          </div>
-        </div>
-        <div className="connection-row">
-          <div className="meta">
-            <strong>Analytics</strong>
-            <span className="mono tiny" style={{ wordBreak: "break-all" }}>{data.scopes.analytics.join(" ")}</span>
-            <span className="muted small">
-              Sensitive. Works today for any address listed under Test users, and needs Google&apos;s review
-              before it works for the public. That review takes weeks, so it is worth starting early.
-            </span>
-          </div>
-        </div>
-        <div className="connection-row">
-          <div className="meta">
-            <strong>Business Profile</strong>
-            <span className="mono tiny" style={{ wordBreak: "break-all" }}>{data.scopes.businessProfile.join(" ")}</span>
-            <span className="muted small">
-              Sensitive, and Google gates the API itself behind a separate access request. Until that clears,
-              posts and review replies are drafted here and pasted there.
-            </span>
-          </div>
-        </div>
-      </Card>
-
-      <Card title="APIs to enable">
-        <p className="small muted">
-          In the same Google Cloud project, under APIs and Services, Library. A scope that is granted against an
-          API nobody enabled fails at the first call rather than at the consent screen, which is a confusing way
-          to find out.
+      <Card title={`2. In Cloudflare: add three secrets${done("master_key") && done("google_client") ? " (done)" : ""}`}>
+        <p className="small">
+          <a href="https://dash.cloudflare.com/?to=/:account/workers-and-pages" target="_blank" rel="noopener noreferrer">
+            Workers and Pages
+          </a>
+          , this Worker, Settings, Variables and Secrets, Add. Choose type <strong>Secret</strong> for each, then Deploy.
+          Secrets survive every future deploy, so this is once.
         </p>
-        <ul className="small">
-          {data.apis.map((api) => (
-            <li key={api}>{api}</li>
-          ))}
-        </ul>
+        <div className="connection-row">
+          <div className="meta">
+            <strong className="mono small">GOOGLE_CLIENT_ID</strong>
+            <span className="muted small">The Client ID from the last step. It ends in .apps.googleusercontent.com.</span>
+          </div>
+        </div>
+        <div className="connection-row">
+          <div className="meta">
+            <strong className="mono small">GOOGLE_CLIENT_SECRET</strong>
+            <span className="muted small">The Client secret from the same screen.</span>
+          </div>
+        </div>
+        <div className="connection-row">
+          <div className="meta">
+            <strong className="mono small">SEOOS_MASTER_KEY</strong>
+            {done("master_key") ? (
+              <span className="muted small">Already set. Do not change it: every stored connection is sealed with it.</span>
+            ) : (
+              <>
+                <span className="muted small">
+                  This one was just made in your browser, from 32 random bytes. It is not sent anywhere, so the copy you
+                  paste into Cloudflare is the only one.
+                </span>
+                <span className="mono small" style={{ wordBreak: "break-all" }}>{masterKey}</span>
+              </>
+            )}
+          </div>
+          {!done("master_key") && masterKey ? <CopyButton text={masterKey} /> : null}
+        </div>
+        <p className="small muted" style={{ marginTop: "0.6rem" }}>
+          Changing the master key later disconnects every stored connection, because nothing sealed with the old key
+          can be opened with the new one. People would simply press Connect Google again.
+        </p>
       </Card>
+
+      <Card title="3. Try it">
+        <p className="small">
+          Once the status above is all ticks: open a site, go to <strong>Connections</strong>, and press{" "}
+          <strong>Connect Google</strong>. Google asks which account to use; pick one listed as a test user. It warns that
+          the app is unverified, because it is still in Testing: press Continue. Leave both boxes ticked. You land on{" "}
+          <strong>Your Google data</strong> with the sync running.
+        </p>
+      </Card>
+
+      <details className="acc">
+        <summary>What Testing mode means, and going public later</summary>
+        <div className="acc-body">
+          <p className="small">
+            <strong>Works on this address today.</strong> No domain is needed to test. Only the Gmail addresses listed as
+            test users can connect, and Google keeps each of their permissions for seven days while the app is in
+            Testing; after that the screen says the connection needs renewing, and Connect Google renews it.
+          </p>
+          <p className="small">
+            <strong>To open it to everyone</strong>, press Publish app under Audience. Google then verifies the app because
+            Analytics read access is a sensitive scope: it wants the app&apos;s home page and privacy policy on a domain you
+            own and have verified, which is why this waits until the real domain is live. Neither scope is a restricted
+            one, so there is no paid security assessment.
+          </p>
+          <p className="small">
+            <strong>After moving to a real domain</strong>, add the two redirect URLs this page shows then (they follow the
+            address automatically) to the same client.
+          </p>
+        </div>
+      </details>
+
+      <details className="acc">
+        <summary>If the database still shows missing after a deploy</summary>
+        <div className="acc-body">
+          <p className="small">
+            Deploys normally create a D1 database called <span className="mono">seoos</span> and attach it. If the
+            deploy was not allowed to create one, make it by hand: Cloudflare dashboard, Storage and Databases, D1, Create,
+            name it <span className="mono">seoos</span>. The next deploy finds it by name. There is no id to paste and no
+            command to run; the tables build themselves.
+          </p>
+        </div>
+      </details>
 
       <Card title="What this deployment is">
         <p className="small muted">
-          Origin: <span className="mono">{data.origin}</span>. Everything above is configuration held by
-          Cloudflare and Google, not by any machine. Once it is set, the product is a website: usable by anyone,
-          from any device, anywhere, with nothing installed.
+          Origin: <span className="mono">{data.origin}</span>. Everything above is configuration held by Cloudflare and
+          Google, not by any machine or any assistant. Once it is set, the product is a website: usable by anyone, from any
+          device, with nothing installed.
         </p>
       </Card>
     </div>

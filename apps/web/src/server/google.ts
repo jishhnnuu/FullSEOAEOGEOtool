@@ -7,9 +7,10 @@
  * the whole trick, and it is why Google sign-in is the default here and the
  * magic link is the fallback.
  *
- * Scope notes, checked rather than assumed:
- *  - `webmasters.readonly` was reclassified non-sensitive in 2024. No app
- *    review, no hundred-user cap. Search Console works the day it ships.
+ * Scope notes:
+ *  - `webmasters.readonly` is read only and not a restricted scope. While the
+ *    app is in Testing it works for listed test users; publishing the app
+ *    goes through Google's verification with the Analytics scope anyway.
  *  - `analytics.readonly` is sensitive. It works immediately for accounts
  *    listed as testers on the OAuth consent screen, and needs Google's review
  *    before it works for the public. That review is weeks, so it starts early.
@@ -46,6 +47,22 @@ export const PRODUCT_SCOPES: Record<string, { scopes: string[]; name: string; no
     note: "Posts, hours and review replies. Google also gates this API behind its own access request.",
   },
 };
+
+/**
+ * Search Console and Analytics together, on one approval.
+ *
+ * Asking for them one at a time is two trips to Google for something a person
+ * thinks of as one decision: "let it see my Google data". Google shows each
+ * scope as its own checkbox, so the person can still untick one, and the grant
+ * is stored for whichever they left ticked.
+ */
+export const GOOGLE_BUNDLE = ["gsc", "ga4"] as const;
+
+/** The scopes for a product name, where "google" means the bundle. */
+export function scopesFor(product: string): string[] | null {
+  if (product === "google") return GOOGLE_BUNDLE.flatMap((p) => PRODUCT_SCOPES[p].scopes);
+  return PRODUCT_SCOPES[product]?.scopes ?? null;
+}
 
 export type StateKind = "signin" | "connect";
 
@@ -112,7 +129,10 @@ export async function startAuth(
   // A refresh token is the difference between a dashboard and a platform:
   // without one nothing can run on a schedule while the tab is closed.
   url.searchParams.set("access_type", "offline");
-  url.searchParams.set("prompt", "consent");
+  // select_account: the person picks which Gmail, every time, because the
+  // one that owns Search Console is often not the one they are signed into.
+  // consent: Google only returns a refresh token on a consent screen.
+  url.searchParams.set("prompt", "select_account consent");
   if (options.incremental) url.searchParams.set("include_granted_scopes", "true");
   if (options.loginHint) url.searchParams.set("login_hint", options.loginHint);
   return url.toString();

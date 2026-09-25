@@ -1,9 +1,8 @@
 /**
  * Search Console, read-only.
  *
- * The scope is `webmasters.readonly`, which Google reclassified as
- * non-sensitive in 2024: no app review, no hundred-user cap. Everything here
- * is a GET or a report query; nothing submits, deletes or verifies anything.
+ * The scope is `webmasters.readonly`. Everything here is a GET or a report
+ * query; nothing submits, deletes or verifies anything.
  */
 
 import { accessToken, type ConnectionRow } from "./connections";

@@ -8,6 +8,8 @@ import { CATEGORY_LABEL, CATEGORY_ORDER, CONNECTORS, type ConnectorSpec } from "
 import { id, logActivity } from "@/lib/store";
 import { useSite } from "@/lib/site-hooks";
 import { disconnect, signInHref, useConnections, useSession, type Connection } from "@/lib/session";
+import { forgetSite } from "@/lib/google-store";
+import { needsProperty, useAutoMatch } from "@/lib/google-match";
 import { Badge, Card, Notice, PageHeader, timeAgo } from "@/components/ui";
 
 /**
@@ -32,8 +34,6 @@ export default function IntegrationsPage() {
 
 /** Providers whose connection lives on the server, behind a real handshake. */
 const SERVER_SIDE: Record<string, { product?: string; kind: "google" | "wordpress" }> = {
-  gsc: { product: "gsc", kind: "google" },
-  ga4: { product: "ga4", kind: "google" },
   gbp: { product: "gbp", kind: "google" },
   wordpress: { kind: "wordpress" },
 };
@@ -44,6 +44,7 @@ function Integrations() {
   const { session } = useSession();
   const signedIn = Boolean(session.user);
   const { connections, refresh } = useConnections(signedIn);
+  const { matching, ambiguous } = useAutoMatch(site?.id, site?.baseUrl, connections, refresh);
   const [editing, setEditing] = useState<string | null>(null);
   const [values, setValues] = useState<Record<string, string>>({});
   const [wpUrl, setWpUrl] = useState("");
@@ -51,10 +52,14 @@ function Integrations() {
   if (!site) return null;
 
   const local = new Map(site.integrations.map((i) => [i.provider, i]));
+  // This site's own connection first, then one made with no site named.
+  // Another site's connection is never shown here.
   const server = new Map<string, Connection>();
+  const rank = (c: Connection) => (c.siteId === site.id ? 2 : c.siteId ? 0 : 1) * 2 + (c.status === "connected" ? 1 : 0);
   for (const connection of connections) {
+    if (connection.siteId && connection.siteId !== site.id) continue;
     const existing = server.get(connection.provider);
-    if (!existing || connection.status === "connected") server.set(connection.provider, connection);
+    if (!existing || rank(connection) > rank(existing)) server.set(connection.provider, connection);
   }
 
   function connectLocally(spec: ConnectorSpec) {
@@ -95,8 +100,19 @@ function Integrations() {
     refresh();
   }
 
+  async function disconnectGoogle(ids: string[]) {
+    for (const connectionId of ids) await disconnect(connectionId);
+    await forgetSite(site!.id);
+    refresh();
+  }
+
   const banner = params.get("error") ?? null;
-  const justConnected = params.get("connected") === "1";
+  const fix = params.get("fix") ?? null;
+  const justConnected = params.has("connected");
+  const declined = (params.get("declined") ?? "").split(",").filter(Boolean);
+  const googleHref = `/api/connections/google/start?product=google&site=${site.id}&next=${encodeURIComponent(`/app/sites/${site.id}/google`)}`;
+  const gsc = server.get("gsc") ?? null;
+  const ga4 = server.get("ga4") ?? null;
 
   return (
     <div className="stack">
@@ -105,21 +121,35 @@ function Integrations() {
         description="Every capability degrades with a reason rather than failing. Each gap below is a sentence, not an error."
       />
 
-      {banner ? <Notice kind="error" title="That connection did not complete">{banner}</Notice> : null}
-      {justConnected ? <Notice kind="ok" title="Connected">The grant is stored and renews itself. Scheduled runs can use it.</Notice> : null}
-
-      {!signedIn ? (
-        <Notice kind="warn" title="Connections that survive need an account">
-          A refresh token is what lets a run happen on Monday morning with nobody&apos;s browser open, and it has
-          to live somewhere other than this tab. Anything you connect while signed out is held in this browser
-          and goes when the browser does.{" "}
-          <Link href={signInHref()}>Sign in</Link> and connecting Search Console becomes one Approve on the same
-          Google account.
+      {banner ? (
+        <Notice kind="error" title="That connection did not complete">
+          {banner}
+          {fix ? <span className="small" style={{ display: "block", marginTop: "0.3rem" }}>{fix}</span> : null}
+        </Notice>
+      ) : null}
+      {justConnected && !banner ? <Notice kind="ok" title="Connected">The grant is stored and renews itself. Scheduled runs can use it.</Notice> : null}
+      {declined.length ? (
+        <Notice kind="warn" title="Part of Google's screen was left unticked">
+          {declined.map((p) => (p === "gsc" ? "Search Console" : p === "ga4" ? "Analytics" : p)).join(" and ")} was not
+          ticked, so it is not connected. <a href={googleHref}>Connect Google again</a> and leave every box ticked.
         </Notice>
       ) : null}
 
+      <GoogleCard
+        siteId={site.id}
+        domain={site.domain}
+        available={session.methods.google}
+        signedIn={signedIn}
+        href={googleHref}
+        gsc={gsc}
+        ga4={ga4}
+        matching={matching}
+        ambiguous={ambiguous}
+        onDisconnect={(ids) => void disconnectGoogle(ids)}
+      />
+
       {CATEGORY_ORDER.map((category) => {
-        const specs = CONNECTORS.filter((c) => c.category === category);
+        const specs = CONNECTORS.filter((c) => c.category === category && c.provider !== "gsc" && c.provider !== "ga4");
         if (specs.length === 0) return null;
         return (
           <Card key={category} title={CATEGORY_LABEL[category]}>
@@ -267,13 +297,10 @@ function Integrations() {
 
       <Card title="What Google will and will not allow">
         <p className="small">
-          <strong>Search Console</strong> needs no review. Google reclassified the read-only scope as
-          non-sensitive in 2024, so it works the moment the client exists, for anyone.
-        </p>
-        <p className="small">
-          <strong>Analytics</strong> is a sensitive scope. It works today for accounts listed as testers on the
-          consent screen, and needs Google&apos;s review before it works for the public. That review is measured
-          in weeks, which is why it is worth starting before you need it.
+          <strong>Search Console and Analytics</strong> are both read only here, and neither is one of Google&apos;s
+          restricted scopes, so no security assessment is involved. Until Google has verified this app, only the
+          Google accounts listed as test users can connect, and they see an &ldquo;unverified app&rdquo; screen
+          with a Continue link first. Verification is a review of the app&apos;s name, domain and privacy policy.
         </p>
         <p className="small">
           <strong>Business Profile</strong> is gated behind an access request against the API itself, not just a
@@ -292,5 +319,128 @@ function Integrations() {
         </p>
       </Card>
     </div>
+  );
+}
+
+/**
+ * Search Console and Analytics, as one connection.
+ *
+ * They are one trip to Google and one approval, so they are one card with one
+ * button. It works signed out too: the same trip signs the person in, with
+ * the Google account they pick on Google's own chooser.
+ */
+function GoogleCard({
+  siteId,
+  domain,
+  available,
+  signedIn,
+  href,
+  gsc,
+  ga4,
+  matching,
+  ambiguous,
+  onDisconnect,
+}: {
+  siteId: string;
+  domain: string;
+  available: boolean;
+  signedIn: boolean;
+  href: string;
+  gsc: Connection | null;
+  ga4: Connection | null;
+  matching: boolean;
+  ambiguous: string[];
+  onDisconnect: (ids: string[]) => void;
+}) {
+  const any = gsc || ga4;
+  const rows: { name: string; connection: Connection | null }[] = [
+    { name: "Search Console", connection: gsc },
+    { name: "Analytics", connection: ga4 },
+  ];
+
+  return (
+    <Card title="Google Search Console and Analytics">
+      {rows.map(({ name, connection }) => {
+        const unchosen = connection ? needsProperty(connection) : false;
+        const chosen = connection?.selection
+          ? typeof connection.selection.property === "string"
+            ? connection.selection.property
+            : typeof connection.selection.name === "string"
+              ? `${connection.selection.name} (${String(connection.selection.propertyId ?? "")})`
+              : null
+          : null;
+        return (
+          <div key={name} className="connection-row">
+            <div className="meta">
+              <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", flexWrap: "wrap" }}>
+                <strong>{name}</strong>
+                {!connection ? (
+                  <Badge kind="muted">not connected</Badge>
+                ) : connection.status === "error" ? (
+                  <Badge kind="high">needs reconnecting</Badge>
+                ) : unchosen ? (
+                  <Badge kind="warn">{matching ? "matching" : "choose a property"}</Badge>
+                ) : (
+                  <Badge kind="ok">connected</Badge>
+                )}
+              </div>
+              {connection ? (
+                <span className="muted small">
+                  {connection.label}
+                  {chosen ? ` · ${chosen}` : ""}
+                  {" · added "}
+                  {timeAgo(connection.connectedAt)}
+                </span>
+              ) : (
+                <span className="muted small">
+                  {name === "Search Console"
+                    ? "The searches people made before they reached you, 16 months of them."
+                    : "Sessions, key events and revenue, so a ranking change can be tied to money."}
+                </span>
+              )}
+              {connection?.lastError ? <span className="small" style={{ color: "var(--danger)" }}>{connection.lastError}</span> : null}
+            </div>
+            <div className="button-row">
+              {connection && connection.status === "connected" && (unchosen ? ambiguous.includes(connection.id) : true) ? (
+                <Link
+                  href={`/app/sites/${siteId}/integrations/choose?connection=${connection.id}`}
+                  className={unchosen ? "button small primary" : "button small"}
+                >
+                  {unchosen ? `Choose ${domain}` : "Change property"}
+                </Link>
+              ) : null}
+            </div>
+          </div>
+        );
+      })}
+
+      <div className="button-row" style={{ marginTop: "0.9rem" }}>
+        {!available ? (
+          <Notice kind="warn" title="Google sign-in is not switched on for this deployment yet">
+            The owner adds three values once, and then this is one button for everyone.{" "}
+            <Link href="/app/setup">See what is missing</Link>.
+          </Notice>
+        ) : (
+          <>
+            <a className={any ? "button small" : "button primary"} href={href}>
+              {!any ? "Connect Google" : gsc?.status === "error" || ga4?.status === "error" || !gsc || !ga4 ? "Connect Google again" : "Use a different Google account"}
+            </a>
+            {any ? <Link href={`/app/sites/${siteId}/google`} className="button small primary">Open your Google data</Link> : null}
+            {any ? (
+              <button className="small" onClick={() => onDisconnect([gsc?.id, ga4?.id].filter((x): x is string => Boolean(x)))}>
+                Disconnect Google
+              </button>
+            ) : null}
+          </>
+        )}
+      </div>
+      {available && !any ? (
+        <p className="small muted" style={{ marginTop: "0.6rem" }}>
+          {signedIn ? "" : "No account needed first: the same trip to Google signs you in. "}
+          Google asks which account to use, you tick Search Console and Analytics, and the property for {domain} is
+          picked for you. Read only: nothing is changed in either.
+        </p>
+      ) : null}
+    </Card>
   );
 }

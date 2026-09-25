@@ -31,16 +31,16 @@ export async function GET(request: Request): Promise<Response> {
     steps: [
       {
         key: "database",
-        name: "A D1 database bound as DB",
+        name: "The database",
         done: Boolean(e.DB) && tables,
         detail: !e.DB
-          ? "No binding on this Worker yet."
+          ? "Not attached yet. The next deploy creates and attaches it by itself; if it is still missing after one, see below."
           : tables
             ? "Bound, and the tables are built."
             : schemaError
               ? `Bound, but the tables could not be built: ${schemaError}`
               : "Bound. The tables build themselves on the next request.",
-        where: "Cloudflare dashboard, Storage and Databases, D1, then Workers, this Worker, Settings, Bindings.",
+        where: "Automatic. wrangler.jsonc names it, and each deploy creates or reuses it.",
       },
       {
         key: "master_key",
@@ -49,16 +49,16 @@ export async function GET(request: Request): Promise<Response> {
         detail: e.SEOOS_MASTER_KEY
           ? "Set. Every stored credential is sealed with it."
           : "Not set. Sign-in works without it, but no connection can be stored.",
-        where: "Cloudflare dashboard, this Worker, Settings, Variables and Secrets. 32 random bytes, base64.",
+        where: "Generated below. Cloudflare dashboard, this Worker, Settings, Variables and Secrets, as a Secret.",
       },
       {
         key: "google_client",
         name: "GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET",
         done: Boolean(e.GOOGLE_CLIENT_ID && e.GOOGLE_CLIENT_SECRET),
         detail: e.GOOGLE_CLIENT_ID
-          ? "Set. Sign in with Google, and connecting Search Console, both work."
+          ? "Set. Sign in with Google, and connecting Search Console and Analytics, both work."
           : "Not set. There is no way to sign in until this exists.",
-        where: "console.cloud.google.com/apis/credentials, then add both as secrets here.",
+        where: "Made in Google Cloud (steps below), then added as two Secrets on this Worker.",
       },
       {
         key: "mail",
@@ -90,6 +90,6 @@ export async function GET(request: Request): Promise<Response> {
       businessProfile: ["https://www.googleapis.com/auth/business.manage"],
     },
     apis: ["Google Search Console API", "Google Analytics Data API", "Google Analytics Admin API"],
-    ready: methods.google && Boolean(e.DB) && tables,
+    ready: methods.google && Boolean(e.DB) && tables && Boolean(e.SEOOS_MASTER_KEY),
   });
 }

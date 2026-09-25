@@ -2,14 +2,7 @@
 -- Do not edit by hand. The Worker applies these itself on first use;
 -- this file exists for `wrangler d1 migrations apply` and for reading.
 
-orgs.plan` so a
-      // quota check is a single read on the hot path; this table is the audit
-      // trail and the thing the provider's webhook writes.
-      //
-      // No card details, no provider secret, nothing that could be replayed.
-      // A subscription id and a customer id are opaque references that are
-      // useless without the API key, which never leaves the Worker.
-      `CREATE TABLE IF NOT EXISTS subscriptions (
+CREATE TABLE IF NOT EXISTS subscriptions (
   org_id            TEXT PRIMARY KEY REFERENCES orgs(id) ON DELETE CASCADE,
   plan              TEXT NOT NULL,
   status            TEXT NOT NULL,

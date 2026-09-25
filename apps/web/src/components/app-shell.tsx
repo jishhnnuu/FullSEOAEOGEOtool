@@ -33,6 +33,7 @@ const DIRECTOR_NAV = [
   { href: "/approvals", label: "Approvals", badge: "approvals" as const },
   { href: "/progress", label: "Progress" },
   { href: "/reports", label: "Reports" },
+  { href: "/google", label: "Your Google data" },
   { href: "/team", label: "The organisation" },
 ];
 

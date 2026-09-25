@@ -278,6 +278,38 @@ export const MIGRATIONS: Migration[] = [
       `CREATE INDEX IF NOT EXISTS billing_events_org ON billing_events(org_id, received_at)`,
     ],
   },
+  // One connection per Google account, product and site, so two sites that
+  // share a Gmail each keep their own chosen property. SQLite cannot drop a
+  // constraint, so the table is rebuilt; the migration runs as one batch,
+  // which D1 applies as a single transaction, and every step is safe to
+  // repeat if it ever has to be.
+  {
+    id: "0004_connections_per_site",
+    statements: [
+      `CREATE TABLE IF NOT EXISTS connections_next (
+  id           TEXT PRIMARY KEY,
+  org_id       TEXT NOT NULL REFERENCES orgs(id) ON DELETE CASCADE,
+  site_id      TEXT,
+  provider     TEXT NOT NULL,
+  label        TEXT NOT NULL,
+  status       TEXT NOT NULL,
+  scopes       TEXT,
+  selection    TEXT,
+  sealed       TEXT,
+  expires_at   TEXT,
+  last_error   TEXT,
+  last_used_at TEXT,
+  created_at   TEXT NOT NULL,
+  updated_at   TEXT NOT NULL,
+  UNIQUE (org_id, provider, label, site_id)
+)`,
+      `INSERT OR IGNORE INTO connections_next (id, org_id, site_id, provider, label, status, scopes, selection, sealed, expires_at, last_error, last_used_at, created_at, updated_at)
+SELECT id, org_id, site_id, provider, label, status, scopes, selection, sealed, expires_at, last_error, last_used_at, created_at, updated_at FROM connections`,
+      `DROP TABLE connections`,
+      `ALTER TABLE connections_next RENAME TO connections`,
+      `CREATE INDEX IF NOT EXISTS connections_org ON connections(org_id)`,
+    ],
+  },
 ];
 
 /** The bookkeeping table. Created before anything consults it. */
@@ -315,13 +347,14 @@ async function apply(db: D1Database): Promise<void> {
 
   for (const migration of MIGRATIONS) {
     if (applied.has(migration.id)) continue;
-    for (const statement of migration.statements) {
-      await db.prepare(statement).run();
-    }
-    await db
-      .prepare("INSERT OR REPLACE INTO schema_migrations (id, applied_at) VALUES (?1, ?2)")
-      .bind(migration.id, new Date().toISOString())
-      .run();
+    // One batch per migration: D1 runs a batch as a transaction, so a
+    // migration is either wholly applied and recorded, or not at all.
+    await db.batch([
+      ...migration.statements.map((statement) => db.prepare(statement)),
+      db
+        .prepare("INSERT OR REPLACE INTO schema_migrations (id, applied_at) VALUES (?1, ?2)")
+        .bind(migration.id, new Date().toISOString()),
+    ]);
   }
 }
 

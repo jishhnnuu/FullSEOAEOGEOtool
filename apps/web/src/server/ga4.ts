@@ -10,10 +10,17 @@
 import { accessToken, type ConnectionRow } from "./connections";
 import type { Env } from "./env";
 
-export type Ga4Property = { name: string; displayName: string; propertyId: string; account: string };
+export type Ga4Property = {
+  name: string;
+  displayName: string;
+  propertyId: string;
+  account: string;
+  /** The website addresses of the property's web data streams, so it can be matched to a site. */
+  urls: string[];
+};
 
 /** Every GA4 property this account can read. */
-export async function properties(e: Env, row: ConnectionRow): Promise<Ga4Property[]> {
+export async function properties(e: Env, row: ConnectionRow, options: { streams?: boolean } = {}): Promise<Ga4Property[]> {
   const token = await accessToken(e, row);
   const response = await fetch(
     "https://analyticsadmin.googleapis.com/v1beta/accountSummaries?pageSize=200",
@@ -39,9 +46,31 @@ export async function properties(e: Env, row: ConnectionRow): Promise<Ga4Propert
         displayName: property.displayName ?? property.property,
         propertyId: property.property.replace("properties/", ""),
         account: account.displayName ?? "",
+        urls: [],
       });
     }
   }
+
+  // The web stream's address is what ties a property to a website. Read it
+  // for the first thirty properties, in parallel; an account with more than
+  // that is an agency, and the chooser lets them filter by name. The sign-in
+  // callback only needs the count, so it skips this.
+  if (options.streams === false) return out;
+  await Promise.all(
+    out.slice(0, 30).map(async (property) => {
+      try {
+        const streams = await fetch(
+          `https://analyticsadmin.googleapis.com/v1beta/${property.name}/dataStreams?pageSize=50`,
+          { headers: { authorization: `Bearer ${token}` } },
+        );
+        if (!streams.ok) return;
+        const body = (await streams.json()) as { dataStreams?: { webStreamData?: { defaultUri?: string } }[] };
+        property.urls = (body.dataStreams ?? []).map((d) => d.webStreamData?.defaultUri ?? "").filter(Boolean);
+      } catch {
+        // No address is not an error: the property can still be chosen by name.
+      }
+    }),
+  );
   return out;
 }
 

@@ -119,9 +119,12 @@ export async function saveConnection(
   },
 ): Promise<string> {
   const sealed = await seal(input.secret as unknown as Record<string, unknown>, masterKey(e));
+  // One row per account, product and site: two sites connected through the
+  // same Google account each keep their own chosen property. A row with no
+  // site is reused by a connect that names none.
   const existing = await database(e)
-    .prepare("SELECT id FROM connections WHERE org_id = ?1 AND provider = ?2 AND label = ?3 LIMIT 1")
-    .bind(input.orgId, input.provider, input.label)
+    .prepare("SELECT id FROM connections WHERE org_id = ?1 AND provider = ?2 AND label = ?3 AND site_id IS ?4 LIMIT 1")
+    .bind(input.orgId, input.provider, input.label, input.siteId ?? null)
     .first<{ id: string }>();
 
   const id = existing?.id ?? newId("con");
@@ -142,7 +145,12 @@ export async function saveConnection(
   };
   if (existing) {
     const { id: _id, org_id: _org, created_at: _created, ...rest } = values;
-    await updateScoped(e, "connections", id, input.orgId, rest as Record<string, unknown>);
+    // Reconnecting renews the grant. It must not forget which property was
+    // chosen or which site it belongs to, or every reconnect would send the
+    // person back through the chooser.
+    const kept: Record<string, unknown> = { ...rest };
+    if (input.selection === undefined) delete kept.selection;
+    await updateScoped(e, "connections", id, input.orgId, kept);
   } else {
     await insert(e, "connections", values as Record<string, unknown>);
   }
@@ -161,8 +169,18 @@ export async function markBroken(e: Env, row: ConnectionRow, message: string): P
 export async function forgetConnection(e: Env, id: string, orgId: string): Promise<boolean> {
   const row = await getConnection(e, id, orgId);
   if (!row) return false;
-  // Hand the grant back to Google rather than just dropping our copy of it.
-  if (row.sealed && (row.provider === "gsc" || row.provider === "ga4" || row.provider === "gbp")) {
+  // Hand the grant back to Google rather than just dropping our copy of it,
+  // unless another connection was made on the same approval: Search Console
+  // and Analytics share one grant, and revoking it for one would silently
+  // break the other.
+  const google = ["gsc", "ga4", "gbp"];
+  const sibling = google.includes(row.provider)
+    ? await database(e)
+        .prepare("SELECT id FROM connections WHERE org_id = ?1 AND label = ?2 AND id != ?3 AND provider IN ('gsc','ga4','gbp') LIMIT 1")
+        .bind(orgId, row.label, id)
+        .first<{ id: string }>()
+    : null;
+  if (row.sealed && google.includes(row.provider) && !sibling) {
     try {
       const secret = await openJson<GoogleSecret>(row.sealed, masterKey(e));
       if (secret.refresh_token) await revoke(secret.refresh_token);

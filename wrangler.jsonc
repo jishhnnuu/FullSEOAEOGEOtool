@@ -20,25 +20,29 @@
     "binding": "ASSETS"
   },
 
-  // Accounts, OAuth tokens and the publish log live in D1. The binding is
-  // deliberately absent until `npm run cf:setup` writes it, because a
-  // d1_databases block naming a database that does not exist fails the deploy
-  // and would take the public site down while the database is being made.
-  //
-  //   "d1_databases": [
-  //     {
-  //       "binding": "DB",
-  //       "database_name": "seoos",
-  //       "database_id": "...",
-  //       "migrations_dir": "deploy/d1/migrations"
-  //     }
-  //   ],
+  // Accounts, OAuth tokens and the publish log live in D1. There is no
+  // database_id on purpose: Wrangler provisions a binding that names a
+  // database but no id. On a deploy it connects to the database called
+  // "seoos" if one exists, creates it if not, and on later deploys inherits
+  // the binding the Worker already has. So nobody has to create a database
+  // or paste an id, from a laptop or the dashboard. The tables then build
+  // themselves on the first request (src/server/schema.ts).
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "seoos",
+      "migrations_dir": "deploy/d1/migrations"
+    }
+  ],
   //
   // Everything the database serves degrades with a stated reason while it is
   // missing: the audit runs, the workspace stays in the browser, and the
   // sign-in screen says why there is nothing to sign in to.
   //
-  // Secrets are set with `npx wrangler secret put NAME`, never written here:
+  // Secrets are set in the dashboard (this Worker, Settings, Variables and
+  // Secrets) or with `npx wrangler secret put NAME`, never written here.
+  // /app/setup on the running deployment says which are still missing, and
+  // generates a master key in the browser:
   //   SEOOS_MASTER_KEY       seals every stored credential (openssl rand -base64 32)
   //   GOOGLE_CLIENT_ID       the OAuth client, for sign-in and for Search Console
   //   GOOGLE_CLIENT_SECRET

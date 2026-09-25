@@ -76,8 +76,9 @@ curl -s https://<your-domain>/llms.txt | head -5
 
 8. **Start Google's verification** for the Analytics scope. It is a sensitive
    scope, it takes weeks, and it is on the critical path for the
-   revenue-reporting claim. Search Console needs nothing; it was reclassified
-   as non-sensitive in 2024.
+   revenue-reporting claim. Verification covers the whole app, so Search
+   Console goes through it at the same time. Neither is a restricted scope,
+   so there is no paid security assessment.
 
 ## When you want to take money
 

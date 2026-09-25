@@ -22,36 +22,28 @@ pretend otherwise.
 
 ## Setup, from a browser, on any device
 
-Nothing here needs a terminal, a laptop, or a particular machine. Four things,
-and the running deployment tells you which are done: open `/app/setup` on the
-live site and it re-checks itself every fifteen seconds.
+Nothing here needs a terminal, a laptop, or a particular machine. Open
+`/app/setup` on the live site: it walks through every step with direct links
+and copy buttons, and re-checks itself every fifteen seconds.
 
-**1. Create the database.** Cloudflare dashboard, Storage and Databases, D1,
-Create. Call it `seoos`. Copy the database ID it shows you.
+**1. The database is automatic.** `wrangler.jsonc` names a D1 database
+(`seoos`) without an id. On deploy, Wrangler connects to it by name, creates it
+if it does not exist, and on later deploys inherits the binding the Worker
+already has. The tables then build themselves on the first request. If a deploy
+was not allowed to create a database, create one called `seoos` in the
+dashboard (Storage and Databases, D1) and the next deploy finds it by name.
+There is no id to paste.
 
-**2. Bind it to the Worker.** The binding has to be in `wrangler.jsonc`,
-because Cloudflare rebuilds the Worker from that file on every push. Add it
-above the `observability` block:
+**2. Create the Google OAuth client.** Below. `/app/setup` prints the exact two
+redirect URLs and the scopes, with copy buttons.
 
-```jsonc
-  "d1_databases": [
-    { "binding": "DB", "database_name": "seoos", "database_id": "the id you copied" }
-  ],
-```
+**3. Add three secrets.** Cloudflare dashboard, Workers, this Worker, Settings,
+Variables and Secrets, each as a Secret: `GOOGLE_CLIENT_ID`,
+`GOOGLE_CLIENT_SECRET` and `SEOOS_MASTER_KEY`. `/app/setup` generates the
+master key in the browser. Secrets survive every deploy, so this is once.
 
-You can do that from github.com in a browser: edit the file, commit, and
-Cloudflare redeploys. **The tables build themselves** on the first request
-after that. There is no migration command to run.
-
-**3. Add the secrets.** Cloudflare dashboard, Workers, this Worker, Settings,
-Variables and Secrets. Add each as a Secret, not a Variable. These survive
-every deploy, so they are set once.
-
-**4. Create the Google OAuth client.** The only step that is not Cloudflare,
-below. `/app/setup` prints the exact two URLs to paste, with a copy button.
-
-There is also `npm run cf:setup`, which does steps 1 to 3 in one command for
-anyone who prefers a terminal. It is a convenience, not the path.
+There is also `npm run cf:setup` for anyone who prefers a terminal. It is a
+convenience, not the path.
 
 ### The Google OAuth client
 
@@ -67,20 +59,23 @@ Two rather than one on purpose: signing in and connecting a product are
 separate round trips, and keeping them apart means a callback cannot be
 replayed against the other flow.
 
-On the consent screen, add the scopes:
+On the consent screen (Google Auth Platform: Branding, Audience, Data access),
+choose **External**, leave the status on **Testing**, and add the scopes:
 
-| Scope | Review | Why |
-| --- | --- | --- |
-| `openid`, `email`, `profile` | None | Identity |
-| `.../auth/webmasters.readonly` | **None**. Google reclassified it as non-sensitive in 2024 | Search Console |
-| `.../auth/analytics.readonly` | Sensitive. Works for test users now, needs review to go public | GA4 |
-| `.../auth/business.manage` | Sensitive, **and** the API needs its own access request | Business Profile |
+| Scope | Why |
+| --- | --- |
+| `openid`, `email`, `profile` | Identity |
+| `.../auth/webmasters.readonly` | Search Console, read only |
+| `.../auth/analytics.readonly` | Analytics, read only. A sensitive scope, so publishing the app means Google's verification |
+| `.../auth/business.manage` | Business Profile. Sensitive, **and** the API needs its own access request |
 
-While the app is unverified, add your own Gmail address under **Test users**.
-That is enough for everything, including Analytics. Refresh tokens issued to an
-app in Testing expire after seven days, so during testing expect to reconnect
-about weekly; publishing the app (which needs the review above only for the
-sensitive scopes) removes that.
+None of these is a restricted scope, so no paid security assessment is ever
+involved. While the app is in Testing, add every Gmail address that will
+connect under **Test users** (up to 100). They see an "unverified app" screen
+with a Continue link, which is expected. Refresh tokens issued to an app in
+Testing expire after seven days, so during testing expect to press Connect
+Google again about weekly; the screen says when. Publishing the app removes
+that, and needs a home page and privacy policy on a domain you own.
 
 Also enable the APIs themselves under **APIs & Services, Library**: Search
 Console API, Google Analytics Data API, Google Analytics Admin API.

@@ -212,6 +212,18 @@ style disagreement.
   halves in separate fields, `user_action` and `app_requirements`, so a screen
   cannot confuse them. `/paid` publishes our position in each platform's review
   queue rather than describing a platform as coming soon.
+- **Google data is piped, never parsed, by the Worker.** Connect Google is one
+  trip that signs a person in (if they are not) and grants Search Console and
+  Analytics together, with Google's own account chooser every time. The full
+  sync (`lib/google-sync.ts`, report definitions in `engine/google-data.ts`)
+  runs in the browser: `/api/google/gsc` and `/api/google/ga4` only attach the
+  token, put the stored property in the address and stream Google's body back,
+  because parsing a hundred thousand rows would spend the Worker's CPU budget.
+  The property comes from the stored selection, never the request. Reports
+  live in IndexedDB in the person's browser; the server holds the sealed grant
+  and no copy of the data. A capped or failed report says so above its table.
+  A connection is per Google account, product and site, so two sites on one
+  Gmail keep their own property.
 - **Paid will not spend on an account it cannot measure.** `measurement_readiness`
   is a gate, not a score, and it is the only refusal in the product with no
   fallback. A platform optimising toward a conversion it cannot see does worse

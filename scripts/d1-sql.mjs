@@ -28,7 +28,9 @@ for (const block of blocks) {
   const start = block.indexOf("statements: [");
   const end = block.indexOf("\n    ],");
   if (start === -1 || end === -1) throw new Error(`Could not read the statements of ${id}.`);
-  const body = block.slice(start + "statements: [".length, end);
+  // Comment lines go first: a comment that quotes a column in backticks would
+  // otherwise be read as the start of a statement.
+  const body = block.slice(start + "statements: [".length, end).replace(/^\s*\/\/.*$/gm, "");
   const statements = [...body.matchAll(/`([\s\S]*?)`,/g)].map((m) => m[1].replace(/\\`/g, "`").replace(/\\\$\{/g, "${").replace(/\\\\/g, "\\"));
   if (statements.length === 0) throw new Error(`${id} has no statements.`);
   migrations.push({ id, statements });

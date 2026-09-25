@@ -2,7 +2,7 @@ import Link from "next/link";
 
 import { CtaBand, MarketingChrome } from "@/components/marketing";
 import { DESKS, managerFor, WHOLE_AGENCY } from "@/lib/desks";
-import { MANAGERS, headcount } from "@/lib/org";
+import { MANAGERS } from "@/lib/org";
 import { PLANS, priceLabel } from "@/lib/plans";
 import { breadcrumbNode, graph } from "@/lib/schema";
 
@@ -43,7 +43,7 @@ export default function WholeAgencyPage() {
       <section className="section fresh-hero">
         <div className="eyebrow"><span className="dot" aria-hidden="true" />Every desk, one plan</div>
         <h1 className="hero-title">
-          All {headcount()} of them. <span className="hl">One</span> price.
+          Every desk. <span className="hl">One</span> price.
         </h1>
         <p className="hero-lede">
           {priceLabel(plan)} a month per site on {plan.name}. Search, content, social and paid, all talking to each
@@ -60,7 +60,6 @@ export default function WholeAgencyPage() {
         <div className="fresh-desks" style={{ marginTop: "1.4rem" }}>
           {DESKS.map((desk) => (
             <Link key={desk.key} href={desk.path} className="fresh-desk" data-desk={desk.key}>
-              <span className="fd-count">{managerFor(desk).team.length} specialists</span>
               <span className="fd-name">{desk.label}</span>
               <span className="fd-line">{desk.tagline}</span>
               <span className="fd-foot">

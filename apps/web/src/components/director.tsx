@@ -4,7 +4,7 @@ import Link from "next/link";
 
 import type { AuditResult } from "@/engine/types";
 import type { RunDiff } from "@/engine/diff";
-import { DIRECTOR, MANAGERS, headcount } from "@/lib/org";
+import { DIRECTOR, MANAGERS } from "@/lib/org";
 import type { SiteRecord, Workspace } from "@/lib/store";
 import { Badge } from "@/components/ui";
 
@@ -36,7 +36,7 @@ function searchDesk(site: SiteRecord, result: AuditResult | null, base: string):
   if (!result) {
     return {
       key: manager.key, name: manager.name, title: manager.title, status: "waiting",
-      line: `Nothing crawled yet. Start a run and ${manager.team.length} agents go over the live site.`,
+      line: "Nothing crawled yet. Start a run and this desk goes over the live site.",
       href: null, metric: null,
     };
   }
@@ -191,8 +191,7 @@ export function DirectorBrief({
       )}
 
       <footer className="brief-foot tiny faint">
-        {headcount()} agents across {MANAGERS.filter((m) => m.status === "live").length} live desks.
-        You approve, you do not execute. <Link href={`${base}/team`}>See the organisation</Link>.
+        One team, four desks. You approve, you do not execute. <Link href={`${base}/team`}>See the organisation</Link>.
       </footer>
     </section>
   );

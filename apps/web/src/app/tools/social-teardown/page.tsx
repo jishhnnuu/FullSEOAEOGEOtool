@@ -1,6 +1,7 @@
 import Link from "next/link";
 
 import { CtaBand, MarketingChrome } from "@/components/marketing";
+import { Sprig } from "@/components/sprig";
 import { SocialTeardownTool } from "@/components/social-teardown-tool";
 import { breadcrumbNode, graph } from "@/lib/schema";
 import { PLATFORMS, readableForCompetitors } from "@/lib/social-platforms";
@@ -39,10 +40,10 @@ export default function SocialTeardownPage() {
         }}
       />
 
-      <section className="section fresh-hero" style={{ paddingBottom: "1.5rem" }}>
-        <div className="eyebrow"><span className="dot" aria-hidden="true" />Free tool &middot; no signup</div>
-        <h1 className="hero-title">Spy on a competitor. <span className="hl">Legally.</span></h1>
+      <section className="section fresh-hero seat-room" style={{ paddingBottom: "1.5rem" }}>
+        <h1 className="hero-title">Scout a <span data-sprig-seat="">competitor</span>. <span className="hl">Fair</span> and square.</h1>
         <p className="hero-lede">Type a handle. See which of their posts actually worked, and why. YouTube needs no key at all.</p>
+        <p className="hero-status"><span className="dot" aria-hidden="true" /><span>Free tool &middot; no signup</span></p>
       </section>
 
       <section className="section section-tight" style={{ paddingTop: 0 }}>
@@ -101,6 +102,8 @@ export default function SocialTeardownPage() {
         primary={{ href: "/social", label: "Meet the social desk" }}
         secondary={{ href: "/inside", label: "Peek inside a live account" }}
       />
+      {/* The mascot crew. Delete this line and components/sprig to remove them. */}
+      <Sprig crew="social" />
     </MarketingChrome>
   );
 }

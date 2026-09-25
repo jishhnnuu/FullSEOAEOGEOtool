@@ -1,7 +1,9 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
+import { Seat } from "@/components/seat";
 import { CtaBand, MarketingChrome } from "@/components/marketing";
+import { Sprig } from "@/components/sprig";
 import { ToolPage } from "@/components/tool-page";
 import { TOOLS_BY_SLUG, allTools } from "@/content/tools";
 import { CATALOG } from "@/engine/catalog";
@@ -45,13 +47,15 @@ export default async function ToolRoute({ params }: { params: Promise<{ slug: st
         }}
       />
 
-      <section className="section fresh-hero" style={{ paddingBottom: "1.2rem" }}>
-        <div className="eyebrow">
-          <span className="dot" aria-hidden="true" />
-          <Link href="/tools">Free tools</Link>&nbsp;&middot; no signup
-        </div>
-        <h1 className="hero-title" style={{ fontSize: "clamp(2rem, 5vw, 3.4rem)" }}>{tool.name}</h1>
+      <section className="section fresh-hero seat-room" style={{ paddingBottom: "1.2rem" }}>
+        <h1 className="hero-title" style={{ fontSize: "clamp(2rem, 5vw, 3.4rem)" }}>
+          <Seat text={tool.name} word={tool.name.split(" ")[0]} />
+        </h1>
         <p className="hero-lede">{tool.blurb}</p>
+        <p className="hero-status">
+          <span className="dot" aria-hidden="true" />
+          <span><Link href="/tools">Free tools</Link> &middot; no signup</span>
+        </p>
       </section>
 
       {/* The interactive part. Everything around it is server-rendered on
@@ -114,6 +118,8 @@ export default async function ToolRoute({ params }: { params: Promise<{ slug: st
       </section>
 
       <CtaBand title="Or check everything at once." body="The full audit reads your whole site and writes every fix. Free, no signup." />
+      {/* The mascot crew. Delete this line and components/sprig to remove them. */}
+      <Sprig crew="search" />
     </MarketingChrome>
   );
 }

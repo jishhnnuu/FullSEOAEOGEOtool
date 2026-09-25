@@ -102,9 +102,7 @@ export function AppShell({ siteId, children }: { siteId: string; children: React
         <div key={manager.key}>
           <div className="nav-section">
             {manager.name}
-            {manager.status === "planned"
-              ? <span className="nav-note">{manager.opens}</span>
-              : <span className="nav-note">{manager.team.length}</span>}
+            {manager.status === "planned" && <span className="nav-note">{manager.opens}</span>}
           </div>
           {manager.status === "live" ? (
             <nav className="nav">{manager.nav.map(itemFor)}</nav>

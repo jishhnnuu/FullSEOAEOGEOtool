@@ -56,12 +56,24 @@ export function greeting(now = new Date()): string {
   return "Evening, night owl!";
 }
 
-/** The CMO drops by. Each pair is one exchange: the CMO first, Sprig second. */
+/** The crew, one per desk. Herb names, because the brand grew out of thyme. */
+export type Crew = "search" | "content" | "social" | "paid";
+export const CREW: Record<Crew, { name: string; desk: string }> = {
+  search: { name: "Sprig", desk: "Search" },
+  content: { name: "Basil", desk: "Content" },
+  social: { name: "Rosie", desk: "Social" },
+  paid: { name: "Sage", desk: "Paid" },
+};
+
+/**
+ * The CMO checks in on whoever is on duty. Each pair is one exchange: the
+ * CMO first, the crew member second. {name} is the crew member's name.
+ */
 export const CMO_VISITS: [string, string][] = [
-  ["Morning, Sprig!", "Hi boss!"],
-  ["Love the shoes, Sprig.", "Thanks! They're new."],
-  ["Just passing by. Carry on!", "Nice suit!"],
-  ["How's our visitor doing?", "They seem lovely!"],
+  ["Just checking in, {name}!", "All good here, boss!"],
+  ["CMO here. How's our visitor?", "They seem lovely!"],
+  ["Love the shoes, {name}.", "Thanks! They're new."],
+  ["Checking in. Carry on!", "Nice glasses, boss!"],
 ];
 
 export function pick<T>(list: T[], avoid?: T): T {

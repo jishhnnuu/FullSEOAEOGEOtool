@@ -1,17 +1,16 @@
 import Link from "next/link";
 
 import { MarketingChrome } from "@/components/marketing";
+import { Sprig } from "@/components/sprig";
 import { UrlStart } from "@/components/url-start";
-import { CATALOG_SIZE } from "@/engine/catalog";
 import { DESKS, managerFor } from "@/lib/desks";
-import { headcount } from "@/lib/org";
 import { PLANS, priceLabel } from "@/lib/plans";
 import { faqNode, graph } from "@/lib/schema";
 
 export const metadata = {
   // The homepage keeps the layout's default title rather than restating it,
   // so the product name lives in exactly one place.
-  description: `${headcount()} AI marketers fix your SEO, write your content, plan your socials and build your ads. You just approve. Free site audit, no signup, about four minutes.`,
+  description: "An AI marketing team that fixes your SEO, writes your content, plans your socials and builds your ads. You approve, it does the work. Free site audit, no signup, about four minutes.",
   alternates: { canonical: "/" },
 };
 
@@ -29,7 +28,7 @@ export const metadata = {
 const FAQ = [
   {
     q: "Is this actually AI, or a person with a template?",
-    a: `It's ${headcount()} AI specialists, each great at one job, run by a CMO you can chat with. Every one of them is listed on our team page, along with the one thing it will never do.`,
+    a: "It's software, built job by job. Each small job, like writing a page title or checking that your ad tracking works, has its own AI specialist that does only that. You talk to one of them, your CMO, and approve what the rest make. The team page lists every job and the one thing each will never do.",
   },
   {
     q: "Do I need to know anything about marketing?",
@@ -37,7 +36,7 @@ const FAQ = [
   },
   {
     q: "What can it do today, honestly?",
-    a: "Search fixes ship straight to your website today. Content plans and writes today. Social and paid research, plan and draft everything today; posting and launching switch on as each platform approves us, and each desk page shows exactly where that stands.",
+    a: "All four desks do the thinking and the writing today, and all four ask your yes before anything goes live. Search can then put approved fixes straight onto your website. Posting to socials and launching ads open as each platform approves us, and each desk page shows exactly where that stands.",
   },
   {
     q: "What happens if I cancel?",
@@ -50,8 +49,6 @@ const FAQ = [
 ];
 
 export default function Home() {
-  const n = headcount();
-
   return (
     <MarketingChrome>
       <script
@@ -60,7 +57,7 @@ export default function Home() {
       />
 
       {/* 1. The action, first. */}
-      <section className="section fresh-hero">
+      <section className="section fresh-hero seat-room">
         {/* Decoration only. Stickers rather than a fake dashboard, because a
             product screenshot on a homepage is a number nobody measured. */}
         <div className="hero-stickers" aria-hidden="true">
@@ -70,9 +67,8 @@ export default function Home() {
           <span className="sticker s4" data-desk="paid">Ads that pay &#128184;</span>
           <span className="sticker s5">No meetings &#9996;</span>
         </div>
-        <div className="eyebrow"><span className="dot" aria-hidden="true" />{n} AI marketers, one inbox</div>
         <h1 className="hero-title">
-          The marketing team you <span className="hl">never</span> have to manage.
+          The <span data-sprig-seat="">marketing</span> team you <span className="hl">never</span> have to manage.
         </h1>
         <p className="hero-lede">
           We fix your SEO, write your content, plan your socials and build your ads. You just click yes.
@@ -80,7 +76,7 @@ export default function Home() {
         <UrlStart />
         <div className="chip-links">
           <span className="label">Or try:</span>
-          <Link href="/tools/social-teardown" className="chip-link">Spy on a competitor</Link>
+          <Link href="/tools/social-teardown" className="chip-link">Scout a competitor</Link>
           <Link href="/tools/ad-budget-check" className="chip-link">Check my ad budget</Link>
           <Link href="/tools/voice-check" className="chip-link">Test my writing</Link>
         </div>
@@ -91,16 +87,16 @@ export default function Home() {
         <h2 className="section-title">Here&rsquo;s your next 4 minutes.</h2>
         <div className="steps3" style={{ marginTop: "1.6rem" }}>
           <div>
-            <h3>We read your whole site</h3>
-            <p>Every page, {CATALOG_SIZE} checks. Nothing to install.</p>
+            <h3>We read your site</h3>
+            <p>Paste your address. We open your pages the way Google does and look for anything holding you back.</p>
           </div>
           <div>
             <h3>We write the fixes</h3>
-            <p>Not a to-do list. The actual fix, ready to go.</p>
+            <p>For each problem we write the actual change, like a clearer page title, so there's nothing left for you to do.</p>
           </div>
           <div>
             <h3>You pick what goes live</h3>
-            <p>Click yes. We push it to your site and check it worked.</p>
+            <p>Say yes to the ones you like. Connect your site and we put them live, then check they worked.</p>
           </div>
         </div>
       </section>
@@ -108,11 +104,10 @@ export default function Home() {
       {/* 3. The desks. */}
       <section className="section">
         <h2 className="section-title">Four desks. Pick your problem.</h2>
-        <p className="section-lede">Every desk tells you exactly what it can do today. No surprises.</p>
+        <p className="section-lede">Each desk looks after one part of your marketing. Nothing goes live without your yes.</p>
         <div className="fresh-desks">
           {DESKS.map((desk) => (
             <Link key={desk.key} href={desk.path} className="fresh-desk" data-desk={desk.key}>
-              <span className="fd-count">{managerFor(desk).team.length} specialists</span>
               <span className="fd-name">{desk.label}</span>
               <span className="fd-line">{desk.tagline}</span>
               <span className="fd-foot">
@@ -138,15 +133,15 @@ export default function Home() {
           </div>
           <div className="chat-mock" aria-label="An example conversation with the CMO">
             <span className="label">Example chat. Yours uses your real numbers.</span>
-            <div className="bubble me">Be honest. How bad is my site?</div>
+            <div className="bubble me">Be honest. How&rsquo;s my site doing?</div>
             <div className="bubble them">
               <span className="who">Your CMO</span>
-              Not bad, not great. 36 things to fix, and I&rsquo;ve already written 24 of the fixes.
+              Good bones! I found a few things worth tidying up, and I&rsquo;ve drafted fixes for most of them already.
             </div>
-            <div className="bubble me">What do I do first?</div>
+            <div className="bubble me">Where should I start?</div>
             <div className="bubble them">
               <span className="who">Your CMO</span>
-              Approve the page titles. One click, and it&rsquo;s your biggest win this week.
+              I&rsquo;d start with your page titles. They&rsquo;re quick to check, and clearer ones help people find you. Want a look?
             </div>
           </div>
         </div>
@@ -165,7 +160,7 @@ export default function Home() {
           </Link>
           <Link href="/tools/social-teardown" className="tool-card">
             <span className="tc-emoji" style={{ background: "var(--desk-social)" }} aria-hidden="true">&#128373;</span>
-            <h3>Spy on a competitor</h3>
+            <h3>Scout a competitor</h3>
             <p>See which of their posts actually worked, and why.</p>
             <span className="tc-go">Start &rarr;</span>
           </Link>
@@ -277,6 +272,8 @@ export default function Home() {
           </div>
         </div>
       </section>
+      {/* The mascot crew. Delete this line and components/sprig to remove them. */}
+      <Sprig crew="rotate" />
     </MarketingChrome>
   );
 }

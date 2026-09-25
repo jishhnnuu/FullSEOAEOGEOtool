@@ -38,6 +38,14 @@ export type Desk = {
    * "coming soon": the desk page names the exact step and the exact queue.
    */
   ready: { tone: "go" | "part"; label: string };
+  /**
+   * One sentence under the hero buttons saying what waits for the visitor's
+   * yes, and, where a platform has to approve us first, that too. Every desk
+   * asks before anything goes live, so every desk says so the same way.
+   */
+  readyNote: string;
+  /** The word in the headline the mascot flies in and sits on. Must appear in `headline`. */
+  seat: string;
   /** The one free thing a visitor can do on this desk's page, right now. */
   tryIt: { href: string; label: string };
   /** Who this page is written for, named plainly. */
@@ -71,10 +79,12 @@ export const DESKS: Desk[] = [
     label: "Search",
     headline: "SEO that fixes things. Not a list of things.",
     tagline: "Get found on Google, and in AI answers too.",
-    ready: { tone: "go", label: "Live: fixes ship today" },
+    ready: { tone: "go", label: "Fixes ready today" },
+    readyNote: "Nothing goes live until you say yes.",
+    seat: "SEO",
     tryIt: { href: "/app/new", label: "Audit my site free" },
     audience: "Anyone who has paid for an SEO audit and still has the same problems.",
-    lede: "We find what's broken, write the fix and push it to your site. You click yes.",
+    lede: "We find what's broken and write the fix. You say yes, we put it live.",
     worry: "I paid for an audit once. I got a PDF. The problems are still there.",
     answer: "Same. That's why every problem here comes with the fix already written, ready to ship.",
     work: [
@@ -96,7 +106,9 @@ export const DESKS: Desk[] = [
     label: "Content",
     headline: "Content with an opinion. Finally.",
     tagline: "Posts people actually finish reading.",
-    ready: { tone: "go", label: "Live today" },
+    ready: { tone: "go", label: "Drafts ready today" },
+    readyNote: "Every draft waits for your yes before it goes anywhere.",
+    seat: "Content",
     tryIt: { href: "/tools/voice-check", label: "Test my writing free" },
     audience: "Companies publishing regularly and seeing nothing move.",
     lede: "We figure out what you should be saying, then write it so people read to the end.",
@@ -121,7 +133,9 @@ export const DESKS: Desk[] = [
     label: "Paid ads",
     headline: "Ads that earn their keep.",
     tagline: "Ads that don't set your money on fire.",
-    ready: { tone: "part", label: "Plans today · launches after approval" },
+    ready: { tone: "part", label: "Plans ready today" },
+    readyNote: "Every campaign is built paused and waits for your yes. Launching opens as each ad platform approves us.",
+    seat: "Ads",
     tryIt: { href: "/tools/ad-budget-check", label: "Check my ad budget free" },
     audience: "Anyone paying for clicks and not sure the numbers are real.",
     lede: "Google, Meta, TikTok and more. Planned, built and tracked. We won't spend a penny we can't measure.",
@@ -145,9 +159,11 @@ export const DESKS: Desk[] = [
     path: "/social",
     label: "Social",
     headline: "Socials that know what's working.",
-    tagline: "Copy what works for your rivals. Legally.",
-    ready: { tone: "part", label: "Drafts today · posts after approval" },
-    tryIt: { href: "/tools/social-teardown", label: "Spy on a competitor free" },
+    tagline: "See what's working for your rivals.",
+    ready: { tone: "part", label: "Drafts ready today" },
+    readyNote: "Every post waits for your yes. Auto-posting opens as each platform approves us.",
+    seat: "Socials",
+    tryIt: { href: "/tools/social-teardown", label: "Scout a competitor free" },
     audience: "Businesses posting all the time and hearing crickets.",
     lede: "We study what's working for your competitors, pick your best platforms and write every post for you.",
     worry: "Our last agency showed us a competitor's reach. How did they even get that?",

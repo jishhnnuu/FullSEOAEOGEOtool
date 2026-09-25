@@ -1,6 +1,7 @@
 import Link from "next/link";
 
 import { CtaBand, MarketingChrome } from "@/components/marketing";
+import { Seat } from "@/components/seat";
 import { DESKS, deskPrice, managerFor, WHOLE_AGENCY, type Desk } from "@/lib/desks";
 import { PLANS } from "@/lib/plans";
 import { breadcrumbNode, faqNode, graph } from "@/lib/schema";
@@ -26,7 +27,6 @@ export function DeskPage({ desk, extra }: { desk: Desk; extra?: React.ReactNode 
   const manager = managerFor(desk);
   const plan = desk.requiresPlan ? PLANS[desk.requiresPlan] : null;
   const others = DESKS.filter((d) => d.key !== desk.key);
-  const n = manager.team.length;
 
   const faq = [
     {
@@ -65,17 +65,19 @@ export function DeskPage({ desk, extra }: { desk: Desk; extra?: React.ReactNode 
       />
 
       {/* 1. The claim, and the thing to try, in the desk's own colour. */}
-      <section className="section section-alt desk-hero-band" data-desk={desk.key}>
-        <div className="eyebrow">
-          <span className="dot" aria-hidden="true" />
-          {n} specialists &middot; {desk.ready.label}
-        </div>
-        <h1 className="hero-title">{desk.headline}</h1>
+      <section className="section section-alt desk-hero-band seat-room" data-desk={desk.key}>
+        <h1 className="hero-title">
+          <Seat text={desk.headline} word={desk.seat} />
+        </h1>
         <p className="hero-lede">{desk.lede}</p>
         <div className="hero-actions">
           <Link href={desk.tryIt.href} className="big-button primary">{desk.tryIt.label} &rarr;</Link>
           <Link href="#price" className="big-button">See the price</Link>
         </div>
+        <p className="hero-status">
+          <span className="dot" aria-hidden="true" />
+          <span><b>{desk.ready.label}.</b> {desk.readyNote}</span>
+        </p>
       </section>
 
       {/* 2. The objection this buyer arrives with, answered in one line. */}
@@ -119,7 +121,7 @@ export function DeskPage({ desk, extra }: { desk: Desk; extra?: React.ReactNode 
             </div>
           </details>
           <details className="acc">
-            <summary>Meet the {n} specialists</summary>
+            <summary>Who does the work</summary>
             <div className="acc-body">
               <div className="firm-people" style={{ marginTop: "0.4rem" }}>
                 {manager.team.map((member) => (
@@ -177,7 +179,6 @@ export function DeskPage({ desk, extra }: { desk: Desk; extra?: React.ReactNode 
         <div className="fresh-desks three" style={{ marginTop: "1.4rem" }}>
           {others.map((other) => (
             <Link key={other.key} href={other.path} className="fresh-desk" data-desk={other.key}>
-              <span className="fd-count">{managerFor(other).team.length} specialists</span>
               <span className="fd-name">{other.label}</span>
               <span className="fd-line">{other.tagline}</span>
               <span className="fd-foot">

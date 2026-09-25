@@ -1,6 +1,7 @@
 import Link from "next/link";
 
 import { CtaBand, MarketingChrome } from "@/components/marketing";
+import { Sprig } from "@/components/sprig";
 import { allTools } from "@/content/tools";
 import { CATALOG_SIZE } from "@/engine/catalog";
 import { breadcrumbNode, graph } from "@/lib/schema";
@@ -31,7 +32,7 @@ const DESK_TOOLS = [
   },
   {
     path: "/tools/social-teardown",
-    name: "Spy on a competitor",
+    name: "Scout a competitor",
     blurb: "Which of their posts actually worked, and the hook they share.",
     emoji: "\u{1F575}",
     color: "var(--desk-social)",
@@ -67,12 +68,12 @@ export default function ToolsPage() {
           ),
         }}
       />
-      <section className="section fresh-hero" style={{ paddingBottom: "1.5rem" }}>
-        <div className="eyebrow"><span className="dot" aria-hidden="true" />Free &middot; no signup &middot; nothing stored</div>
+      <section className="section fresh-hero seat-room" style={{ paddingBottom: "1.5rem" }}>
         <h1 className="hero-title">
-          Free tools that <span className="hl">actually</span> do something.
+          Free <span data-sprig-seat="">tools</span> that <span className="hl">actually</span> do something.
         </h1>
         <p className="hero-lede">Real engine, your real inputs, answers in seconds. Pick one.</p>
+        <p className="hero-status"><span className="dot" aria-hidden="true" /><span>Free &middot; no signup &middot; nothing stored</span></p>
       </section>
 
       <section className="section section-tight" style={{ paddingTop: 0 }}>
@@ -115,6 +116,8 @@ export default function ToolsPage() {
         title={`Or run all ${CATALOG_SIZE} checks at once.`}
         body="The full audit reads your whole site and writes every fix. Same price: nothing."
       />
+      {/* The mascot crew. Delete this line and components/sprig to remove them. */}
+      <Sprig crew="rotate" />
     </MarketingChrome>
   );
 }

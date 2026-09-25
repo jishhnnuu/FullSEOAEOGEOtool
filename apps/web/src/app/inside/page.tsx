@@ -4,7 +4,6 @@ import { InsideDesks } from "@/components/inside-desks";
 import { CtaBand, MarketingChrome } from "@/components/marketing";
 import { TheFlow } from "@/components/the-flow";
 import { BRAND } from "@/lib/brand";
-import { headcount } from "@/lib/org";
 import { breadcrumbNode, graph } from "@/lib/schema";
 
 export const metadata = {
@@ -81,7 +80,7 @@ export default function InsidePage() {
               <li><strong>It&rsquo;s a partial crawl,</strong> a dozen pages, so it finishes while you watch.</li>
               <li><strong>Nothing is pre-cooked.</strong> No cached results, no seeded data. It runs fresh every time.</li>
               <li>
-                <strong>Some of the {headcount()} agents aren&rsquo;t here.</strong> Anything needing a server, a
+                <strong>Some of the team isn&rsquo;t here.</strong> Anything needing a server, a
                 connected account or a model key can&rsquo;t run in a public browser tab.{" "}
                 <Link href="/the-firm">The full roster</Link> says which.
               </li>

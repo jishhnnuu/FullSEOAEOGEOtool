@@ -30,7 +30,7 @@ import { parseHtml } from "@/engine/parse";
 import { AI_CRAWLER_LIST, parseRobots, robotsAllows } from "@/engine/robots";
 import type { CrawlReport, CrawledPage, Finding, SiteFiles } from "@/engine/types";
 import { DESKS, managerFor } from "@/lib/desks";
-import { DIRECTOR, headcount } from "@/lib/org";
+import { DIRECTOR } from "@/lib/org";
 import { ROUTES } from "@/lib/routes";
 
 /** Codes a partial crawl cannot honestly answer. Left out rather than guessed. */
@@ -297,7 +297,7 @@ export function InsideAccount() {
                 <div key={desk.key} className={open ? "desk desk-working" : "desk desk-planned"}>
                   <div className="desk-top">
                     <strong>{manager.name}</strong>
-                    <span className="tiny faint">{open ? `${manager.team.length}` : manager.opens}</span>
+                    {!open && <span className="tiny faint">{manager.opens}</span>}
                   </div>
                   <div className="tiny faint desk-title">{manager.title}</div>
                   <p className="small">
@@ -341,8 +341,7 @@ export function InsideAccount() {
           </div>
 
           <div className="brief-foot tiny faint">
-            {headcount()} agents across {DESKS.filter((d) => managerFor(d).status === "live").length} live desks.
-            You approve, you do not execute. <Link href="/the-firm">See the organisation</Link>.
+            One team, four desks. You approve, you do not execute. <Link href="/the-firm">See the organisation</Link>.
           </div>
         </div>
 

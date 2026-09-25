@@ -55,10 +55,10 @@ export const IS_LAUNCHED = SITE_URL !== FALLBACK_URL;
 export const TAGLINE = "A digital marketing agency run by AI agents";
 
 export const DESCRIPTION =
-  "A roster of named agents across search, content and social, with one director you talk to. " +
+  "An AI marketing team across search, content, social and paid, with one CMO you talk to. " +
   "Crawl a site, take the fixes already written, get a point of view argued and a " +
-  "draft written against it. Covers SEO, AEO and GEO, with paid and social next. " +
-  "No account, no card, no API key.";
+  "draft written against it, and plan ads that only spend what can be measured. " +
+  "Nothing goes live without your yes. No account, no card, no API key.";
 
 /** One sentence, used where a description has to be short. */
 export const SHORT_DESCRIPTION =

@@ -14,8 +14,8 @@ export default function Page() {
   return (
     <>
       <DeskPage desk={desk} />
-      {/* The mascot, on trial here only. Delete this line and components/sprig to remove him. */}
-      <Sprig />
+      {/* The mascot crew. Delete this line and components/sprig to remove them. */}
+      <Sprig crew="search" />
     </>
   );
 }

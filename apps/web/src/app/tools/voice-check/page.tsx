@@ -1,6 +1,7 @@
 import Link from "next/link";
 
 import { CtaBand, MarketingChrome } from "@/components/marketing";
+import { Sprig } from "@/components/sprig";
 import { VoiceTool } from "@/components/voice-tool";
 import { breadcrumbNode, graph } from "@/lib/schema";
 
@@ -36,10 +37,10 @@ export default function VoiceCheckPage() {
         }}
       />
 
-      <section className="section fresh-hero" style={{ paddingBottom: "1.5rem" }}>
-        <div className="eyebrow"><span className="dot" aria-hidden="true" />Free tool &middot; no signup</div>
-        <h1 className="hero-title">Do you sound like <span className="hl">you?</span></h1>
+      <section className="section fresh-hero seat-room" style={{ paddingBottom: "1.5rem" }}>
+        <h1 className="hero-title">Do you <span data-sprig-seat="">sound</span> like <span className="hl">you?</span></h1>
         <p className="hero-lede">Your page against up to five rivals. Counted, not judged. No AI, no signup.</p>
+        <p className="hero-status"><span className="dot" aria-hidden="true" /><span>Free tool &middot; no signup</span></p>
       </section>
 
       <section className="section section-tight" style={{ paddingTop: 0 }}>
@@ -91,6 +92,8 @@ export default function VoiceCheckPage() {
         primary={{ href: "/content", label: "Meet the content desk" }}
         secondary={{ href: "/inside", label: "Peek inside a live account" }}
       />
+      {/* The mascot crew. Delete this line and components/sprig to remove them. */}
+      <Sprig crew="content" />
     </MarketingChrome>
   );
 }

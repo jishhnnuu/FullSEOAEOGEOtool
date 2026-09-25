@@ -267,8 +267,9 @@ style disagreement.
   capabilities while three other desks shipped, so the pricing grid described
   an SEO tool, the desk pages quoted a plan the grid never mentioned, and
   `permits()` had nothing to gate on. `contentDesk`, `socialDesk` and
-  `paidDesk` are limits like any other, and the pricing labels read the
-  headcount from the roster rather than repeating it.
+  `paidDesk` are limits like any other. Public pages name desks and jobs,
+  never a headcount: "115 AI marketers" reads as 115 of something big when
+  each is one narrow job, and it sets an expectation the first bug breaks.
 - **Mentions are weighted above links.** Ahrefs measured 75,000 brands in
   2026: brand mentions correlate with AI Overview visibility at 0.664,
   backlinks at 0.218. A model has no link graph, it has text. `mentions.ts`
@@ -347,14 +348,20 @@ style disagreement.
   but it lives in `.acc` accordions so it is one click away rather than in the
   way. `docs/VOICE-AND-LOOK.md` has the voice, the palette and the rules; a
   page that breaks them is wrong, not the rules.
-- **Sprig is on trial, on /seo only, and nobody controls him.** The mascot
-  lives entirely in `apps/web/src/components/sprig/` and is rendered by one
-  line in `app/seo/page.tsx`; deleting both removes him. He picks his own
-  moves, follows the reader between real edges on the page, and his lines
-  are friendly small talk with no commands, no teasing and no numbers. He
-  takes no clicks, is hidden from screen readers, and measures the page
-  before standing anywhere, so he never covers text or a button: where there
-  is not room he squeezes under or does not go.
+- **The mascot crew is on trial, and nobody controls them.** One per desk,
+  identical but for shoe colour and one accessory: Sprig (search), Basil
+  (content), Rosie (social), Sage (paid), plus the CMO in a suit and
+  glasses who checks in on the desk pages. They live entirely in
+  `apps/web/src/components/sprig/` and each page renders them with one line
+  (home, the four desk pages, /tools and the tool pages); deleting the folder
+  and those lines removes them. On arrival they fly in and sit on the
+  headline word marked `data-sprig-seat`, then follow the reader between real
+  edges. Their lines are friendly small talk with no commands, no teasing and
+  no numbers. They take no clicks, are hidden from screen readers, and
+  measure the page before standing anywhere, so they never cover text, a
+  button or the menu bar: where there is not room they squeeze under or do
+  not go. The seat is the one deliberate exception: sitting on the word is
+  the point.
 - **Our own site passes our own checks.** `npm run seo:check` requires one h1,
   a meta description and a self-referential canonical on every public page, and
   `/proof` runs the real audit against this deployment and publishes what it

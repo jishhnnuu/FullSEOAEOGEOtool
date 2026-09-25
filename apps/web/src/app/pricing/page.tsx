@@ -4,7 +4,6 @@ import { Fragment } from "react";
 import { CtaBand, MarketingChrome } from "@/components/marketing";
 import { DESKS, deskPrice, managerFor } from "@/lib/desks";
 import { EXCLUDED_FOR, PLANS, PLAN_ORDER, priceLabel } from "@/lib/plans";
-import { managerByKey } from "@/lib/org";
 import { faqNode, graph } from "@/lib/schema";
 
 export const metadata = {
@@ -30,18 +29,15 @@ const CTA: Record<string, { href: string; label: string }> = {
   scale: { href: "/app/new", label: "Try it on one site first" },
 };
 
-// Derived, not typed. A hand-written headcount here would drift from the
-// roster the moment a desk gained an agent, which is the same bug that once
-// had the firm page reporting 81 of 80.
 const CAPABILITY_LABEL: Record<string, string> = {
   scheduling: "weekly check-ups",
   publishing: "fixes pushed live",
   answerVisibility: "AI answer tracking",
   linkProgramme: "link outreach",
   local: "local",
-  contentDesk: `content desk (${managerByKey("content")?.team.length ?? 0})`,
-  socialDesk: `social desk (${managerByKey("social")?.team.length ?? 0})`,
-  paidDesk: `paid desk (${managerByKey("paid")?.team.length ?? 0})`,
+  contentDesk: "content desk",
+  socialDesk: "social desk",
+  paidDesk: "paid desk",
   whiteLabel: "your own branding",
 };
 
@@ -113,7 +109,6 @@ export default function PricingPage() {
         <div className="fresh-desks" style={{ marginTop: "1.4rem" }}>
           {DESKS.map((desk) => (
             <Link key={desk.key} href={desk.path} className="fresh-desk" data-desk={desk.key}>
-              <span className="fd-count">{managerFor(desk).team.length} specialists</span>
               <span className="fd-name">{desk.label}</span>
               <span className="fd-line">
                 {desk.requiresPlan ? `From ${deskPrice(desk)} a month on ${PLANS[desk.requiresPlan].name}` : deskPrice(desk)}

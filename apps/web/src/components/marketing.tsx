@@ -1,7 +1,6 @@
 import Link from "next/link";
 
 import { BRAND } from "@/lib/brand";
-import { headcount } from "@/lib/org";
 
 /**
  * The public site's chrome.
@@ -59,7 +58,7 @@ export function SiteFooter() {
             {BRAND}
           </div>
           <p className="small muted" style={{ maxWidth: "28ch" }}>
-            {headcount()} AI marketers. One inbox. No meetings.
+            Your AI marketing team. One inbox. No meetings.
           </p>
         </div>
         <div>
@@ -73,7 +72,7 @@ export function SiteFooter() {
         <div>
           <h4>Free tools</h4>
           <Link href="/app/new">Audit my site</Link>
-          <Link href="/tools/social-teardown">Spy on a competitor</Link>
+          <Link href="/tools/social-teardown">Scout a competitor</Link>
           <Link href="/tools/ad-budget-check">Check my ad budget</Link>
           <Link href="/tools/voice-check">Test my writing</Link>
           <Link href="/tools">All tools</Link>

@@ -67,7 +67,6 @@ export function InsideDesks() {
               onClick={() => setTab(t.key)}
             >
               <span className="dt-name">{t.label}</span>
-              <span className="dt-count">{m ? `${m.team.length} specialists` : ""}</span>
               <span className="dt-claim">{t.claim}</span>
             </button>
           );

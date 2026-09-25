@@ -2185,12 +2185,13 @@ button.primary:hover:not(:disabled), .button.primary:hover { background: var(--z
 .fresh-desk .fd-name { font-family: var(--display); font-weight: 800; font-size: 1.55rem; letter-spacing: -0.03em; }
 .fresh-desk .fd-count { font-size: 0.78rem; font-weight: 700; opacity: 0.7; }
 .fresh-desk .fd-line { font-size: 1rem; line-height: 1.35; font-weight: 550; flex: 1 1 auto; }
-.fresh-desk .fd-foot { display: flex; justify-content: space-between; align-items: center; gap: 0.5rem; flex-wrap: wrap; }
+.fresh-desk .fd-foot { display: flex; justify-content: space-between; align-items: center; gap: 0.5rem; flex-wrap: nowrap; }
 .fresh-desk .fd-status {
   font-size: 0.72rem; font-weight: 750; background: rgba(255, 255, 255, 0.6);
   border: 1.5px solid #16130f; border-radius: 999px; padding: 0.18rem 0.55rem;
 }
-.fresh-desk .fd-go { font-family: var(--display); font-weight: 800; }
+.fresh-desk .fd-go { font-family: var(--display); font-weight: 800; white-space: nowrap; flex: none; }
+.fresh-desk .fd-status { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
 .fresh-desks.three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 @media (max-width: 980px) { .fresh-desks, .fresh-desks.three { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 @media (max-width: 560px) { .fresh-desks, .fresh-desks.three { grid-template-columns: 1fr; } .fresh-desk { min-height: 0; } }
@@ -2565,3 +2566,11 @@ button.primary:hover:not(:disabled), .button.primary:hover { background: var(--z
 .fresh-hero + .section-tight { padding-top: 0; }
 .fresh-prices .price .big-button { text-align: center; }
 .fresh-prices .price.featured .big-button { background: #16130f; color: #fff9ef; border-color: #16130f; box-shadow: 4px 4px 0 #fff9ef; }
+
+/* ------------------------------------------------------------ hero status and mascot room */
+.hero-status { display: flex; gap: 0.55rem; align-items: baseline; margin: 1.2rem 0 0; font-size: 0.95rem; max-width: 62ch; }
+.hero-status .dot { width: 9px; height: 9px; border-radius: 50%; background: var(--accent); flex: none; transform: translateY(-1px); }
+.desk-hero-band .hero-status { color: #16130f; }
+.desk-hero-band .hero-status .dot { background: #0e6b4a; }
+/* Room above the headline for the mascot to land on its word. */
+.seat-room { padding-top: clamp(5.5rem, 10vw, 8rem); }

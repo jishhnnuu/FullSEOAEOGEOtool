@@ -47,8 +47,8 @@
 
 .sprig .s-limb { fill: none; stroke: var(--s-ink); stroke-width: 5.5; stroke-linecap: round; }
 .sprig .s-hand { fill: #fff; stroke: var(--s-ink); stroke-width: 3; }
-.sprig .s-shoe { fill: #fff; stroke: var(--s-ink); stroke-width: 3; stroke-linejoin: round; }
-.sprig .s-sole { fill: none; stroke: #d4f55a; stroke-width: 2.5; stroke-linecap: round; }
+.sprig .s-shoe { fill: var(--shoe, #d4f55a); stroke: var(--s-ink); stroke-width: 3; stroke-linejoin: round; }
+.sprig .s-sole { fill: none; stroke: #fff; stroke-width: 2.5; stroke-linecap: round; }
 .sprig .s-body { fill: var(--s-body); stroke: var(--s-ink); stroke-width: 3.5; }
 .sprig .s-belly { fill: var(--s-belly); opacity: 0.55; }
 .sprig .s-vein { fill: none; stroke: rgba(255, 255, 255, 0.28); stroke-width: 2.5; stroke-linecap: round; }
@@ -66,14 +66,30 @@
 .sprig .s-glint { fill: none; stroke: #fff; stroke-width: 2.5; stroke-linecap: round; }
 .sprig .s-shadow { fill: rgba(0, 0, 0, 0.16); }
 
-/* The CMO's suit: charcoal jacket, white shirt, coral tie, mint pocket square. */
+/* The CMO's suit and glasses: charcoal jacket, white shirt, mint pocket square, no tie. */
 .sprig .s-jacket { fill: #2b2620; stroke: var(--s-ink); stroke-width: 3.5; stroke-linejoin: round; }
 .sprig .s-shirt { fill: #fff; stroke: var(--s-ink); stroke-width: 2.5; stroke-linejoin: round; }
-.sprig .s-tie { fill: #ff6b4a; stroke: var(--s-ink); stroke-width: 2.5; stroke-linejoin: round; }
 .sprig .s-lapel { fill: none; stroke: #5a5146; stroke-width: 2.5; stroke-linecap: round; }
 .sprig .s-pocket { fill: #a9ebcf; stroke: var(--s-ink); stroke-width: 2; stroke-linejoin: round; }
 .sprig .s-button { fill: #d4f55a; }
 .sprig.cmo .s-belly { display: none; }
+.sprig.cmo { --shoe: #2b2620; }
+.sprig .s-glasses circle { fill: rgba(255, 255, 255, 0.18); stroke: var(--s-ink); stroke-width: 3; }
+.sprig .s-glasses path { fill: none; stroke: var(--s-ink); stroke-width: 3; stroke-linecap: round; }
+
+/*
+ * The crew. Same character, like a row of minions: each desk gets its own
+ * shoe colour and one accessory.
+ */
+.sprig .s-acc { display: none; }
+.sprig.v-search { --shoe: #d4f55a; }
+.sprig.v-content { --shoe: #cdbdff; }
+.sprig.v-social { --shoe: #ffb8d4; }
+.sprig.v-paid { --shoe: #ffca70; }
+.sprig.v-content .s-beret, .sprig.v-social .s-bow, .sprig.v-paid .s-cap { display: inline; }
+.sprig .s-beret path, .sprig .s-beret circle { fill: #cdbdff; stroke: var(--s-ink); stroke-width: 3; stroke-linejoin: round; }
+.sprig .s-bow path, .sprig .s-bow circle { fill: #ff8fbd; stroke: var(--s-ink); stroke-width: 2.5; stroke-linejoin: round; }
+.sprig .s-cap path { fill: #ffca70; stroke: var(--s-ink); stroke-width: 3; stroke-linejoin: round; }
 .sprig.cmo .s-arm .s-limb { stroke: #2b2620; stroke-width: 7; }
 
 /* Transform origins, in the SVG's own 120 x 150 space. */
@@ -252,3 +268,18 @@
 @media (prefers-reduced-motion: reduce) {
   .sprig, .sprig * { animation: none !important; transition: none !important; }
 }
+
+/*
+ * Talking while sitting on a word: the bubble goes beside the head rather
+ * than above it, so it never reaches the menu bar.
+ */
+.sprig.talk-side .sprig-bubble {
+  left: 96%;
+  bottom: 52%;
+  transform: translateX(var(--nx)) scale(0.6);
+  transform-origin: 0 100%;
+}
+.sprig.talk-side .sprig-bubble.show { transform: translateX(var(--nx)) scale(1); }
+.sprig.talk-side .sprig-bubble::after { left: 0; top: 72%; transform: translate(-50%, -50%) rotate(135deg); }
+.sprig.talk-side.to-left .sprig-bubble { left: auto; right: 96%; transform-origin: 100% 100%; }
+.sprig.talk-side.to-left .sprig-bubble::after { left: 100%; transform: translate(-50%, -50%) rotate(-45deg); }

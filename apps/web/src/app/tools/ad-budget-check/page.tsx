@@ -2,6 +2,7 @@ import Link from "next/link";
 
 import { AdBudgetTool } from "@/components/ad-budget-tool";
 import { CtaBand, MarketingChrome } from "@/components/marketing";
+import { Sprig } from "@/components/sprig";
 import { SMART_BIDDING_MONTHLY } from "@/engine/ads";
 import { breadcrumbNode, graph } from "@/lib/schema";
 
@@ -37,10 +38,10 @@ export default function AdBudgetCheckPage() {
         }}
       />
 
-      <section className="section fresh-hero" style={{ paddingBottom: "1.5rem" }}>
-        <div className="eyebrow"><span className="dot" aria-hidden="true" />Free tool &middot; no signup</div>
-        <h1 className="hero-title">Will your ad budget <span className="hl">actually</span> work?</h1>
+      <section className="section fresh-hero seat-room" style={{ paddingBottom: "1.5rem" }}>
+        <h1 className="hero-title">Will your ad <span data-sprig-seat="">budget</span> <span className="hl">actually</span> work?</h1>
         <p className="hero-lede">Three numbers in, a straight answer out. The maths an agency on commission never shows you.</p>
+        <p className="hero-status"><span className="dot" aria-hidden="true" /><span>Free tool &middot; no signup</span></p>
       </section>
 
       <section className="section section-tight" style={{ paddingTop: 0 }}>
@@ -103,6 +104,8 @@ export default function AdBudgetCheckPage() {
         primary={{ href: "/paid", label: "Meet the paid desk" }}
         secondary={{ href: "/inside", label: "Peek inside a live account" }}
       />
+      {/* The mascot crew. Delete this line and components/sprig to remove them. */}
+      <Sprig crew="paid" />
     </MarketingChrome>
   );
 }

@@ -1,0 +1,254 @@
+/*
+ * Sprig, the search page mascot. Everything here is scoped to .sprig-layer,
+ * so deleting this folder and the one line that renders it removes him
+ * completely.
+ *
+ * The layer sits over the page in page coordinates, clips anything that
+ * walks off the side (so he can never cause a horizontal scrollbar), and
+ * takes no pointer events, so he can never swallow a click.
+ */
+.sprig-layer {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 0;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 30;
+  --s-ink: #16130f;
+  --s-body: #1f8f60;
+  --s-belly: #58c98f;
+  --s-leaf: #7fdc9f;
+  --s-cheek: #ff6b4a;
+}
+.sprig-layer * { pointer-events: none; }
+
+.sprig {
+  position: absolute;
+  left: 0;
+  top: 0;
+  --h: 144px;
+  width: calc(var(--h) * 0.8);
+  height: var(--h);
+  opacity: 0;
+  transition: opacity 0.3s;
+  will-change: transform;
+}
+.sprig.on { opacity: 1; }
+.sprig-body {
+  width: 100%;
+  height: 100%;
+  transform-origin: 50% 100%;
+  transform: scaleX(var(--face, 1)) rotate(var(--tilt, 0deg)) scale(var(--sqx, 1), var(--sqy, 1));
+  transition: transform 0.14s ease-out;
+}
+.sprig svg { width: 100%; height: 100%; overflow: visible; display: block; }
+
+.sprig .s-limb { fill: none; stroke: var(--s-ink); stroke-width: 5.5; stroke-linecap: round; }
+.sprig .s-hand { fill: #fff; stroke: var(--s-ink); stroke-width: 3; }
+.sprig .s-shoe { fill: #fff; stroke: var(--s-ink); stroke-width: 3; stroke-linejoin: round; }
+.sprig .s-sole { fill: none; stroke: #d4f55a; stroke-width: 2.5; stroke-linecap: round; }
+.sprig .s-body { fill: var(--s-body); stroke: var(--s-ink); stroke-width: 3.5; }
+.sprig .s-belly { fill: var(--s-belly); opacity: 0.55; }
+.sprig .s-vein { fill: none; stroke: rgba(255, 255, 255, 0.28); stroke-width: 2.5; stroke-linecap: round; }
+.sprig .s-stem { fill: none; stroke: var(--s-ink); stroke-width: 3.5; stroke-linecap: round; }
+.sprig .s-leaf { fill: var(--s-leaf); stroke: var(--s-ink); stroke-width: 3; stroke-linejoin: round; }
+.sprig .s-eyewhite { fill: #fff; stroke: var(--s-ink); stroke-width: 3; }
+.sprig .s-pupils circle { fill: var(--s-ink); }
+.sprig .s-pupils .s-shine { fill: #fff; }
+.sprig .s-closed path, .sprig .s-happy path { fill: none; stroke: var(--s-ink); stroke-width: 3; stroke-linecap: round; }
+.sprig .s-cheek { fill: var(--s-cheek); opacity: 0.6; }
+.sprig .s-mouth { fill: none; stroke: var(--s-ink); stroke-width: 3; stroke-linecap: round; }
+.sprig .s-mouth-open { fill: var(--s-ink); }
+.sprig .s-stick { fill: none; stroke: var(--s-ink); stroke-width: 4; stroke-linecap: round; }
+.sprig .s-lens { fill: rgba(255, 255, 255, 0.6); stroke: var(--s-ink); stroke-width: 3.5; }
+.sprig .s-glint { fill: none; stroke: #fff; stroke-width: 2.5; stroke-linecap: round; }
+.sprig .s-shadow { fill: rgba(0, 0, 0, 0.16); }
+
+/* The CMO's suit: charcoal jacket, white shirt, coral tie, mint pocket square. */
+.sprig .s-jacket { fill: #2b2620; stroke: var(--s-ink); stroke-width: 3.5; stroke-linejoin: round; }
+.sprig .s-shirt { fill: #fff; stroke: var(--s-ink); stroke-width: 2.5; stroke-linejoin: round; }
+.sprig .s-tie { fill: #ff6b4a; stroke: var(--s-ink); stroke-width: 2.5; stroke-linejoin: round; }
+.sprig .s-lapel { fill: none; stroke: #5a5146; stroke-width: 2.5; stroke-linecap: round; }
+.sprig .s-pocket { fill: #a9ebcf; stroke: var(--s-ink); stroke-width: 2; stroke-linejoin: round; }
+.sprig .s-button { fill: #d4f55a; }
+.sprig.cmo .s-belly { display: none; }
+.sprig.cmo .s-arm .s-limb { stroke: #2b2620; stroke-width: 7; }
+
+/* Transform origins, in the SVG's own 120 x 150 space. */
+.sprig .s-leg, .sprig .s-arm, .sprig .s-sprout, .sprig .s-eyes, .sprig .s-bodyall, .sprig .s-legs { transform-box: view-box; }
+.sprig .s-leg-l { transform-origin: 50px 116px; }
+.sprig .s-leg-r { transform-origin: 70px 116px; }
+.sprig .s-arm-l { transform-origin: 31px 86px; }
+.sprig .s-arm-r { transform-origin: 89px 86px; }
+.sprig .s-sprout { transform-origin: 60px 31px; }
+.sprig .s-eyes { transform-origin: 60px 67px; }
+.sprig .s-bodyall { transform-origin: 60px 140px; }
+.sprig .s-leg, .sprig .s-arm, .sprig .s-bodyall, .sprig .s-legs, .sprig .s-sprout { transition: transform 0.22s ease-out; }
+.sprig .s-pupils { transform: translate(var(--px, 0px), var(--py, 0px)); transition: transform 0.12s linear; }
+
+.sprig .s-prop, .sprig .s-closed, .sprig .s-happy, .sprig .s-mouth-open { display: none; }
+
+/* Idle life. */
+.sprig .s-sprout { animation: sprig-sway 3.2s ease-in-out infinite; }
+.sprig .s-bodyall { animation: sprig-breathe 2.6s ease-in-out infinite; }
+@keyframes sprig-sway { 0%, 100% { transform: rotate(-6deg); } 50% { transform: rotate(7deg); } }
+@keyframes sprig-breathe { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-1px); } }
+.sprig.blink .s-eyes { transform: scaleY(0.1); transition: transform 0.06s; }
+
+/* Walk. */
+.sprig.walking .s-leg-l { animation: sprig-leg-a 0.46s ease-in-out infinite alternate; }
+.sprig.walking .s-leg-r { animation: sprig-leg-b 0.46s ease-in-out infinite alternate; }
+.sprig.walking .s-arm-l { animation: sprig-arm-a 0.46s ease-in-out infinite alternate; }
+.sprig.walking .s-arm-r { animation: sprig-arm-b 0.46s ease-in-out infinite alternate; }
+.sprig.walking .s-bodyall { animation: sprig-bob 0.23s ease-in-out infinite alternate; }
+@keyframes sprig-leg-a { from { transform: rotate(-24deg); } to { transform: rotate(24deg); } }
+@keyframes sprig-leg-b { from { transform: rotate(24deg); } to { transform: rotate(-24deg); } }
+@keyframes sprig-arm-a { from { transform: rotate(22deg); } to { transform: rotate(-22deg); } }
+@keyframes sprig-arm-b { from { transform: rotate(-22deg); } to { transform: rotate(22deg); } }
+@keyframes sprig-bob { from { transform: translateY(0); } to { transform: translateY(-3.5px); } }
+
+/* Wave. */
+.sprig.p-wave .s-arm-r { animation: sprig-wave 0.34s ease-in-out infinite alternate; }
+@keyframes sprig-wave { from { transform: rotate(-138deg); } to { transform: rotate(-172deg); } }
+.sprig.p-wave .s-mouth-open, .sprig.p-excited .s-mouth-open, .sprig.p-dance .s-mouth-open { display: inline; }
+.sprig.p-wave .s-mouth, .sprig.p-excited .s-mouth, .sprig.p-dance .s-mouth { display: none; }
+
+/* Hold up a sign. */
+.sprig.p-hold .s-arm-r { transform: rotate(-160deg); animation: none; }
+.sprig.p-hold .s-arm-l { transform: rotate(40deg); animation: none; }
+.sprig.p-hold .s-prop-sign { display: inline; }
+
+/* Look closely with the magnifier. */
+.sprig.p-inspect .s-arm-r { transform: rotate(-38deg); animation: none; }
+.sprig.p-inspect .s-prop-mag { display: inline; }
+.sprig.p-inspect .s-bodyall, .sprig.p-inspect.walking .s-bodyall { transform: translate(3px, 5px) rotate(7deg); animation: none; }
+
+/* Sit on the edge, legs over the line. */
+.sprig.p-sit .s-bodyall { transform: translateY(27px); animation: none; }
+.sprig.p-sit .s-legs { transform: translateY(27px); }
+.sprig.p-sit .s-leg-l { animation: sprig-dangle 1.1s ease-in-out infinite alternate; }
+.sprig.p-sit .s-leg-r { animation: sprig-dangle 1.1s ease-in-out -0.55s infinite alternate; }
+.sprig.p-sit .s-arm-l { transform: rotate(-28deg); }
+.sprig.p-sit .s-arm-r { transform: rotate(28deg); }
+.sprig.p-sit .s-shadow { display: none; }
+@keyframes sprig-dangle { from { transform: rotate(-16deg); } to { transform: rotate(18deg); } }
+
+/* Point. */
+.sprig.p-point .s-arm-r { transform: rotate(-98deg); animation: none; }
+.sprig.p-point .s-arm-l { transform: rotate(10deg); animation: none; }
+
+/* In the air: the sprout spins like a propeller going down, he tucks going up. */
+.sprig.p-propeller .s-sprout { animation: sprig-prop 0.14s linear infinite; }
+@keyframes sprig-prop { 0% { transform: translateY(-3px) scaleX(1); } 50% { transform: translateY(-3px) scaleX(-1); } 100% { transform: translateY(-3px) scaleX(1); } }
+.sprig.p-propeller .s-arm-l { transform: rotate(70deg); animation: none; }
+.sprig.p-propeller .s-arm-r { transform: rotate(-70deg); animation: none; }
+.sprig.p-propeller .s-mouth-open { display: inline; }
+.sprig.p-propeller .s-mouth { display: none; }
+.sprig.p-air .s-leg-l { transform: rotate(-30deg); }
+.sprig.p-air .s-leg-r { transform: rotate(30deg); }
+.sprig.p-air .s-arm-l, .sprig.p-stretch .s-arm-l { transform: rotate(150deg); animation: none; }
+.sprig.p-air .s-arm-r, .sprig.p-stretch .s-arm-r { transform: rotate(-150deg); animation: none; }
+.sprig.p-air .s-shadow, .sprig.p-propeller .s-shadow { opacity: 0.3; }
+.sprig.p-stretch .s-bodyall { transform: scale(0.97, 1.05); animation: none; }
+
+/* Dance: arms take turns, a little hop, happy eyes. */
+.sprig.p-dance .s-arm-l { animation: sprig-dance-l 0.4s ease-in-out infinite alternate; }
+.sprig.p-dance .s-arm-r { animation: sprig-dance-r 0.4s ease-in-out infinite alternate; }
+.sprig.p-dance .s-bodyall { animation: sprig-hop 0.2s ease-in-out infinite alternate; }
+.sprig.p-dance .s-eyes { display: none; }
+.sprig.p-dance .s-happy { display: inline; }
+@keyframes sprig-dance-l { from { transform: rotate(150deg); } to { transform: rotate(20deg); } }
+@keyframes sprig-dance-r { from { transform: rotate(-20deg); } to { transform: rotate(-150deg); } }
+
+/* Happy, nap, excited. */
+.sprig.p-happy .s-eyes { display: none; }
+.sprig.p-happy .s-happy { display: inline; }
+.sprig.p-nap .s-eyes { display: none; }
+.sprig.p-nap .s-closed { display: inline; }
+.sprig.p-nap .s-sprout { animation: sprig-droop 3s ease-in-out infinite; }
+@keyframes sprig-droop { 0%, 100% { transform: rotate(38deg); } 50% { transform: rotate(46deg); } }
+.sprig.p-excited .s-bodyall { animation: sprig-hop 0.32s ease-in-out infinite alternate; }
+@keyframes sprig-hop { from { transform: translateY(0); } to { transform: translateY(-9px); } }
+
+/* Speech, signs and sleep. These never mirror when he turns round. */
+.sprig-ui { position: absolute; inset: 0; }
+.sprig-bubble, .sprig-placard {
+  position: absolute;
+  bottom: calc(100% + var(--h) * 0.06);
+  left: 50%;
+  --nx: 0px;
+  transform: translateX(calc(-50% + var(--nx))) scale(0.6);
+  opacity: 0;
+  transition: opacity 0.18s, transform 0.22s cubic-bezier(0.3, 1.6, 0.5, 1);
+  font-family: var(--display, system-ui), system-ui, sans-serif;
+  font-weight: 800;
+  color: #16130f;
+  white-space: nowrap;
+  font-size: max(13px, calc(var(--h) * 0.108));
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+  background: #fff;
+  border: 2.5px solid #16130f;
+  border-radius: 12px;
+  padding: 0.35em 0.75em;
+  box-shadow: 3px 3px 0 #16130f;
+}
+.sprig-bubble::after {
+  content: "";
+  position: absolute;
+  left: clamp(14px, calc(50% - var(--nx)), calc(100% - 14px));
+  top: 100%;
+  width: 11px;
+  height: 11px;
+  background: #fff;
+  border-right: 2.5px solid #16130f;
+  border-bottom: 2.5px solid #16130f;
+  transform: translate(-50%, -50%) rotate(45deg);
+}
+.sprig-placard { bottom: calc(100% + var(--h) * 0.02); }
+/* On a phone the clear space beside the buttons is narrow, so words wrap rather than hide. */
+@media (max-width: 759px) {
+  .sprig-bubble, .sprig-placard { white-space: normal; width: max-content; max-width: 136px; text-align: center; }
+}
+.sprig-bubble.show, .sprig-placard.show { opacity: 1; transform: translateX(calc(-50% + var(--nx))) scale(1); }
+.sprig-zzz {
+  position: absolute;
+  right: -4%;
+  top: -6%;
+  font-family: var(--display, system-ui), system-ui, sans-serif;
+  font-weight: 800;
+  color: #16130f;
+  font-size: calc(var(--h) * 0.2);
+  opacity: 0;
+}
+.sprig.p-nap .sprig-zzz { animation: sprig-zz 2.2s ease-in infinite; }
+.sprig.p-nap .sprig-zzz.b { animation-delay: 1.1s; }
+@keyframes sprig-zz { 0% { opacity: 0; transform: translate(0, 0) scale(0.6); } 30% { opacity: 1; } 100% { opacity: 0; transform: translate(14px, -30px) scale(1.2); } }
+
+/* The broken link he mends, and the tag it turns into. */
+.sprig-bug { position: absolute; width: 34px; height: 22px; transform: translate(-50%, -100%); opacity: 0; transition: opacity 0.3s; }
+.sprig-bug.on { opacity: 1; }
+.sprig-bug svg { width: 100%; height: 100%; display: block; }
+.sprig-fixtag {
+  position: absolute;
+  transform: translate(-50%, -100%) scale(0.5);
+  opacity: 0;
+  font-family: var(--display, system-ui), system-ui, sans-serif;
+  font-weight: 800;
+  font-size: 15px;
+  color: #16130f;
+  background: #fff;
+  border: 2.5px solid #16130f;
+  border-radius: 9px;
+  padding: 2px 8px;
+  box-shadow: 2px 2px 0 #16130f;
+  white-space: nowrap;
+  transition: opacity 0.25s, transform 0.35s cubic-bezier(0.3, 1.6, 0.5, 1);
+}
+.sprig-fixtag.on { opacity: 1; transform: translate(-50%, -120%) scale(1); }
+
+@media (prefers-reduced-motion: reduce) {
+  .sprig, .sprig * { animation: none !important; transition: none !important; }
+}

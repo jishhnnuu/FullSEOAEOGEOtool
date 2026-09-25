@@ -347,6 +347,14 @@ style disagreement.
   but it lives in `.acc` accordions so it is one click away rather than in the
   way. `docs/VOICE-AND-LOOK.md` has the voice, the palette and the rules; a
   page that breaks them is wrong, not the rules.
+- **Sprig is on trial, on /seo only, and nobody controls him.** The mascot
+  lives entirely in `apps/web/src/components/sprig/` and is rendered by one
+  line in `app/seo/page.tsx`; deleting both removes him. He picks his own
+  moves, follows the reader between real edges on the page, and his lines
+  are friendly small talk with no commands, no teasing and no numbers. He
+  takes no clicks, is hidden from screen readers, and measures the page
+  before standing anywhere, so he never covers text or a button: where there
+  is not room he squeezes under or does not go.
 - **Our own site passes our own checks.** `npm run seo:check` requires one h1,
   a meta description and a self-referential canonical on every public page, and
   `/proof` runs the real audit against this deployment and publishes what it

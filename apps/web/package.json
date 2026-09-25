@@ -8,7 +8,7 @@
     "start": "next start -p 3000",
     "lint": "next lint",
     "typecheck": "tsc --noEmit",
-    "cf:build": "opennextjs-cloudflare build --skipWranglerConfigCheck",
+    "cf:build": "opennextjs-cloudflare build --skipWranglerConfigCheck && opennextjs-cloudflare populateCache local --config ../../wrangler.jsonc",
     "cf:preview": "wrangler dev --config ../../wrangler.jsonc",
     "test": "tsc -p tsconfig.test.json && node --test .test-build/tests/*.test.js"
   },

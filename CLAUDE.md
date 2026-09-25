@@ -303,6 +303,16 @@ style disagreement.
   audit runs in the browser, so a scheduled crawl waits for a tab, and
   `headlessNote()` prints that on the screen. A schedule that quietly does
   nothing is worse than no schedule.
+- **A prerendered page is served, never re-rendered.** With no incremental
+  cache configured, OpenNext has nowhere to read built HTML from, so every
+  visit to a static page ran the full React render inside the Worker
+  (`x-nextjs-cache: MISS` on the homepage). The free plan allows about 10 ms
+  of CPU per request, and the overruns surfaced as intermittent Error 1102.
+  `open-next.config.ts` now uses the static assets cache with cache
+  interception, and `cf:build` runs `populateCache local` to copy the pages
+  into the assets. A healthy static page answers `x-opennext-cache: HIT`.
+  The cache is read only: adding `revalidate`, `revalidateTag` or
+  `unstable_cache` anywhere means moving to the KV or R2 cache first.
 - **The cron handler lives outside Next.** `deploy/worker.js` re-exports
   OpenNext's generated worker and adds `scheduled`, because Cloudflare will not
   fire a cron trigger without one. It reaches the app through an in-isolate

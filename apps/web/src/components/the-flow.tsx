@@ -24,42 +24,34 @@ type Step = {
 
 const STEPS: Step[] = [
   {
-    n: "01",
-    title: "Run something, now, with nothing",
-    cost: "No account, no card, no email",
-    body:
-      "Type a URL or a competitor's handle and watch real analysis happen in your browser. The crawl, the 90 checks, the voice comparison and the social teardown all run without us knowing who you are, and the results are yours to export.",
+    n: "1",
+    title: "Try a free tool",
+    cost: "Costs: nothing",
+    body: "Paste a URL or a rival's handle. Real results, in your browser, in seconds.",
     links: [
-      { href: "/tools/social-teardown", label: "Tear down a competitor", primary: true },
-      { href: "/tools/voice-check", label: "Check a page against its rivals" },
-      { href: "/tools", label: "All free tools" },
+      { href: "/tools", label: "Pick a tool", primary: true },
     ],
   },
   {
-    n: "02",
-    title: "Watch a whole account run",
-    cost: "Still nothing",
-    body:
-      "Our own site, open, with the findings we have not fixed left in it. This is the workspace a paying account sees: the director's brief, the queue, the fixes already written, and the one row that refuses to score itself because a connection is missing.",
-    links: [{ href: "/inside", label: "Look inside a live account", primary: true }],
+    n: "2",
+    title: "Peek at a live account",
+    cost: "Costs: still nothing",
+    body: "Our own site, with the stuff we haven't fixed yet left in. That's the real dashboard.",
+    links: [{ href: "/inside", label: "Look inside", primary: true }],
   },
   {
-    n: "03",
-    title: "Point it at your own site",
-    cost: "A URL. A card only if you want work shipped for you",
-    body:
-      "This is the dashboard. One workspace per site, a desk down the left for each team you have turned on, an approval queue in the middle, and a report that reads flat as flat. The free tier crawls and writes the fixes; a plan is what lets the agents push them.",
-    links: [
-      { href: "/app/new", label: "Open a workspace", primary: true },
-      { href: "/pricing", label: "What a plan costs" },
-    ],
+    n: "3",
+    title: "Point it at your site",
+    cost: "Costs: a URL. A card only if you want us shipping fixes",
+    body: "Your own workspace. Every fix written free. A plan lets us push them live.",
+    links: [{ href: "/app/new", label: "Audit my site", primary: true }],
   },
 ];
 
-export function TheFlow({ heading = "Where the product is, in three clicks" }: { heading?: string }) {
+export function TheFlow({ heading = "Three clicks to the real thing." }: { heading?: string }) {
   return (
     <div>
-      <h2 className="section-title small-title">{heading}</h2>
+      <h2 className="section-title">{heading}</h2>
       <div className="flow-steps">
         {STEPS.map((step) => (
           <div key={step.n} className="flow-step">

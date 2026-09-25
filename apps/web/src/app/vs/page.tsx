@@ -27,28 +27,24 @@ export default function VersusIndex() {
         }}
       />
 
-      <section className="section">
-        <div className="eyebrow">Against an agency</div>
-        <h1 className="section-title">Four comparisons, one per desk.</h1>
-        <p className="section-lede">
-          Somebody weighing an SEO retainer is making a different decision from somebody weighing a PPC one, so one
-          generic page about agencies answers neither. Each table below lists the rows an agency genuinely wins, and
-          each page ends with the cases where we would tell you to hire them.
-        </p>
+      <section className="section fresh-hero">
+        <div className="eyebrow"><span className="dot" aria-hidden="true" />Us vs an agency</div>
+        <h1 className="hero-title">Us vs an agency. <span className="hl">Honestly.</span></h1>
+        <p className="hero-lede">One comparison per desk, including the rows they win.</p>
       </section>
 
       <section className="section section-tight">
-        <div className="card-grid">
+        <div className="mini-tools">
           {VERSUS.map((v) => {
             const desk = deskByKey(v.desk)!;
             const manager = managerFor(desk);
             const wins = v.rows.filter((r) => r.winner === "here").length;
             const losses = v.rows.filter((r) => r.winner === "agency").length;
             return (
-              <Link href={`/vs/${v.slug}`} className="card link-card" key={v.slug}>
-                <h3>{v.title}</h3>
-                <p>{v.description}</p>
-                <span className="small">
+              <Link href={`/vs/${v.slug}`} className="mini-tool" key={v.slug}>
+                <strong>{v.title}</strong>
+                <span>{v.description}</span>
+                <span className="tag go" style={{ alignSelf: "flex-start", marginTop: "0.4rem" }}>
                   {manager.status === "live"
                     ? `${wins} rows to us, ${losses} to them`
                     : `Desk opens ${manager.opens}. ${losses} rows to them.`}
@@ -60,10 +56,10 @@ export default function VersusIndex() {
       </section>
 
       <CtaBand
-        title="Or skip the comparison and look at the work"
-        body="A real account on our own site, running live, with the findings we have not fixed still in it."
-        primary={{ href: "/inside", label: "Look inside a live account" }}
-        secondary={{ href: "/the-firm", label: "Meet the firm" }}
+        title="Or skip the comparison. Watch the work."
+        body="A real account on our own site, running live, unfixed bits and all."
+        primary={{ href: "/inside", label: "Look inside" }}
+        secondary={{ href: "/app/new", label: "Audit my site free" }}
       />
     </MarketingChrome>
   );

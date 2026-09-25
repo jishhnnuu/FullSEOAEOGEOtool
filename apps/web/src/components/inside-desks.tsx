@@ -3,14 +3,16 @@
 import Link from "next/link";
 import { useState } from "react";
 
+import { AdBudgetTool } from "@/components/ad-budget-tool";
 import { InsideAccount } from "@/components/inside-account";
 import { SocialTeardownTool } from "@/components/social-teardown-tool";
 import { VoiceTool } from "@/components/voice-tool";
+import { CATALOG_SIZE } from "@/engine/catalog";
 import { SITE_URL } from "@/lib/brand";
 import { MANAGERS } from "@/lib/org";
 
 /*
- * Three desks, three live tools, one page.
+ * Four desks, four live tools, one page.
  *
  * The first version of this page ran an SEO crawl of our own site and nothing
  * else, which meant two of the three built desks had nothing a visitor could
@@ -24,21 +26,34 @@ import { MANAGERS } from "@/lib/org";
  * that says so on screen.
  */
 
-type DeskKey = "search" | "content" | "social";
+type DeskKey = "search" | "content" | "social" | "paid";
 
 const TABS: { key: DeskKey; label: string; claim: string }[] = [
-  { key: "search", label: "Search", claim: "A real crawl, 90 checks, and the fixes already written" },
-  { key: "content", label: "Content", claim: "Your writing measured against the pages you compete with" },
-  { key: "social", label: "Social", claim: "A competitor's posts, and what actually worked for them" },
+  { key: "search", label: "Search", claim: "Our site, crawled live, fixes written" },
+  { key: "content", label: "Content", claim: "Any page, measured against its rivals" },
+  { key: "social", label: "Social", claim: "A rival's posts, and which ones worked" },
+  { key: "paid", label: "Paid", claim: "Will your ad budget actually work?" },
 ];
+
+/** The closing line under each tab: one sentence, one button. */
+function TryBand({ title, body, href, label, primary }: { title: string; body: string; href: string; label: string; primary?: boolean }) {
+  return (
+    <div className="try-band">
+      <div>
+        <strong>{title}</strong>
+        <p className="small muted" style={{ margin: "0.2rem 0 0" }}>{body}</p>
+      </div>
+      <Link href={href} className={primary ? "big-button primary" : "big-button"}>{label}</Link>
+    </div>
+  );
+}
 
 export function InsideDesks() {
   const [tab, setTab] = useState<DeskKey>("search");
-  const manager = MANAGERS.find((m) => m.key === tab);
 
   return (
     <div>
-      <div className="desk-tabs" role="tablist">
+      <div className="desk-tabs four" role="tablist">
         {TABS.map((t) => {
           const m = MANAGERS.find((x) => x.key === t.key);
           return (
@@ -46,6 +61,7 @@ export function InsideDesks() {
               key={t.key}
               type="button"
               role="tab"
+              data-desk={t.key}
               aria-selected={tab === t.key}
               className={tab === t.key ? "desk-tab on" : "desk-tab"}
               onClick={() => setTab(t.key)}
@@ -58,76 +74,65 @@ export function InsideDesks() {
         })}
       </div>
 
-      {manager && (
-        <p className="small muted" style={{ marginTop: "0.9rem" }}>
-          <strong>{manager.name}.</strong> {manager.remit}
-        </p>
-      )}
-
       {tab === "search" && (
-        <div style={{ marginTop: "1.1rem" }}>
-          <h3 className="section-title small-title">Our own site, crawled right now</h3>
+        <div style={{ marginTop: "1.4rem" }}>
           <p className="small muted">
-            Not a screenshot and not a cached result. This fetches our pages, parses them, runs the
-            catalogue and generates the fixes while you watch, which is why it takes a moment and
-            why it looks different next week.
+            Live, not a screenshot. It crawls our own pages right now, so it takes a moment and changes week to week.
           </p>
           <InsideAccount />
-          <div className="try-band">
-            <div>
-              <strong>Now run it on yours</strong>
-              <p className="small muted" style={{ margin: "0.2rem 0 0" }}>
-                The same engine and the same 90 checks, about four minutes, in your browser. No
-                account and no card.
-              </p>
-            </div>
-            <Link href="/app/new" className="button primary">See what we would fix</Link>
-          </div>
+          <TryBand
+            title="Now do yours"
+            body={`Same engine, same ${CATALOG_SIZE} checks, about four minutes. No account.`}
+            href="/app/new"
+            label="Audit my site free"
+            primary
+          />
         </div>
       )}
 
       {tab === "content" && (
-        <div style={{ marginTop: "1.1rem" }}>
-          <h3 className="section-title small-title">Measure a page against the field</h3>
+        <div style={{ marginTop: "1.4rem" }}>
           <p className="small muted">
-            Counting rather than judgement: rhythm, hedging, marketing filler, specifics, reading
-            grade and who the page talks about. No model reads it and no key is needed. Our own page
-            is in the box to start with, so you can run it before typing anything.
+            Counts, not opinions: rhythm, filler, specifics and reading level. No AI, no key. Our page is in the box
+            already, so just press go.
           </p>
           <VoiceTool defaultMine={SITE_URL} />
-          <div className="try-band">
-            <div>
-              <strong>This is one of fourteen things the content desk does</strong>
-              <p className="small muted" style={{ margin: "0.2rem 0 0" }}>
-                The rest, the point of view, the briefs, the drafting and the three edit gates, run
-                inside an account because they work against your own approved argument.
-              </p>
-            </div>
-            <Link href="/content" className="button">Read the content desk</Link>
-          </div>
+          <TryBand
+            title="That's one trick of many"
+            body="Inside an account the desk also briefs, drafts and edits against your own point of view."
+            href="/content"
+            label="Meet the content desk"
+          />
         </div>
       )}
 
       {tab === "social" && (
-        <div style={{ marginTop: "1.1rem" }}>
-          <h3 className="section-title small-title">Tear down a competitor</h3>
+        <div style={{ marginTop: "1.4rem" }}>
           <p className="small muted">
-            Type any public YouTube handle and this runs immediately, with no key and no account,
-            from the channel&rsquo;s own public feed. It reads the fifteen most recent uploads and
-            says so above the numbers. A free key of your own reads a hundred.
+            Type any public YouTube handle. It reads the fifteen latest uploads from the public feed, no key needed.
           </p>
           <SocialTeardownTool />
-          <div className="try-band">
-            <div>
-              <strong>No impressions appear anywhere in that output</strong>
-              <p className="small muted" style={{ margin: "0.2rem 0 0" }}>
-                They cannot. Impressions and reach are computed by a platform for the account owner
-                and exposed only through that owner&rsquo;s own token, so every competitor reach
-                figure you have been shown by anyone was estimated from follower count.
-              </p>
-            </div>
-            <Link href="/social" className="button">What each platform allows</Link>
-          </div>
+          <TryBand
+            title="Notice: no impressions anywhere"
+            body="Only the account owner can see those. Anyone showing you a rival's reach made it up."
+            href="/social"
+            label="Meet the social desk"
+          />
+        </div>
+      )}
+
+      {tab === "paid" && (
+        <div style={{ marginTop: "1.4rem" }}>
+          <p className="small muted">
+            Three numbers in, a straight answer out. The maths an agency on commission never shows you.
+          </p>
+          <AdBudgetTool />
+          <TryBand
+            title="The maths is the easy bit"
+            body="The desk takes it from here: tracking checked, ads built paused, results you can trust."
+            href="/paid"
+            label="Meet the paid desk"
+          />
         </div>
       )}
     </div>

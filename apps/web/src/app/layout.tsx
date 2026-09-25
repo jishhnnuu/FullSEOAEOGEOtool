@@ -1,9 +1,25 @@
 import type { Metadata } from "next";
+import { Bricolage_Grotesque } from "next/font/google";
 
 import { BRAND, DESCRIPTION, IS_LAUNCHED, OG_IMAGE, SITE_URL, TAGLINE } from "@/lib/brand";
 import { graph, organizationNode, softwareNode, websiteNode } from "@/lib/schema";
 
 import "./globals.css";
+
+/*
+ * The display face, self-hosted.
+ *
+ * next/font downloads it at build time and serves it from our own domain, so
+ * no visitor's browser asks Google for anything to render a heading. The
+ * privacy page promises no third-party requests of that kind, and a font CDN
+ * would quietly break the promise on every page view.
+ */
+const display = Bricolage_Grotesque({
+  subsets: ["latin"],
+  weight: ["500", "700", "800"],
+  variable: "--font-display",
+  display: "swap",
+});
 
 /**
  * Nothing here names the product directly.
@@ -54,7 +70,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
+    <html lang="en" className={display.variable}>
       <head>
         {/*
           One graph, not three script tags. Defining the organisation once and

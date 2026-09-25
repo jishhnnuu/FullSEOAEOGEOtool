@@ -62,6 +62,7 @@ function NewSite() {
     if (prefill) setForm((f) => (f.url ? f : { ...f, url: prefill }));
   }, [params]);
 
+
   const set = <K extends keyof typeof form>(key: K) => (value: (typeof form)[K]) =>
     setForm((current) => ({ ...current, [key]: value }));
 
@@ -142,6 +143,24 @@ function NewSite() {
     }
   }
 
+  /*
+   * Arriving from the homepage URL box means the visitor has already said
+   * what they want. Making them confirm it on a second form and then choose a
+   * business type on a third added three clicks between "paste" and "watch",
+   * which is exactly where people leave. So `go=1` starts the run as soon as
+   * the address is in. Every setting it skips has a sensible default and can
+   * be changed afterwards in the site's settings.
+   */
+  const autoStarted = useRef(false);
+  useEffect(() => {
+    if (autoStarted.current) return;
+    if (params.get("go") !== "1" || step !== 1 || !domain) return;
+    autoStarted.current = true;
+    void begin();
+    // begin is recreated every render; the ref makes this fire exactly once.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [params, domain, step]);
+
   if (step === 3) {
     return <RunningView progress={progress} error={error} domain={domain} onStop={() => stopRef.current?.()} />;
   }
@@ -153,10 +172,10 @@ function NewSite() {
       </Link>
 
       <PageHeader
-        title={step === 1 ? "Audit a website" : "Sharpen the run"}
+        title={step === 1 ? "What's your website?" : "Sharpen the run"}
         description={
           step === 1
-            ? "This crawls the real site and runs the whole check catalogue. Nothing is connected, nothing is charged, and nothing is published."
+            ? "We read every page and write the fixes. Nothing gets connected, charged or published."
             : "All of this is optional. Each answer makes the keyword model, the gap analysis and the local checks more specific."
         }
       />
@@ -207,11 +226,13 @@ function NewSite() {
           {error && <Notice kind="bad">{error}</Notice>}
 
           <div className="button-row" style={{ marginTop: "1rem" }}>
-            <button className="primary" onClick={() => (domain ? setStep(2) : setError("Enter a website address first."))}>
-              Continue
+            {/* The fast path is the primary action: the details below sharpen
+                the run, but nobody should have to answer them to see results. */}
+            <button className="primary" onClick={() => (domain ? void begin() : setError("Pop your website address in first."))}>
+              Run my audit &rarr;
             </button>
-            <button className="ghost" onClick={begin} disabled={!domain}>
-              Skip and run now
+            <button onClick={() => (domain ? setStep(2) : setError("Pop your website address in first."))}>
+              Add more detail first
             </button>
           </div>
         </Card>

@@ -40,14 +40,10 @@ export default function GlossaryPage() {
         }}
       />
 
-      <section className="section">
-        <div className="eyebrow">Glossary</div>
-        <h1 className="section-title">The terms that actually decide anything.</h1>
-        <p className="section-lede">
-          {entries.length} definitions, each one for a term this product implements a check or a fix for. A glossary
-          of words the software does not touch is padding, so there is no entry here that does not link to the thing
-          that acts on it.
-        </p>
+      <section className="section fresh-hero">
+        <div className="eyebrow"><span className="dot" aria-hidden="true" />Glossary</div>
+        <h1 className="hero-title">Marketing jargon, <span className="hl">decoded.</span></h1>
+        <p className="hero-lede">{entries.length} terms, each one linked to the check or fix that acts on it.</p>
       </section>
 
       <section className="section section-tight">

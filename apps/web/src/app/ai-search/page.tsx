@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { CtaBand, MarketingChrome } from "@/components/marketing";
 import { AI_CRAWLER_LIST } from "@/engine/robots";
 
@@ -39,29 +40,26 @@ const STEPS = [
 export default function AiSearchPage() {
   return (
     <MarketingChrome>
-      <section className="section">
-        <div className="eyebrow">AEO and GEO</div>
-        <h1 className="section-title" style={{ fontSize: "clamp(1.9rem, 4vw, 2.6rem)" }}>
-          Being cited is the new being ranked.
-        </h1>
-        <p className="section-lede">
-          When a question is answered inside ChatGPT, Perplexity, Gemini or an AI Overview, the click never
-          happens. What happens instead is a citation, and citations go to pages a model could fetch, parse and
-          trust. Almost none of that is the same work as ranking, and almost no tool checks it.
-        </p>
-        <div className="notice" style={{ maxWidth: "72ch" }}>
-          <p style={{ margin: 0 }}>
-            <strong>The specialist tools measure share of voice.</strong> Very few of them treat an engine stating
-            your wrong price, or claiming you have closed, as the urgent revenue problem it is. Accuracy is
-            checked here alongside visibility, against a ledger of facts you control.
-          </p>
+      <section className="section fresh-hero">
+        <div className="eyebrow"><span className="dot" aria-hidden="true" />AEO and GEO</div>
+        <h1 className="hero-title">Get <span className="hl">cited</span>, not just ranked.</h1>
+        <p className="hero-lede">When ChatGPT or Google&rsquo;s AI answers, nobody clicks. They read who got quoted. We make you quotable.</p>
+        <div className="hero-actions">
+          <Link href="/tools/ai-crawler-check" className="big-button primary">Can AI read my site? &rarr;</Link>
+          <Link href="/app/new" className="big-button">Full audit</Link>
         </div>
       </section>
 
-      <section className="section section-tight">
-        <div className="eyebrow">The method</div>
-        <h2 className="section-title">Five questions, in order.</h2>
-        <div className="timeline" style={{ marginTop: "2rem", maxWidth: "64ch" }}>
+      <section className="section section-alt">
+        <h2 className="section-title">Four questions, then the fix.</h2>
+        <p className="section-lede">
+          Can the engine reach you? Can it read you? Does it know who you are? Is anything worth quoting? Then we
+          fix whatever said no.
+        </p>
+        <details className="acc">
+          <summary>The method, step by step</summary>
+          <div className="acc-body">
+        <div className="timeline" style={{ maxWidth: "64ch" }}>
           {STEPS.map((step) => (
             <div className="timeline-item" key={step.n}>
               <div className="timeline-when">{step.n}</div>
@@ -70,16 +68,12 @@ export default function AiSearchPage() {
             </div>
           ))}
         </div>
-      </section>
-
-      <section className="section section-alt">
-        <div style={{ padding: "0 1.5rem" }}>
-          <div className="eyebrow">Crawler access</div>
-          <h2 className="section-title">The twelve agents checked on every run.</h2>
-          <p className="section-lede">
-            Each one is evaluated against your robots.txt with the same longest-match rule a real crawler uses, so
-            an allow buried under a wildcard disallow is resolved correctly rather than guessed at.
-          </p>
+          </div>
+        </details>
+        <details className="acc">
+          <summary>The {AI_CRAWLER_LIST.length} AI crawlers we check on every run</summary>
+          <div className="acc-body" style={{ maxWidth: "none" }}>
+          <p>Each one is tested against your robots.txt with the same longest-match rule a real crawler uses.</p>
           <div className="table-scroll">
             <table>
               <thead>
@@ -95,12 +89,12 @@ export default function AiSearchPage() {
               </tbody>
             </table>
           </div>
-        </div>
+          </div>
+        </details>
       </section>
 
       <section className="section">
-        <div className="eyebrow">What gets generated</div>
-        <h2 className="section-title">Not advice. Artefacts.</h2>
+        <h2 className="section-title">Not advice. The actual files.</h2>
         <div className="feature-grid">
           <div className="feature">
             <span className="tag">File</span>
@@ -154,8 +148,9 @@ export default function AiSearchPage() {
       </section>
 
       <CtaBand
-        title="Find out which engines can currently reach you"
-        body="The crawler check runs in the first few seconds of any audit, before the crawl proper starts. No account needed."
+        title="Can ChatGPT even see you?"
+        body="Find out in about ten seconds. Free, no account."
+        primary={{ href: "/tools/ai-crawler-check", label: "Check my site" }}
       />
     </MarketingChrome>
   );

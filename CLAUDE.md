@@ -329,6 +329,14 @@ style disagreement.
   noindex with an empty sitemap, on purpose: a subdomain that gets indexed and
   then moves leaves a duplicate competing with the real domain for its own
   terms.
+- **The action goes first, and detail is opt-in.** The public site once held
+  the URL box until section eight of nine, and the person it was built for
+  read every page and could not find where the product was. Every public page
+  now opens with a headline under eight words, one line, and the thing to do.
+  Long honest detail (refusals, methodology, caveats) is kept, never deleted,
+  but it lives in `.acc` accordions so it is one click away rather than in the
+  way. `docs/VOICE-AND-LOOK.md` has the voice, the palette and the rules; a
+  page that breaks them is wrong, not the rules.
 - **Our own site passes our own checks.** `npm run seo:check` requires one h1,
   a meta description and a self-referential canonical on every public page, and
   `/proof` runs the real audit against this deployment and publishes what it

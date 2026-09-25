@@ -21,7 +21,11 @@ export function MarketingChrome({ children }: { children: React.ReactNode }) {
   );
 }
 
-/** The public site's header. Nothing here is behind a sign-in. */
+/**
+ * The header. The button on the right is the action, not a tour: it starts
+ * an audit. Everything else is one word, because a nav bar is not a place to
+ * explain anything.
+ */
 export function SiteHeader() {
   return (
     <header className="site-header">
@@ -30,16 +34,15 @@ export function SiteHeader() {
           <span className="dot" aria-hidden="true" />
           {BRAND}
         </Link>
-        {/* Ordered by what a stranger is choosing between, not by what we built first. */}
         <nav className="site-nav">
           <Link href="/seo" className="hide-sm">Search</Link>
           <Link href="/content" className="hide-sm">Content</Link>
           <Link href="/social" className="hide-sm">Social</Link>
+          <Link href="/paid" className="hide-sm">Paid</Link>
           <Link href="/tools" className="hide-sm">Free tools</Link>
-          <Link href="/the-firm" className="hide-sm">The firm</Link>
           <Link href="/pricing">Pricing</Link>
-          <Link href="/app/signin">Sign in</Link>
-          <Link href="/inside" className="cta">Look inside</Link>
+          <Link href="/app/signin" className="hide-sm">Sign in</Link>
+          <Link href="/app/new" className="cta">Audit my site</Link>
         </nav>
       </div>
     </header>
@@ -55,80 +58,63 @@ export function SiteFooter() {
             <span className="dot" aria-hidden="true" />
             {BRAND}
           </div>
-          <p className="small muted" style={{ maxWidth: "30ch" }}>
-            Everything an agency does, done by specialists you can watch, question and stop.
+          <p className="small muted" style={{ maxWidth: "28ch" }}>
+            {headcount()} AI marketers. One inbox. No meetings.
           </p>
         </div>
         <div>
-          <h4>The desks</h4>
+          <h4>Desks</h4>
           <Link href="/seo">Search</Link>
           <Link href="/content">Content</Link>
-          <Link href="/paid">Paid ads</Link>
           <Link href="/social">Social</Link>
-          <Link href="/the-whole-agency">Every desk, one plan</Link>
+          <Link href="/paid">Paid ads</Link>
+          <Link href="/the-whole-agency">All of them</Link>
         </div>
         <div>
-          <h4>The firm</h4>
-          <Link href="/the-firm">All {headcount()} specialists</Link>
-          <Link href="/inside">Look inside a live account</Link>
-          <Link href="/how-it-works">How a run works</Link>
-          <Link href="/platform">Every capability</Link>
+          <h4>Free tools</h4>
+          <Link href="/app/new">Audit my site</Link>
+          <Link href="/tools/social-teardown">Spy on a competitor</Link>
+          <Link href="/tools/ad-budget-check">Check my ad budget</Link>
+          <Link href="/tools/voice-check">Test my writing</Link>
+          <Link href="/tools">All tools</Link>
+        </div>
+        <div>
+          <h4>Company</h4>
+          <Link href="/the-firm">The team</Link>
+          <Link href="/inside">Look inside</Link>
           <Link href="/pricing">Pricing</Link>
-        </div>
-        <div>
-          <h4>Compare</h4>
-          <Link href="/vs">Against an agency</Link>
-          <Link href="/vs/seo-agency">Vs an SEO agency</Link>
-          <Link href="/vs/content-agency">Vs a content agency</Link>
-          <Link href="/compare">Against other tools</Link>
-          <Link href="/compare/semrush">Vs Semrush</Link>
-        </div>
-        <div>
-          <h4>Run something now</h4>
-          <Link href="/tools/social-teardown">Tear down a competitor</Link>
-          <Link href="/tools/voice-check">Check a page against its rivals</Link>
-          <Link href="/tools/ad-budget-check">Check an ad budget</Link>
-          <Link href="/tools">All free tools</Link>
-          <Link href="/app/new">Audit your own site</Link>
-        </div>
-        <div>
-          <h4>Learn</h4>
-          <Link href="/library">The check library</Link>
-          <Link href="/glossary">Glossary</Link>
-          <Link href="/ai-crawlers-and-javascript">AI crawlers and JavaScript</Link>
-          <Link href="/research/ai-crawler-access">The 100-site study</Link>
+          <Link href="/vs">Us vs an agency</Link>
           <Link href="/proof">Our own audit</Link>
         </div>
         <div>
-          <h4>Trust</h4>
-          <Link href="/security">Security and data</Link>
-          <Link href="/privacy">Privacy policy</Link>
-          <Link href="/terms">Terms of use</Link>
-          <Link href="/security#standalone">Runs without us</Link>
-          <Link href="/proof">Our own audit, in public</Link>
-          <a href="https://github.com/jishhnnuu/fullseoaeogeotool" target="_blank" rel="noopener noreferrer">
-            Source
-          </a>
+          <h4>Learn</h4>
+          <Link href="/library">Every check we run</Link>
+          <Link href="/glossary">Glossary</Link>
+          <Link href="/compare">Compare tools</Link>
+          <Link href="/ai-search">AI search</Link>
         </div>
         <div>
-          <h4>Start</h4>
-          <Link href="/inside">Look inside a live account</Link>
-          <Link href="/app/new">See what we would fix</Link>
-          <Link href="/app/signin">Sign in</Link>
+          <h4>Legal</h4>
+          <Link href="/privacy">Privacy</Link>
+          <Link href="/terms">Terms</Link>
+          <Link href="/security">Security</Link>
         </div>
       </div>
       <div className="site-footer-bottom">
-        <span>{BRAND}. Self-hostable, open source, and usable without an account.</span>
-        <span>Search, answer engines and generative engines: SEO, AEO and GEO.</span>
+        <span>&copy; {BRAND}. Made with an unreasonable number of checks.</span>
+        <span>SEO, AEO, GEO, content, social and paid.</span>
       </div>
     </footer>
   );
 }
 
+/**
+ * The closing band on every page: one line, one action.
+ */
 export function CtaBand({
-  title = "See what we would fix on your site this week",
-  body = "No account, no card, no connections. Enter an address and watch the crawl run. You keep everything it produces.",
-  primary = { href: "/app/new", label: "See what we would fix this week" },
+  title = "Ready when you are.",
+  body = "Paste your URL and see what we'd fix. Free, no signup, about four minutes.",
+  primary = { href: "/app/new", label: "Audit my site free" },
   secondary,
 }: {
   title?: string;
@@ -142,9 +128,9 @@ export function CtaBand({
         <h2>{title}</h2>
         <p>{body}</p>
         <div className="hero-actions" style={{ justifyContent: "center" }}>
-          <Link href={primary.href} className="button primary big-button">{primary.label}</Link>
+          <Link href={primary.href} className="big-button primary">{primary.label}</Link>
           {secondary && (
-            <Link href={secondary.href} className="button big-button">{secondary.label}</Link>
+            <Link href={secondary.href} className="big-button">{secondary.label}</Link>
           )}
         </div>
       </div>

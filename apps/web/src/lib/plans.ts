@@ -74,7 +74,7 @@ export const PLANS: Record<PlanId, Plan> = {
     amount: 0,
     currency: "GBP",
     per: "forever, no account",
-    blurb: "Anyone who wants to see what is actually wrong before deciding anything.",
+    blurb: "See what's broken before you decide anything.",
     limits: {
       pagesPerRun: 40,
       sites: 1,
@@ -90,12 +90,11 @@ export const PLANS: Record<PlanId, Plan> = {
       paidDesk: false,
     },
     features: [
-      "The full check catalogue on every run",
-      "Up to 40 pages crawled per run",
-      "Every fix that can be generated, generated",
-      "AI crawler access and extractability checks",
-      "Content gaps and three briefs",
-      "Export everything as JSON",
+      "Every check we run, on up to 40 pages",
+      "Every fix written for you",
+      "See if AI tools can read your site",
+      "Three content briefs",
+      "Take it all with you as a file",
     ],
   },
   starter: {
@@ -104,7 +103,7 @@ export const PLANS: Record<PlanId, Plan> = {
     amount: 7900,
     currency: "GBP",
     per: "per site, per month",
-    blurb: "A single site that wants the work done rather than described.",
+    blurb: "Your SEO, fixed for you. One site.",
     limits: {
       pagesPerRun: 250,
       sites: 1,
@@ -120,14 +119,12 @@ export const PLANS: Record<PlanId, Plan> = {
       paidDesk: false,
     },
     features: [
-      "Everything in Free",
-      "Up to 250 pages crawled per run",
-      "Weekly scheduled runs, with nobody watching",
-      "Full run history and change reporting",
-      "Search Console and Analytics connected",
-      "Approval queue with autonomy levels",
-      "Publishing to WordPress, Shopify, Webflow or a webhook",
-      "AI answer visibility on your own model key",
+      "Everything in Free, on up to 250 pages",
+      "Fixes pushed live to WordPress, Shopify, Webflow and more",
+      "Weekly check-ups, while you sleep",
+      "Google Search Console and Analytics plugged in",
+      "You choose what needs your yes",
+      "See if ChatGPT and friends mention you",
     ],
   },
   growth: {
@@ -136,7 +133,7 @@ export const PLANS: Record<PlanId, Plan> = {
     amount: 24900,
     currency: "GBP",
     per: "per site, per month",
-    blurb: "The plan that actually replaces a retainer. Content, local and links included.",
+    blurb: "The whole team. Replaces your agency.",
     limits: {
       pagesPerRun: 2000,
       sites: 1,
@@ -152,15 +149,13 @@ export const PLANS: Record<PlanId, Plan> = {
       paidDesk: true,
     },
     features: [
-      "Everything in Starter",
-      "Up to 2,000 pages crawled per run",
-      "Content production on your cadence, with the quality gates",
-      "Local cycle: profile, posts, review replies, citations",
-      "Link prospecting and outreach from your own domain",
-      "Monthly narrative report with the trace behind every claim",
-      "The content desk: one argued point of view, briefs, drafts and three edit gates",
-      "The social desk: competitor teardowns, share of voice and a drafted calendar",
-      "The paid desk: readiness gate, budget arithmetic, creative specs and reconciled reporting",
+      "Everything in Starter, on up to 2,000 pages",
+      "The content desk: posts written in your voice",
+      "The social desk: rival teardowns and a drafted calendar",
+      "The paid desk: ads planned, built and honestly reported",
+      "Local: your Google profile, posts and review replies",
+      "Link outreach, drafted from your own inbox",
+      "A monthly report that shows its working",
     ],
   },
   scale: {
@@ -169,7 +164,7 @@ export const PLANS: Record<PlanId, Plan> = {
     amount: 0,
     currency: "GBP",
     per: "multi-site and white label",
-    blurb: "Agencies running this for their own clients, and companies with a portfolio of sites.",
+    blurb: "Lots of sites, or an agency with clients.",
     limits: {
       pagesPerRun: 10000,
       sites: 1000,
@@ -185,11 +180,11 @@ export const PLANS: Record<PlanId, Plan> = {
       paidDesk: true,
     },
     features: [
-      "Everything in Growth, across every site",
+      "Everything in Growth, on every site",
       "Unlimited sites and seats",
-      "Client-facing reports under your own brand",
-      "Self-hosted deployment, or we run it",
-      "Priority on connector work you need",
+      "Reports under your own brand",
+      "Run it on your servers, or ours",
+      "First in line for the integrations you need",
     ],
   },
 };
@@ -204,7 +199,7 @@ export function planOf(id: string | null | undefined): Plan {
 }
 
 export function priceLabel(plan: Plan): string {
-  if (plan.id === "scale") return "Talk to us";
+  if (plan.id === "scale") return "Custom";
   if (plan.amount === 0) return "£0";
   return `£${Math.round(plan.amount / 100)}`;
 }

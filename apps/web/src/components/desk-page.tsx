@@ -2,7 +2,7 @@ import Link from "next/link";
 
 import { CtaBand, MarketingChrome } from "@/components/marketing";
 import { DESKS, deskPrice, managerFor, WHOLE_AGENCY, type Desk } from "@/lib/desks";
-import { PLANS, priceLabel } from "@/lib/plans";
+import { PLANS } from "@/lib/plans";
 import { breadcrumbNode, faqNode, graph } from "@/lib/schema";
 
 /**
@@ -10,40 +10,42 @@ import { breadcrumbNode, faqNode, graph } from "@/lib/schema";
  *
  * Four front doors rather than one page with a word swapped, because search
  * demand is service shaped and so is budget. Somebody arrives having typed
- * "seo agency", not "digital marketing platform", and they have a line in a
- * budget for exactly the thing they typed.
+ * "seo agency", not "digital marketing platform".
  *
- * A desk that is not built says so here, with the quarter it opens and what it
- * will refuse to do. That costs some visitors. The alternative, a page
- * implying a service exists, costs the only asset this business has.
- */
-/**
+ * The page is built the way docs/VOICE-AND-LOOK.md says: the thing to try is
+ * in the hero, every section is a headline and a line, and the long honest
+ * parts (where the desk stops, what it refuses, who is on it) sit in
+ * accordions. They are still on the page and still in the FAQ markup, so
+ * nothing true was deleted to make it shorter.
+ *
  * `extra` is a slot for the one thing a desk needs that the others do not.
- *
  * Paid uses it for the platform access table, because that desk is the only
- * one whose availability depends on somebody else's review queue and the
- * honest thing is to publish our position in it.
+ * one whose availability depends on somebody else's review queue.
  */
 export function DeskPage({ desk, extra }: { desk: Desk; extra?: React.ReactNode }) {
   const manager = managerFor(desk);
-  const open = manager.status === "live";
   const plan = desk.requiresPlan ? PLANS[desk.requiresPlan] : null;
   const others = DESKS.filter((d) => d.key !== desk.key);
+  const n = manager.team.length;
 
   const faq = [
     {
-      q: `What does the ${manager.name.toLowerCase()} desk actually do?`,
+      q: `What does the ${desk.label.toLowerCase()} desk do?`,
       a: desk.work.map((w) => w.title).join(". ") + ".",
     },
     {
-      q: `What will it refuse to do?`,
+      q: "What can it do today?",
+      a: manager.delivers,
+    },
+    {
+      q: "What will it refuse to do?",
       a: manager.refusals[0],
     },
     {
-      q: open ? "What does it cost?" : "When does it open?",
-      a: open
-        ? `${deskPrice(desk)} per site per month on the ${plan?.name} plan. No retainer, no minimum term, no onboarding fee, and no call to book. An agency charges ${desk.agencyPrice} for the same scope.`
-        : `${manager.opens}. Until then this page exists so you can see what it will do and what it will refuse, and nothing on it implies the desk is running.`,
+      q: "What does it cost?",
+      a: plan
+        ? `${deskPrice(desk)} per site per month on the ${plan.name} plan. No retainer, no minimum term, no call to book. An agency charges ${desk.agencyPrice} for the same scope.`
+        : deskPrice(desk),
     },
   ];
 
@@ -62,157 +64,136 @@ export function DeskPage({ desk, extra }: { desk: Desk; extra?: React.ReactNode 
         }}
       />
 
-      <section className="section">
+      {/* 1. The claim, and the thing to try, in the desk's own colour. */}
+      <section className="section section-alt desk-hero-band" data-desk={desk.key}>
         <div className="eyebrow">
-          {open ? `${manager.team.length} specialists, working now` : `Not built yet · opens ${manager.opens}`}
+          <span className="dot" aria-hidden="true" />
+          {n} specialists &middot; {desk.ready.label}
         </div>
         <h1 className="hero-title">{desk.headline}</h1>
-        <p className="hero-lede">
-          {open ? `${manager.team.length} specialists. ` : ""}{desk.lede}
-        </p>
+        <p className="hero-lede">{desk.lede}</p>
         <div className="hero-actions">
-          {open ? (
-            <>
-              <Link href="/inside" className="button primary big-button">Look inside a live account</Link>
-              <Link href="/app/new" className="button big-button">See what we would fix this week</Link>
-            </>
-          ) : (
-            <>
-              <Link href="/the-firm" className="button primary big-button">See the desks that are built</Link>
-              <Link href="/inside" className="button big-button">Look inside a live account</Link>
-            </>
-          )}
+          <Link href={desk.tryIt.href} className="big-button primary">{desk.tryIt.label} &rarr;</Link>
+          <Link href="#price" className="big-button">See the price</Link>
         </div>
-        <p className="small faint" style={{ marginTop: "0.9rem" }}>Written for: {desk.audience}</p>
       </section>
 
-      {/* The objection this buyer actually arrives with, answered before anything else. */}
-      <section className="section section-alt">
-        <div className="eyebrow">The thing you are thinking</div>
-        <blockquote className="worry">{desk.worry}</blockquote>
-        <p className="section-lede" style={{ marginTop: "1rem" }}>{desk.answer}</p>
-      </section>
-
+      {/* 2. The objection this buyer arrives with, answered in one line. */}
       <section className="section">
-        <div className="eyebrow">The work</div>
-        <h2 className="section-title">
-          {open ? "What this desk does, and what it applies rather than recommends." : "What this desk will do."}
-        </h2>
-        <div className="card-grid">
+        <blockquote className="worry-quote">{desk.worry}</blockquote>
+        <p className="section-lede" style={{ marginBottom: 0 }}>{desk.answer}</p>
+      </section>
+
+      {/* 3. The work, with who presses the button on each piece. */}
+      <section className="section section-alt">
+        <h2 className="section-title">What you get.</h2>
+        <div className="work-grid" style={{ marginTop: "1.4rem" }}>
           {desk.work.map((item) => (
-            <div className="card" key={item.title}>
+            <div className="work-card" key={item.title}>
               <h3>{item.title}</h3>
               <p>{item.body}</p>
-              {open && (
-                <span className="small" style={{ color: item.applied ? "var(--ok)" : "var(--text-faint)" }}>
-                  {item.applied ? "Applied, then verified live" : "Drafted for you, never sent by us"}
-                </span>
-              )}
+              <span className={item.applied ? "tag go" : "tag part"}>
+                {item.applied ? "Done for you" : "Drafted for you"}
+              </span>
             </div>
+          ))}
+        </div>
+        <p className="small muted" style={{ marginTop: "1rem" }}>
+          &ldquo;Done for you&rdquo; means we ship it and check it went live. &ldquo;Drafted for you&rdquo; means
+          it&rsquo;s written and waiting for your yes.
+        </p>
+      </section>
+
+      {/* 4. The honest detail, opt-in. */}
+      <section className="section">
+        <h2 className="section-title">The small print, in plain English.</h2>
+        <div style={{ marginTop: "1.2rem" }}>
+          <details className="acc">
+            <summary>What it can do today, and where it stops</summary>
+            <div className="acc-body"><p>{manager.delivers}</p></div>
+          </details>
+          <details className="acc">
+            <summary>Things this desk will never do</summary>
+            <div className="acc-body">
+              <ul>{manager.refusals.map((line, i) => <li key={i}>{line}</li>)}</ul>
+            </div>
+          </details>
+          <details className="acc">
+            <summary>Meet the {n} specialists</summary>
+            <div className="acc-body">
+              <div className="firm-people" style={{ marginTop: "0.4rem" }}>
+                {manager.team.map((member) => (
+                  <div className="person" key={member.key}>
+                    <strong>{member.name}</strong>
+                    <span className="dept">{member.department}</span>
+                    <p>{member.role}</p>
+                    <span className="never-line"><b>Never</b>{member.never}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </details>
+          <details className="acc">
+            <summary>Who this is for</summary>
+            <div className="acc-body"><p>{desk.audience}</p></div>
+          </details>
+        </div>
+      </section>
+
+      {extra}
+
+      {/* 5. Price, next to what the alternative costs. */}
+      <section className="section section-alt" id="price">
+        <h2 className="section-title">What it costs.</h2>
+        <div className="price-strip" style={{ marginTop: "1.2rem" }}>
+          <div>
+            <div className="ps-us">
+              {deskPrice(desk)}
+              {plan && <span className="small muted" style={{ fontFamily: "inherit", fontWeight: 500 }}> / month</span>}
+            </div>
+            <div className="small muted">
+              {plan ? `Per site, on the ${plan.name} plan. Cancel anytime.` : "Not on a plan yet."}
+            </div>
+          </div>
+          <div className="ps-them">
+            A typical agency: <s>{desk.agencyPrice}</s>
+          </div>
+          <Link href={desk.tryIt.href} className="big-button primary">{desk.tryIt.label}</Link>
+        </div>
+        <details className="acc" style={{ marginTop: "1rem" }}>
+          <summary>Where the agency number comes from</summary>
+          <div className="acc-body">
+            <p>{desk.agencyBasis}</p>
+            <p>
+              <Link href="/pricing">Every plan</Link> &middot; <Link href={WHOLE_AGENCY.path}>Every desk on one plan</Link>
+            </p>
+          </div>
+        </details>
+      </section>
+
+      {/* 6. The other desks. */}
+      <section className="section">
+        <h2 className="section-title">Need a hand elsewhere?</h2>
+        <div className="fresh-desks three" style={{ marginTop: "1.4rem" }}>
+          {others.map((other) => (
+            <Link key={other.key} href={other.path} className="fresh-desk" data-desk={other.key}>
+              <span className="fd-count">{managerFor(other).team.length} specialists</span>
+              <span className="fd-name">{other.label}</span>
+              <span className="fd-line">{other.tagline}</span>
+              <span className="fd-foot">
+                <span className="fd-status">{other.ready.label}</span>
+                <span className="fd-go">Meet them &rarr;</span>
+              </span>
+            </Link>
           ))}
         </div>
       </section>
 
-      {open && (
-        <section className="section section-alt">
-          <div className="eyebrow">The team</div>
-          <h2 className="section-title small-title">
-            The {manager.team.length} specialists on this desk, and what each one refuses to do.
-          </h2>
-          <p className="section-lede">
-            Read from the agent specifications the runtime validates at boot, not written here. Every one declares the
-            tools it may touch, and the first line of its guardrails is the promise it makes to you.
-          </p>
-          <div className="firm-people" style={{ marginTop: "1.1rem" }}>
-            {manager.team.slice(0, 12).map((member) => (
-              <div className="person" key={member.key}>
-                <strong>{member.name}</strong>
-                <span className="dept">{member.department}</span>
-                <p>{member.role}</p>
-                <span className="never-line"><b>Never</b>{member.never}</span>
-              </div>
-            ))}
-          </div>
-          {manager.team.length > 12 && (
-            <p style={{ marginTop: "1rem" }}>
-              <Link href="/the-firm" className="button">
-                All {manager.team.length} on this desk, and the other {DESKS.length - 1} desks
-              </Link>
-            </p>
-          )}
-        </section>
-      )}
-
-      <section className="section">
-        <div className="eyebrow">Where it stops</div>
-        <h2 className="section-title small-title">
-          What this desk refuses, whatever you ask for.
-        </h2>
-        <ul className="prose-list">
-          {manager.refusals.map((line, i) => <li key={i}>{line}</li>)}
-        </ul>
-      </section>
-
-      {open && (
-        <section className="section section-tight">
-          <div className="notice">
-            <strong>What this desk can carry today, and where it stops.</strong>{" "}
-            {manager.delivers}
-          </div>
-        </section>
-      )}
-
-      {extra}
-
-      <section className="section section-alt">
-        <div className="eyebrow">Price</div>
-        <h2 className="section-title">
-          {open ? `${deskPrice(desk)} a month. An agency charges ${desk.agencyPrice}.` : `Opens ${manager.opens}.`}
-        </h2>
-        <p className="section-lede">
-          {open ? (
-            <>
-              Per site, per month, on the {plan?.name} plan. No retainer, no minimum term, no onboarding fee and no
-              call to book. The agency figure is {desk.agencyBasis.toLowerCase()}
-            </>
-          ) : (
-            <>
-              Nothing to buy here yet. When this desk opens it joins the plans that already exist rather than adding a
-              new price, and the {DESKS.filter((d) => managerFor(d).status === "live").length} desks that are built
-              are available today.
-            </>
-          )}
-        </p>
-        <div className="hero-actions" style={{ marginTop: "1.1rem" }}>
-          <Link href="/pricing" className="button primary">What each plan permits</Link>
-          <Link href={WHOLE_AGENCY.path} className="button">Every desk on one plan</Link>
-        </div>
-      </section>
-
-      <section className="section">
-        <h2 className="section-title small-title">The other desks</h2>
-        <div className="desk-tiles">
-          {others.map((other) => {
-            const m = managerFor(other);
-            return (
-              <Link key={other.key} href={other.path} className={m.status === "live" ? "desk-tile" : "desk-tile soon"}>
-                <span className="desk-name">{other.label}</span>
-                <span className="desk-count">
-                  {m.status === "live" ? `${m.team.length} specialists` : `Opens ${m.opens}`}
-                </span>
-                <span className="desk-line">{other.headline}</span>
-                <span className="desk-price">{deskPrice(other)}</span>
-              </Link>
-            );
-          })}
-        </div>
-      </section>
-
       <CtaBand
-        title={open ? "See it running before you decide" : "Two desks are running today"}
-        body="A real account on our own site, with the findings we have not fixed still in it. No signup, no email, no domain to enter."
-        primary={{ href: "/inside", label: "Look inside a live account" }}
-        secondary={{ href: "/the-firm", label: `Meet all ${DESKS.length} desks` }}
+        title="Want to see it on your site?"
+        body="Paste your URL. Four minutes later you'll know what we'd fix first. Free, no signup."
+        primary={{ href: "/app/new", label: "Audit my site free" }}
+        secondary={{ href: "/inside", label: "Peek inside a live account" }}
       />
     </MarketingChrome>
   );

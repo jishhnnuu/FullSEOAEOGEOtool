@@ -26,13 +26,10 @@ export default function Page() {
     <DeskPage
       desk={desk}
       extra={
-        <section className="section section-tight">
-          <h2 className="section-title small-title">Every platform, and exactly where it stands</h2>
+        <section className="section">
+          <h2 className="section-title">Where every platform stands.</h2>
           <p className="section-lede">
-            You press Connect and log in on the platform&rsquo;s own site. You never type a key, and you can
-            withdraw the permission from your own account settings without telling us. What differs per platform
-            is our side: each network reviews the software that writes to it, and those reviews are the reason a
-            row below says in review rather than connect now.
+            You press Connect and log in on the platform&rsquo;s own site. No keys, ever. Tap a row for the detail.
           </p>
           <AdAccessTable />
         </section>

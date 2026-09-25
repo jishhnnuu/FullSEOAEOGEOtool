@@ -39,63 +39,67 @@ export default function SocialTeardownPage() {
         }}
       />
 
-      <section className="section">
-        <div className="eyebrow">Free tool</div>
-        <h1 className="section-title">Type a competitor. See what actually worked for them.</h1>
-        <p className="section-lede">
-          This reads a public account&rsquo;s recent posts, works out that account&rsquo;s own median engagement,
-          and shows you only the posts that beat it by double. Then it reads the first line of each winner and
-          tells you which hook they share. Put in up to five accounts and it adds share of voice. YouTube runs with
-          nothing at all, from the channel&rsquo;s own public feed. A free key of your own makes that read deeper,
-          and Instagram needs one; whatever you paste stays in your browser and we never store it.
-        </p>
+      <section className="section fresh-hero" style={{ paddingBottom: "1.5rem" }}>
+        <div className="eyebrow"><span className="dot" aria-hidden="true" />Free tool &middot; no signup</div>
+        <h1 className="hero-title">Spy on a competitor. <span className="hl">Legally.</span></h1>
+        <p className="hero-lede">Type a handle. See which of their posts actually worked, and why. YouTube needs no key at all.</p>
       </section>
 
-      <section className="section section-tight">
+      <section className="section section-tight" style={{ paddingTop: 0 }}>
         <SocialTeardownTool />
       </section>
 
-      <section className="section">
-        <h2 className="section-title small-title">Why there is no impressions column</h2>
-        <p>
-          Because there is no impressions number to read. Impressions, reach, saves and profile visits are computed
-          by the platform for the account owner and released only through that owner&rsquo;s own access token. No
-          public endpoint on any network returns them for somebody else&rsquo;s account, so every competitor reach
-          figure any tool has ever shown you was estimated from follower count and presented as measurement.
-        </p>
-        <p>
-          What is public is the engagement: likes, comments, shares, and on some platforms views. The honest
-          comparable built from that is the <strong>performance multiple</strong>, a post&rsquo;s engagement divided
-          by the median of that same account. It answers the question you actually have, which is not &ldquo;how
-          many people saw this&rdquo; but &ldquo;which of their posts worked, and what did those have in
-          common&rdquo;.
-        </p>
-        <p>
-          Of the {PLATFORMS.length} networks the desk knows about, {readable.length} permit a competitor
-          teardown at all. <Link href="/social">The social desk page</Link> names each one and what it refuses,
-          which is worth reading before anyone sells you a dashboard covering all ten.
-        </p>
+      <section className="section section-alt">
+        <h2 className="section-title">The nerdy bit.</h2>
+        <div style={{ marginTop: "1.2rem" }}>
+          <details className="acc">
+            <summary>Why there is no impressions column</summary>
+            <div className="acc-body">
+              <p>
+                Because there is no impressions number to read. Impressions, reach, saves and profile visits are computed
+                by the platform for the account owner and released only through that owner&rsquo;s own access token. No
+                public endpoint on any network returns them for somebody else&rsquo;s account, so every competitor reach
+                figure any tool has ever shown you was estimated from follower count and presented as measurement.
+              </p>
+              <p>
+                What is public is the engagement: likes, comments, shares, and on some platforms views. The honest
+                comparable built from that is the <strong>performance multiple</strong>, a post&rsquo;s engagement divided
+                by the median of that same account. It answers the question you actually have, which is not &ldquo;how
+                many people saw this&rdquo; but &ldquo;which of their posts worked, and what did those have in
+                common&rdquo;.
+              </p>
+              <p>
+                Of the {PLATFORMS.length} networks the desk knows about, {readable.length} permit a competitor
+                teardown at all. <Link href="/social">The social desk page</Link> names each one and what it refuses,
+                which is worth reading before anyone sells you a dashboard covering all ten.
+              </p>
+            </div>
+          </details>
+          <details className="acc">
+            <summary>What happens to the credential you paste</summary>
+            <div className="acc-body">
+              <p>
+                It goes into your browser&rsquo;s own storage and into the request that uses it, and nowhere else. The
+                relay that calls the platform holds a fixed list of hosts it is allowed to reach, takes your key on the
+                request and forgets it when the request ends. Nothing is written to a database, because on this page
+                there is no account to write it to.
+              </p>
+              <p>
+                That is the same rule the whole platform runs on: the drafting relays your own model key and never keeps
+                it, and the audit needs no key at all. <Link href="/security">The security page</Link> has the detail.
+              </p>
+            </div>
+          </details>
+        </div>
       </section>
 
-      <section className="section section-alt">
-        <h2 className="section-title small-title">What happens to the credential you paste</h2>
-        <p>
-          It goes into your browser&rsquo;s own storage and into the request that uses it, and nowhere else. The
-          relay that calls the platform holds a fixed list of hosts it is allowed to reach, takes your key on the
-          request and forgets it when the request ends. Nothing is written to a database, because on this page
-          there is no account to write it to.
-        </p>
-        <p>
-          That is the same rule the whole platform runs on: the drafting relays your own model key and never keeps
-          it, and the audit needs no key at all. <Link href="/security">The security page</Link> has the detail.
-        </p>
-      </section>
+
 
       <CtaBand
-        title="A teardown is the first hour of the work, not the work"
-        body="The social desk reads the field, writes the calendar against the argument you already approved, drafts every post for a person to approve, and says plainly which platforms publish nothing."
-        primary={{ href: "/social", label: "See the social desk" }}
-        secondary={{ href: "/inside", label: "Look inside a live account" }}
+        title="A teardown is hour one. We do the rest."
+        body="The social desk plans your calendar and drafts every post, ready for your yes."
+        primary={{ href: "/social", label: "Meet the social desk" }}
+        secondary={{ href: "/inside", label: "Peek inside a live account" }}
       />
     </MarketingChrome>
   );

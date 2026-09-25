@@ -36,13 +36,10 @@ export default function TermsPage() {
         }}
       />
 
-      <section className="section">
-        <div className="eyebrow">Terms</div>
-        <h1 className="section-title">What we promise, and what we will not do.</h1>
-        <p className="section-lede">
-          Short, because a long one is a long one for a reason. These are the terms that actually differ from the
-          rest of this category, and the rest is what you would expect.
-        </p>
+      <section className="section fresh-hero">
+        <div className="eyebrow"><span className="dot" aria-hidden="true" />Terms</div>
+        <h1 className="hero-title">Terms, <span className="hl">short.</span></h1>
+        <p className="hero-lede">Only the bits that differ from everyone else. The rest is what you&rsquo;d expect.</p>
       </section>
 
       <section className="section section-tight">

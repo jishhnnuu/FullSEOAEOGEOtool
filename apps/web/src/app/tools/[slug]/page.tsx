@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
-import { MarketingChrome } from "@/components/marketing";
+import { CtaBand, MarketingChrome } from "@/components/marketing";
 import { ToolPage } from "@/components/tool-page";
 import { TOOLS_BY_SLUG, allTools } from "@/content/tools";
 import { CATALOG } from "@/engine/catalog";
@@ -45,73 +45,75 @@ export default async function ToolRoute({ params }: { params: Promise<{ slug: st
         }}
       />
 
-      <section className="section">
+      <section className="section fresh-hero" style={{ paddingBottom: "1.2rem" }}>
         <div className="eyebrow">
-          <Link href="/tools">Free tools</Link>
+          <span className="dot" aria-hidden="true" />
+          <Link href="/tools">Free tools</Link>&nbsp;&middot; no signup
         </div>
-        <h1 className="section-title" style={{ fontSize: "clamp(1.8rem, 4vw, 2.4rem)" }}>
-          {tool.name}
-        </h1>
-        <p className="section-lede">{tool.description}</p>
+        <h1 className="hero-title" style={{ fontSize: "clamp(2rem, 5vw, 3.4rem)" }}>{tool.name}</h1>
+        <p className="hero-lede">{tool.blurb}</p>
       </section>
 
       {/* The interactive part. Everything around it is server-rendered on
           purpose, so a crawler that runs no JavaScript still gets the page. */}
       <ToolPage tool={tool} />
 
-      <section className="section section-tight">
-        <h2 className="section-title small-title">What this is actually checking</h2>
-        {tool.explains.map((paragraph, index) => (
-          <p key={index}>{paragraph}</p>
-        ))}
-      </section>
-
-      {checks.length ? (
-        <section className="section section-tight">
-          <h2 className="section-title small-title">The checks behind it</h2>
-          <p className="section-lede">
-            These are the same entries the full audit uses, with the same severities and the same recommended fixes.
-          </p>
-          <ul className="tool-check-list">
-            {checks.map((check) => (
-              <li key={check.code}>
-                <span className={`pill ${check.severity}`}>{check.severity}</span>
-                <div>
-                  <strong>{check.title}</strong>
-                  <p className="small muted">{check.why}</p>
-                </div>
-              </li>
-            ))}
-          </ul>
-        </section>
-      ) : null}
-
-      <section className="section section-tight">
-        <h2 className="section-title small-title">Questions</h2>
-        <div className="faq">
+      <section className="section section-alt">
+        <h2 className="section-title">The nerdy bit.</h2>
+        <div style={{ marginTop: "1.2rem" }}>
+          <details className="acc">
+            <summary>What this is actually checking</summary>
+            <div className="acc-body">
+              <p>{tool.description}</p>
+              {tool.explains.map((paragraph, index) => (
+                <p key={index}>{paragraph}</p>
+              ))}
+            </div>
+          </details>
+          {checks.length ? (
+            <details className="acc">
+              <summary>The {checks.length} check{checks.length === 1 ? "" : "s"} behind it</summary>
+              <div className="acc-body">
+                <p>The same entries the full audit uses, with the same severities and fixes.</p>
+                <ul className="tool-check-list">
+                  {checks.map((check) => (
+                    <li key={check.code}>
+                      <span className={`pill ${check.severity}`}>{check.severity}</span>
+                      <div>
+                        <strong>{check.title}</strong>
+                        <p className="small muted">{check.why}</p>
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </details>
+          ) : null}
           {tool.faq.map((item) => (
-            <details key={item.q}>
+            <details className="acc" key={item.q}>
               <summary>{item.q}</summary>
-              <p>{item.a}</p>
+              <div className="acc-body"><p>{item.a}</p></div>
             </details>
           ))}
         </div>
       </section>
 
-      <section className="section section-tight">
-        <h2 className="section-title small-title">Other tools</h2>
-        <div className="card-grid">
+      <section className="section">
+        <h2 className="section-title">Try another.</h2>
+        <div className="mini-tools" style={{ marginTop: "1.2rem" }}>
           {allTools()
             .filter((other) => other.slug !== tool.slug)
             .slice(0, 6)
             .map((other) => (
-              <Link key={other.slug} href={`/tools/${other.slug}`} className="card link-card">
-                <h3>{other.name}</h3>
-                <p className="small muted">{other.blurb}</p>
+              <Link key={other.slug} href={`/tools/${other.slug}`} className="mini-tool">
+                <strong>{other.name}</strong>
+                <span>{other.blurb}</span>
               </Link>
             ))}
         </div>
       </section>
+
+      <CtaBand title="Or check everything at once." body="The full audit reads your whole site and writes every fix. Free, no signup." />
     </MarketingChrome>
   );
 }

@@ -137,7 +137,7 @@ export function ToolForm({
   const [value, setValue] = useState("");
   return (
     <form
-      className="tool-form"
+      className="tool-form urlbox"
       onSubmit={(event) => {
         event.preventDefault();
         if (value.trim()) onRun(value);
@@ -157,8 +157,8 @@ export function ToolForm({
         onChange={(event) => setValue(event.target.value)}
         disabled={running}
       />
-      <button type="submit" className="button primary" disabled={running || !value.trim()}>
-        {running ? "Reading the page…" : tool.action}
+      <button type="submit" disabled={running}>
+        {running ? "Reading the page…" : <>{tool.action} &rarr;</>}
       </button>
     </form>
   );

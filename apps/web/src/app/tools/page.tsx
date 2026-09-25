@@ -2,13 +2,13 @@ import Link from "next/link";
 
 import { CtaBand, MarketingChrome } from "@/components/marketing";
 import { allTools } from "@/content/tools";
-import { BRAND } from "@/lib/brand";
+import { CATALOG_SIZE } from "@/engine/catalog";
 import { breadcrumbNode, graph } from "@/lib/schema";
 
 export const metadata = {
   title: "Free SEO, content and social tools",
   description:
-    "Free tools that run the real engine against your real inputs: a competitor social teardown, a voice comparison against your rivals, and ten slices of the 90-check audit. No signup.",
+    `Free tools that run the real engine on your real inputs: a competitor social teardown, an ad budget check, a voice comparison and slices of the ${CATALOG_SIZE}-check audit. No signup.`,
   alternates: { canonical: "/tools" },
 };
 
@@ -23,25 +23,32 @@ export const metadata = {
  */
 const DESK_TOOLS = [
   {
+    path: "/app/new",
+    name: "Audit my site",
+    blurb: "Everything that's broken, with the fixes already written.",
+    emoji: "\u{1F50D}",
+    color: "var(--desk-search)",
+  },
+  {
     path: "/tools/social-teardown",
-    name: "Competitor social teardown",
-    blurb:
-      "A competitor's public posts, the ones that beat their own median, and the hook the winners share. Up to five accounts gives you share of voice.",
-    desk: "Social desk",
+    name: "Spy on a competitor",
+    blurb: "Which of their posts actually worked, and the hook they share.",
+    emoji: "\u{1F575}",
+    color: "var(--desk-social)",
   },
   {
     path: "/tools/ad-budget-check",
-    name: "Will this ad budget work",
-    blurb:
-      "Whether your budget clears the conversion volume the platforms' bidding needs, per platform, and what to change if it does not. The conversation an agency on a percentage will not start.",
-    desk: "Paid desk",
+    name: "Check my ad budget",
+    blurb: "Is it enough to work? The honest maths, in ten seconds.",
+    emoji: "\u{1F4B8}",
+    color: "var(--desk-paid)",
   },
   {
     path: "/tools/voice-check",
-    name: "Voice against your rivals",
-    blurb:
-      "Rhythm, hedging, filler, specifics and reading grade for your page and the pages you compete with, counted the same way. No model reads anything.",
-    desk: "Content desk",
+    name: "Test my writing",
+    blurb: "Your page against your rivals. Do you sound like you?",
+    emoji: "\u270D",
+    color: "var(--desk-content)",
   },
 ];
 
@@ -60,67 +67,53 @@ export default function ToolsPage() {
           ),
         }}
       />
-      <section className="section">
-        <div className="eyebrow">Free tools</div>
-        <h1 className="section-title">{tools.length + DESK_TOOLS.length} tools that run on your real inputs.</h1>
-        {/*
-          The opening paragraph states the claim and the reason in one place,
-          because that is the passage an answer engine extracts. It is also
-          the honest differentiator: everyone else's free tools are toys.
-        */}
-        <p className="section-lede">
-          Every tool here is a slice of the same engine the full audit runs, pointed at one question. They fetch your
-          actual page, parse it, and answer from the same 90-check catalogue, which is why a free tool and the paid
-          audit can never disagree about what is wrong. No signup, no card, no API key, and nothing is stored.
-        </p>
+      <section className="section fresh-hero" style={{ paddingBottom: "1.5rem" }}>
+        <div className="eyebrow"><span className="dot" aria-hidden="true" />Free &middot; no signup &middot; nothing stored</div>
+        <h1 className="hero-title">
+          Free tools that <span className="hl">actually</span> do something.
+        </h1>
+        <p className="hero-lede">Real engine, your real inputs, answers in seconds. Pick one.</p>
       </section>
 
-      <section className="section section-tight">
-        <h2 className="section-title small-title">The three that take more than a URL</h2>
-        <div className="card-grid">
+      <section className="section section-tight" style={{ paddingTop: 0 }}>
+        <div className="tool-cards">
           {DESK_TOOLS.map((tool) => (
-            <Link key={tool.path} href={tool.path} className="card link-card">
-              <h3>{tool.name}</h3>
-              <p className="small muted">{tool.blurb}</p>
-              <span className="small">{tool.desk}</span>
+            <Link key={tool.path} href={tool.path} className="tool-card">
+              <span className="tc-emoji" style={{ background: tool.color }} aria-hidden="true">{tool.emoji}</span>
+              <h2 style={{ fontSize: "1.2rem", margin: "0.3rem 0 0.2rem" }}>{tool.name}</h2>
+              <p>{tool.blurb}</p>
+              <span className="tc-go">Start &rarr;</span>
             </Link>
           ))}
         </div>
       </section>
 
-      <section className="section section-tight">
-        <h2 className="section-title small-title">Ten slices of the audit, one question each</h2>
-        <div className="card-grid">
+      <section className="section section-alt">
+        <h2 className="section-title">Got one specific question?</h2>
+        <p className="section-lede">Each of these answers one thing about one page, using the same checks as the full audit.</p>
+        <div className="mini-tools">
           {tools.map((tool) => (
-            <Link key={tool.slug} href={`/tools/${tool.slug}`} className="card link-card">
-              <h3>{tool.name}</h3>
-              <p className="small muted">{tool.blurb}</p>
-              <span className="small">
-                {tool.checks.length} check{tool.checks.length === 1 ? "" : "s"}
-              </span>
+            <Link key={tool.slug} href={`/tools/${tool.slug}`} className="mini-tool">
+              <strong>{tool.name}</strong>
+              <span>{tool.blurb}</span>
             </Link>
           ))}
         </div>
-      </section>
-
-      <section className="section section-tight">
-        <h2 className="section-title small-title">Why these are not the usual free tools</h2>
-        <p>
-          The convention in this category is a word counter, a slug generator and a favicon resizer. They exist to
-          rank for a keyword and they are honest about it. Nothing is wrong with that, but none of them tells you
-          anything about your site.
-        </p>
-        <p>
-          These run the crawler, the parser and the check catalogue that {BRAND} runs on a paying customer&rsquo;s
-          site. The reason that is affordable to give away is that the audit uses no language model and no data
-          vendor, so a run costs nothing to serve. Every competitor charging for the same answer is paying a model
-          call or a data credit per site, which is why they cannot.
-        </p>
+        <details className="acc" style={{ marginTop: "1.8rem" }}>
+          <summary>Why can these be free?</summary>
+          <div className="acc-body">
+            <p>
+              Because the audit uses no AI model and no data vendor, a run costs us almost nothing. Tools charging for
+              the same answer are paying for a model call or a data credit per site. And since these run the same
+              engine as the paid audit, a free tool and the paid product can never disagree about what&rsquo;s wrong.
+            </p>
+          </div>
+        </details>
       </section>
 
       <CtaBand
-        title="Or run all 90 checks at once"
-        body="The full audit crawls the site, scores it, and writes the fixes. Same price as these: nothing."
+        title={`Or run all ${CATALOG_SIZE} checks at once.`}
+        body="The full audit reads your whole site and writes every fix. Same price: nothing."
       />
     </MarketingChrome>
   );

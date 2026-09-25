@@ -36,55 +36,60 @@ export default function VoiceCheckPage() {
         }}
       />
 
-      <section className="section">
-        <div className="eyebrow">Free tool</div>
-        <h1 className="section-title">Your page, and the pages you lose to, counted the same way.</h1>
-        <p className="section-lede">
-          Put in your page and up to five you compete with. This fetches all of them, strips the navigation, and
-          counts: sentence rhythm, hedging, marketing filler, concrete specifics, reading grade, and who the page
-          talks about. Then it shows you the differences that are large enough to matter, with both numbers, so you
-          can disagree with it.
-        </p>
+      <section className="section fresh-hero" style={{ paddingBottom: "1.5rem" }}>
+        <div className="eyebrow"><span className="dot" aria-hidden="true" />Free tool &middot; no signup</div>
+        <h1 className="hero-title">Do you sound like <span className="hl">you?</span></h1>
+        <p className="hero-lede">Your page against up to five rivals. Counted, not judged. No AI, no signup.</p>
       </section>
 
-      <section className="section section-tight">
+      <section className="section section-tight" style={{ paddingTop: 0 }}>
         <VoiceTool />
       </section>
 
-      <section className="section">
-        <h2 className="section-title small-title">Counting, not judging</h2>
-        <p>
-          No model reads these pages. Nothing here needs a key, and nothing here is an opinion dressed as a score.
-          Every figure is a count you could reproduce by hand with enough patience: how many sentences, how long
-          each one, how many of them hedge, how many numbers and names appear per hundred words, how often the page
-          says &ldquo;we&rdquo; against how often it says &ldquo;you&rdquo;.
-        </p>
-        <p>
-          It refuses in two situations, and both are on purpose. A page under 120 words has no rhythm to measure, so
-          it is dropped and named. Fewer than three readable rivals is not a field, so no comparison is drawn and
-          the page says so instead of quietly comparing you to one competitor and calling it the market.
-        </p>
+      <section className="section section-alt">
+        <h2 className="section-title">The nerdy bit.</h2>
+        <div style={{ marginTop: "1.2rem" }}>
+          <details className="acc">
+            <summary>Counting, not judging</summary>
+            <div className="acc-body">
+              <p>
+                No model reads these pages. Nothing here needs a key, and nothing here is an opinion dressed as a score.
+                Every figure is a count you could reproduce by hand with enough patience: how many sentences, how long
+                each one, how many of them hedge, how many numbers and names appear per hundred words, how often the page
+                says &ldquo;we&rdquo; against how often it says &ldquo;you&rdquo;.
+              </p>
+              <p>
+                It refuses in two situations, and both are on purpose. A page under 120 words has no rhythm to measure, so
+                it is dropped and named. Fewer than three readable rivals is not a field, so no comparison is drawn and
+                the page says so instead of quietly comparing you to one competitor and calling it the market.
+              </p>
+            </div>
+          </details>
+          <details className="acc">
+            <summary>What the content desk does with this</summary>
+            <div className="acc-body">
+              <p>
+                On its own, a voice fingerprint is trivia. Inside an account it is the input to a house style: the desk
+                reads the business, writes one point of view, and then every brief, draft and edit gate holds to a measured
+                tone rather than an adjective in a style guide. The same numbers the tool shows you here are the ones the
+                third edit gate checks a draft against before anyone is asked to approve it.
+              </p>
+              <p>
+                <Link href="/content">The content desk page</Link> has the rest, including the four things it refuses to
+                do. <Link href="/inside">Looking inside a live account</Link> shows it running.
+              </p>
+            </div>
+          </details>
+        </div>
       </section>
 
-      <section className="section section-alt">
-        <h2 className="section-title small-title">What the content desk does with this</h2>
-        <p>
-          On its own, a voice fingerprint is trivia. Inside an account it is the input to a house style: the desk
-          reads the business, writes one point of view, and then every brief, draft and edit gate holds to a measured
-          tone rather than an adjective in a style guide. The same numbers the tool shows you here are the ones the
-          third edit gate checks a draft against before anyone is asked to approve it.
-        </p>
-        <p>
-          <Link href="/content">The content desk page</Link> has the rest, including the four things it refuses to
-          do. <Link href="/inside">Looking inside a live account</Link> shows it running.
-        </p>
-      </section>
+
 
       <CtaBand
-        title="Measuring the writing is the easy half"
-        body="Fourteen specialists take it from a measured page to an argument, a brief, a draft and three edit gates, all against a point of view you approved once."
-        primary={{ href: "/content", label: "See the content desk" }}
-        secondary={{ href: "/inside", label: "Look inside a live account" }}
+        title="Measuring is the easy half."
+        body="The content desk turns this into briefs, drafts and edits, all in your voice."
+        primary={{ href: "/content", label: "Meet the content desk" }}
+        secondary={{ href: "/inside", label: "Peek inside a live account" }}
       />
     </MarketingChrome>
   );

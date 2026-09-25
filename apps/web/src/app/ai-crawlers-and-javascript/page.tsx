@@ -56,22 +56,10 @@ export default function AiCrawlersPage() {
         }}
       />
 
-      <section className="section">
-        <div className="eyebrow">Explainer</div>
-        <h1 className="section-title" style={{ fontSize: "clamp(1.9rem, 4vw, 2.6rem)" }}>
-          AI crawlers do not run JavaScript, and an entire product category depends on you not knowing.
-        </h1>
-        {/*
-          The claim, the evidence and the consequence in the first paragraph.
-          Anyone who reads one paragraph has the whole argument, and it is the
-          passage a model extracts.
-        */}
-        <p className="section-lede">
-          GPTBot, OAI-SearchBot, ClaudeBot, PerplexityBot, Meta-ExternalAgent and Bytespider all fetch raw HTML and
-          execute no client-side code. So any SEO fix applied by a JavaScript pixel, which is how several popular
-          &ldquo;autonomous SEO&rdquo; products work, is invisible to exactly the engines those same products sell you
-          an AI visibility dashboard for. This is checkable in about thirty seconds and almost nobody checks.
-        </p>
+      <section className="section fresh-hero">
+        <div className="eyebrow"><span className="dot" aria-hidden="true" />Explainer</div>
+        <h1 className="hero-title">AI crawlers don&rsquo;t run <span className="hl">JavaScript.</span></h1>
+        <p className="hero-lede">GPTBot, ClaudeBot, PerplexityBot and friends read raw HTML only. So an SEO fix injected by a script is invisible to exactly the engines it claims to help. Checkable in thirty seconds.</p>
       </section>
 
       <section className="section section-tight">

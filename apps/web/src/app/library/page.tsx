@@ -41,14 +41,10 @@ export default function LibraryPage() {
         }}
       />
 
-      <section className="section">
-        <div className="eyebrow">The check library</div>
-        <h1 className="section-title">{CATALOG_SIZE} checks, and what each one does about it.</h1>
-        <p className="section-lede">
-          The actual catalogue the crawler runs, published in full. Every entry names the rule it fires on, why it
-          matters, and whether the engine writes the fix or hands you a decision. Nothing here is a marketing summary
-          of a check: it is the check.
-        </p>
+      <section className="section fresh-hero">
+        <div className="eyebrow"><span className="dot" aria-hidden="true" />The check library</div>
+        <h1 className="hero-title">Every check we run. <span className="hl">All</span> {CATALOG_SIZE}.</h1>
+        <p className="hero-lede">The real catalogue, in full: what each check looks for, why it matters, and whether we write the fix.</p>
         <div className="stat-row" style={{ marginTop: "1.2rem" }}>
           <div className="stat">
             <span className="stat-value">{CATALOG_SIZE}</span>

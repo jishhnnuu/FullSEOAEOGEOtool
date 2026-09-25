@@ -69,25 +69,19 @@ export default function PlatformPage() {
 
   return (
     <MarketingChrome>
-      <section className="section">
-        <div className="eyebrow">The platform</div>
-        <h1 className="section-title" style={{ fontSize: "clamp(1.9rem, 4vw, 2.6rem)" }}>
-          {CATALOG_SIZE} checks, and the work that follows each one.
-        </h1>
-        <p className="section-lede">
-          Severity, impact, effort and confidence live in one table rather than inside the checks, so the same
-          problem is scored the same way wherever it is found and you can argue with the inputs. Below is the
-          whole methodology. An agency calls this document its audit framework and does not show it to you.
-        </p>
+      <section className="section fresh-hero">
+        <div className="eyebrow"><span className="dot" aria-hidden="true" />Under the hood</div>
+        <h1 className="hero-title">{CATALOG_SIZE} checks. <span className="hl">Every</span> one explained.</h1>
+        <p className="hero-lede">Our whole method, in the open. Agencies call this their secret framework.</p>
+        <div className="hero-actions">
+          <Link href="/app/new" className="big-button primary">Run them on my site &rarr;</Link>
+          <Link href="/library" className="big-button">Browse every check</Link>
+        </div>
       </section>
 
       <section className="section section-tight">
-        <div className="eyebrow">Missions</div>
-        <h2 className="section-title">Work that runs on a schedule.</h2>
-        <p className="section-lede">
-          A mission is a sequence of steps with agents attached. Steps that cannot run say what would unblock them
-          rather than failing the run, which is why a site with nothing connected still gets a full audit.
-        </p>
+        <h2 className="section-title">Work that runs itself.</h2>
+        <p className="section-lede">Missing a connection? The step says what it needs and the rest carries on.</p>
         <div className="feature-grid">
           {MISSIONS.map((mission) => (
             <div className="feature" key={mission.key}>
@@ -100,22 +94,19 @@ export default function PlatformPage() {
       </section>
 
       <section className="section section-alt">
-        <div style={{ padding: "0 1.5rem" }}>
-          <div className="eyebrow">The catalogue</div>
-          <h2 className="section-title">Every check, with what it costs you.</h2>
+        <div>
+          <h2 className="section-title">Every check, by category.</h2>
           <p className="section-lede">
-            Anything marked <strong>fix generated</strong> arrives with the corrected artefact attached: the tag,
-            the JSON-LD, the file, the link plan or the copy. Everything else arrives with the specific
-            recommendation and the evidence behind it.
+            &ldquo;Fix generated&rdquo; means the finished change comes attached. The rest come with clear guidance.
           </p>
 
           {categories.map(([category, checks]) => (
-            <details className="reveal" key={category} style={{ marginBottom: "0.5rem" }} open={category === "technical"}>
+            <details className="acc" key={category}>
               <summary>
                 {CATEGORY_LABEL[category] ?? category}
                 <span className="faint small"> {checks.length} checks</span>
               </summary>
-              <div className="table-scroll">
+              <div className="table-scroll acc-body" style={{ maxWidth: "none" }}>
                 <table>
                   <thead>
                     <tr>
@@ -154,12 +145,11 @@ export default function PlatformPage() {
       </section>
 
       <section className="section">
-        <div className="eyebrow">Control</div>
-        <h2 className="section-title">Five autonomy levels, and one rule none of them override.</h2>
-        <p className="section-lede">
-          Most tools give you a choice between approving everything, so nothing ships, and approving nothing, so
-          you lose control. Neither is what anyone wants.
-        </p>
+        <h2 className="section-title">Five levels of hands-off.</h2>
+        <p className="section-lede">Pick how much ships without you. The risky stuff always waits, whatever you pick.</p>
+        <details className="acc">
+          <summary>What each level ships on its own</summary>
+          <div className="acc-body" style={{ maxWidth: "none" }}>
         <div className="table-scroll">
           <table>
             <thead>
@@ -182,18 +172,18 @@ export default function PlatformPage() {
           No level auto-approves a critical action. robots.txt changes, redirect rules across the site and
           anything that cannot be undone need a person, and that is not configurable.
         </div>
+          </div>
+        </details>
       </section>
 
       <section className="section section-alt">
-        <div style={{ padding: "0 1.5rem" }}>
-          <div className="eyebrow">Connections</div>
-          <h2 className="section-title">Nothing is gated. Everything degrades with a reason.</h2>
+        <div>
+          <h2 className="section-title">Works with nothing connected.</h2>
           <p className="section-lede">
-            Most tools are useless until everything is connected, so onboarding becomes twelve OAuth screens before
-            anyone has seen value. The audit here runs on the public site alone. Each connection turns a stated
-            limitation into a capability, and the dashboard says exactly which.
+            No twelve login screens before you see anything. Each connection adds a bit more, and the dashboard
+            says exactly what.
           </p>
-          <p><Link href="/how-it-works#connections">What each connection unlocks</Link></p>
+          <p><Link href="/how-it-works#connections" className="fresh-btn ghost">What each connection adds &rarr;</Link></p>
         </div>
       </section>
 

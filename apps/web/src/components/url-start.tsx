@@ -4,36 +4,66 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 /**
- * The one control on the marketing site that does something.
+ * The most important control on the site.
  *
- * It does not collect an email first. A prospect who cannot see a real finding
- * before handing over an address has been given a brochure, not a tool.
+ * It used to sit in section eight of nine, on the theory that nobody hands a
+ * domain to a company they cannot yet describe. In practice people could not
+ * find the thing the product does, which is worse. It now leads the page.
+ *
+ * Paste and go: `go=1` starts the audit on arrival, so there is no second
+ * form between typing a URL and watching the crawl run.
  */
-export function UrlStart({ label = "See what we would fix", size = "big" }: { label?: string; size?: "big" | "small" }) {
+export function UrlStart({
+  label = "Show me what's broken",
+  note = true,
+}: {
+  label?: string;
+  note?: boolean;
+}) {
   const router = useRouter();
   const [value, setValue] = useState("");
+  const [nudge, setNudge] = useState(false);
 
   return (
-    <form
-      onSubmit={(event) => {
-        event.preventDefault();
-        const url = value.trim();
-        router.push(url ? `/app/new?url=${encodeURIComponent(url)}` : "/app/new");
-      }}
-      style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap", maxWidth: "520px" }}
-    >
-      <input
-        type="text"
-        inputMode="url"
-        aria-label="Your website address"
-        placeholder="yourcompany.com"
-        value={value}
-        onChange={(event) => setValue(event.target.value)}
-        style={{ flex: "1 1 240px", ...(size === "big" ? { padding: "0.65rem 0.8rem", fontSize: "0.95rem" } : {}) }}
-      />
-      <button type="submit" className={`primary ${size === "big" ? "big-button" : ""}`}>
-        {label}
-      </button>
-    </form>
+    <div>
+      <form
+        className="urlbox"
+        onSubmit={(event) => {
+          event.preventDefault();
+          const url = value.trim();
+          if (!url) {
+            setNudge(true);
+            return;
+          }
+          router.push(`/app/new?url=${encodeURIComponent(url)}&go=1`);
+        }}
+      >
+        <input
+          type="text"
+          inputMode="url"
+          autoComplete="url"
+          aria-label="Your website address"
+          placeholder="yourwebsite.com"
+          value={value}
+          onChange={(event) => {
+            setValue(event.target.value);
+            setNudge(false);
+          }}
+        />
+        <button type="submit">{label} &rarr;</button>
+      </form>
+      {nudge && (
+        <p className="small" style={{ marginTop: "0.6rem", color: "var(--bad)" }}>
+          Pop your website address in first. Something like yourwebsite.com.
+        </p>
+      )}
+      {note && (
+        <div className="urlbox-note">
+          <span>Free</span>
+          <span>No signup</span>
+          <span>About 4 minutes</span>
+        </div>
+      )}
+    </div>
   );
 }

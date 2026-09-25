@@ -188,7 +188,7 @@ test("the price label never renders a real number for a talk-to-us tier", () => 
   assert.equal(priceLabel(PLANS.free), "£0");
   assert.equal(priceLabel(PLANS.starter), "£79");
   assert.equal(priceLabel(PLANS.growth), "£249");
-  assert.equal(priceLabel(PLANS.scale), "Talk to us");
+  assert.equal(priceLabel(PLANS.scale), "Custom");
 });
 
 /* ------------------------------------------------------------------ quota */

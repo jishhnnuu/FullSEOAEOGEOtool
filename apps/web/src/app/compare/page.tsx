@@ -27,14 +27,10 @@ export default function ComparePage() {
           ),
         }}
       />
-      <section className="section">
-        <div className="eyebrow">Comparison</div>
-        <h1 className="section-title">Where this wins, and where it does not.</h1>
-        <p className="section-lede">
-          Every page below has a section called &ldquo;when to buy theirs instead&rdquo;, and every one of those
-          sections is real. A comparison page with no losing column is an advert, and readers can tell. Prices and
-          claims carry the date they were checked, because a stale number on our site is our error rather than theirs.
-        </p>
+      <section className="section fresh-hero">
+        <div className="eyebrow"><span className="dot" aria-hidden="true" />Comparison</div>
+        <h1 className="hero-title">Us vs the other tools. <span className="hl">Fairly.</span></h1>
+        <p className="hero-lede">Every comparison includes when you should buy theirs instead. Prices carry the date we checked them.</p>
       </section>
 
       <section className="section section-tight">

@@ -36,14 +36,10 @@ export default function PrivacyPage() {
         }}
       />
 
-      <section className="section">
-        <div className="eyebrow">Privacy</div>
-        <h1 className="section-title">What we hold, and what we deliberately do not.</h1>
-        <p className="section-lede">
-          Most of this product runs in your browser and sends us nothing. The parts that do not are listed below,
-          in the order they matter. This page is written to be read: if a sentence here needs a lawyer to
-          interpret, it is a badly written sentence and we will fix it.
-        </p>
+      <section className="section fresh-hero">
+        <div className="eyebrow"><span className="dot" aria-hidden="true" />Privacy</div>
+        <h1 className="hero-title">Privacy, in <span className="hl">plain</span> English.</h1>
+        <p className="hero-lede">Most of this runs in your browser and sends us nothing. Here&rsquo;s the rest, in order of importance.</p>
       </section>
 
       <section className="section section-tight">

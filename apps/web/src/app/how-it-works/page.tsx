@@ -19,110 +19,129 @@ export default function HowItWorksPage() {
 
   return (
     <MarketingChrome>
-      <section className="section">
-        <div className="eyebrow">How it works</div>
-        <h1 className="section-title" style={{ fontSize: "clamp(1.9rem, 4vw, 2.6rem)" }}>
-          From a URL to a shipped change.
-        </h1>
-        <p className="section-lede">
-          Nothing below is a simulation. The crawl is a real crawl, the findings come from your own markup, and
-          every artefact is derived from what was actually on the page.
-        </p>
-      </section>
-
-      <section className="section section-tight">
-        <div className="timeline" style={{ maxWidth: "66ch" }}>
-          <div className="timeline-item">
-            <div className="timeline-when">Step 1</div>
-            <h3>You give it an address</h3>
-            <p>
-              And, optionally, context that sharpens everything after it: what kind of business this is, where it
-              operates, who it competes with, and the terms you want to win. None of it is required.
-            </p>
-          </div>
-          <div className="timeline-item">
-            <div className="timeline-when">Step 2</div>
-            <h3>It reads the site&apos;s own instructions first</h3>
-            <p>
-              robots.txt, the sitemaps named in it and the ones at the usual paths, and llms.txt. The AI crawler
-              verdict is decided here, before a single page is fetched.
-            </p>
-          </div>
-          <div className="timeline-item">
-            <div className="timeline-when">Step 3</div>
-            <h3>It crawls</h3>
-            <p>
-              Breadth first from the homepage, with sitemap URLs entering at the same depth as navigation links so
-              orphan pages surface rather than being starved. robots.txt is honoured. Redirect chains, status
-              codes, response times and payload sizes are all recorded on the way through.
-            </p>
-          </div>
-          <div className="timeline-item">
-            <div className="timeline-when">Step 4</div>
-            <h3>The catalogue runs</h3>
-            <p>
-              Per page and across the site: duplication, cannibalisation, orphans, sitemap accuracy, entity
-              signals. Each finding gets a priority from impact times confidence over effort, scaled by how many
-              pages it touches, so the list is ordered by what is worth doing rather than by severity alone.
-            </p>
-          </div>
-          <div className="timeline-item">
-            <div className="timeline-when">Step 5</div>
-            <h3>The fixes get written</h3>
-            <p>
-              Titles from the page&apos;s own topic. Meta descriptions from its own opening. JSON-LD from what it
-              contains. Sitemaps from the URLs that were reachable and indexable. Link plans from pages that
-              already discuss the target. Alt text from filenames and page context, with a warning to read it.
-            </p>
-          </div>
-          <div className="timeline-item">
-            <div className="timeline-when">Step 6</div>
-            <h3>Strategy, not just repairs</h3>
-            <p>
-              A keyword model built with tf-idf over your own copy, weighted towards titles and headings. Gaps
-              against your competitors, your locations and the terms you named. Briefs with outlines, answer
-              blocks, FAQs, internal links, meta and schema.
-            </p>
-          </div>
-          <div className="timeline-item">
-            <div className="timeline-when">Step 7</div>
-            <h3>You approve</h3>
-            <p>
-              Batched by risk, each item showing what it changes, why, what it is expected to do and whether it can
-              be undone. High and critical items cannot be bulk approved, deliberately.
-            </p>
-          </div>
-          <div className="timeline-item">
-            <div className="timeline-when">Step 8</div>
-            <h3>It ships, or it hands you the exact change</h3>
-            <p>
-              Through your CMS where one is connected. As a webhook payload, a patch or plain text where one is
-              not. Either way the change is recorded against the agent that proposed it and the person who
-              approved it.
-            </p>
-          </div>
-          <div className="timeline-item">
-            <div className="timeline-when">Step 9</div>
-            <h3>The next run reports the difference</h3>
-            <p>
-              What cleared, what appeared, what got worse, which pages changed, which way the scores moved. That
-              comparison is the thing an agency retainer is supposed to produce and rarely does.
-            </p>
-          </div>
+      <section className="section fresh-hero">
+        <div className="eyebrow"><span className="dot" aria-hidden="true" />How it works</div>
+        <h1 className="hero-title">From URL to <span className="hl">fixed.</span></h1>
+        <p className="hero-lede">Paste a URL. We read it, write the fixes, you click yes, we ship them. That&rsquo;s it.</p>
+        <div className="hero-actions">
+          <Link href="/app/new" className="big-button primary">Try it on my site &rarr;</Link>
+          <Link href="/inside" className="big-button">Watch a live one</Link>
         </div>
       </section>
 
-      <section className="section section-alt" id="connections">
-        <div style={{ padding: "0 1.5rem" }}>
-          <div className="eyebrow">Connections</div>
-          <h2 className="section-title">What each one unlocks, and what happens without it.</h2>
+      <section className="section section-alt">
+        <h2 className="section-title">The short version.</h2>
+        <div className="steps3" style={{ marginTop: "1.6rem" }}>
+          <div>
+            <h3>We read everything</h3>
+            <p>Your robots.txt, sitemaps and every page. Then every check we have.</p>
+          </div>
+          <div>
+            <h3>We write the fixes</h3>
+            <p>Titles, descriptions, schema, links, briefs. The actual change, not advice.</p>
+          </div>
+          <div>
+            <h3>You say yes, we ship</h3>
+            <p>Straight to your CMS. Next run tells you what changed.</p>
+          </div>
+        </div>
+        <details className="acc" style={{ marginTop: "1.8rem" }}>
+          <summary>The long version, all nine steps</summary>
+          <div className="acc-body">
+              <div className="timeline" style={{ maxWidth: "66ch" }}>
+                <div className="timeline-item">
+                  <div className="timeline-when">Step 1</div>
+                  <h3>You give it an address</h3>
+                  <p>
+                    And, optionally, context that sharpens everything after it: what kind of business this is, where it
+                    operates, who it competes with, and the terms you want to win. None of it is required.
+                  </p>
+                </div>
+                <div className="timeline-item">
+                  <div className="timeline-when">Step 2</div>
+                  <h3>It reads the site&apos;s own instructions first</h3>
+                  <p>
+                    robots.txt, the sitemaps named in it and the ones at the usual paths, and llms.txt. The AI crawler
+                    verdict is decided here, before a single page is fetched.
+                  </p>
+                </div>
+                <div className="timeline-item">
+                  <div className="timeline-when">Step 3</div>
+                  <h3>It crawls</h3>
+                  <p>
+                    Breadth first from the homepage, with sitemap URLs entering at the same depth as navigation links so
+                    orphan pages surface rather than being starved. robots.txt is honoured. Redirect chains, status
+                    codes, response times and payload sizes are all recorded on the way through.
+                  </p>
+                </div>
+                <div className="timeline-item">
+                  <div className="timeline-when">Step 4</div>
+                  <h3>The catalogue runs</h3>
+                  <p>
+                    Per page and across the site: duplication, cannibalisation, orphans, sitemap accuracy, entity
+                    signals. Each finding gets a priority from impact times confidence over effort, scaled by how many
+                    pages it touches, so the list is ordered by what is worth doing rather than by severity alone.
+                  </p>
+                </div>
+                <div className="timeline-item">
+                  <div className="timeline-when">Step 5</div>
+                  <h3>The fixes get written</h3>
+                  <p>
+                    Titles from the page&apos;s own topic. Meta descriptions from its own opening. JSON-LD from what it
+                    contains. Sitemaps from the URLs that were reachable and indexable. Link plans from pages that
+                    already discuss the target. Alt text from filenames and page context, with a warning to read it.
+                  </p>
+                </div>
+                <div className="timeline-item">
+                  <div className="timeline-when">Step 6</div>
+                  <h3>Strategy, not just repairs</h3>
+                  <p>
+                    A keyword model built with tf-idf over your own copy, weighted towards titles and headings. Gaps
+                    against your competitors, your locations and the terms you named. Briefs with outlines, answer
+                    blocks, FAQs, internal links, meta and schema.
+                  </p>
+                </div>
+                <div className="timeline-item">
+                  <div className="timeline-when">Step 7</div>
+                  <h3>You approve</h3>
+                  <p>
+                    Batched by risk, each item showing what it changes, why, what it is expected to do and whether it can
+                    be undone. High and critical items cannot be bulk approved, deliberately.
+                  </p>
+                </div>
+                <div className="timeline-item">
+                  <div className="timeline-when">Step 8</div>
+                  <h3>It ships, or it hands you the exact change</h3>
+                  <p>
+                    Through your CMS where one is connected. As a webhook payload, a patch or plain text where one is
+                    not. Either way the change is recorded against the agent that proposed it and the person who
+                    approved it.
+                  </p>
+                </div>
+                <div className="timeline-item">
+                  <div className="timeline-when">Step 9</div>
+                  <h3>The next run reports the difference</h3>
+                  <p>
+                    What cleared, what appeared, what got worse, which pages changed, which way the scores moved. That
+                    comparison is the thing an agency retainer is supposed to produce and rarely does.
+                  </p>
+                </div>
+              </div>
+          </div>
+        </details>
+      </section>
+
+      <section className="section" id="connections">
+        <div>
+          <h2 className="section-title">Plug things in. Or don&rsquo;t.</h2>
           <p className="section-lede">
-            Connect nothing and you still get the full audit, the fixes and the content plan. Every connection
-            below is stated as a trade rather than a requirement.
+            Connect nothing and you still get the full audit, the fixes and the content plan. Each connection just
+            adds a bit more.
           </p>
           {Object.entries(byCategory).map(([category, connectors]) => (
-            <div key={category} style={{ marginBottom: "1.6rem" }}>
-              <h3 style={{ marginBottom: "0.7rem" }}>{CATEGORY_LABEL[category as keyof typeof CATEGORY_LABEL]}</h3>
+            <details className="acc" key={category}>
+              <summary>{CATEGORY_LABEL[category as keyof typeof CATEGORY_LABEL]} ({connectors.length})</summary>
+              <div className="acc-body" style={{ maxWidth: "none" }}>
               <div className="feature-grid">
                 {connectors.map((connector) => (
                   <div className="feature" key={connector.provider}>
@@ -140,18 +159,18 @@ export default function HowItWorksPage() {
                   </div>
                 ))}
               </div>
-            </div>
+              </div>
+            </details>
           ))}
         </div>
       </section>
 
-      <section className="section">
-        <div className="eyebrow">Autonomy</div>
-        <h2 className="section-title">How much you want to be involved.</h2>
-        <p className="section-lede">
-          Set per site, changeable at any time, and it only ever loosens what can ship without you. It never
-          loosens what needs a person.
-        </p>
+      <section className="section section-alt">
+        <h2 className="section-title">You choose how hands-on.</h2>
+        <p className="section-lede">From &ldquo;ask me everything&rdquo; to autopilot. Some things always need you, whatever you pick.</p>
+        <details className="acc">
+          <summary>The autonomy levels</summary>
+          <div className="acc-body" style={{ maxWidth: "none" }}>
         <div className="table-scroll">
           <table>
             <thead><tr><th>Level</th><th>What it means</th></tr></thead>
@@ -170,6 +189,8 @@ export default function HowItWorksPage() {
           including autopilot. That is not a default you can change. See{" "}
           <Link href="/security">how data and credentials are handled</Link>.
         </p>
+          </div>
+        </details>
       </section>
 
       <CtaBand />

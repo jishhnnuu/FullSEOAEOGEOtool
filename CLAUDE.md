@@ -22,6 +22,17 @@ client can use them, but is never made to. "Book a free call" is the main
 action on every agency page, and the one way across to the tools is the
 second.
 
+**How each side is pitched.** The agency is an agency, so it is never pitched
+as "less than an agency", "a fraction of an agency" or "AI prices": the page
+says what the founder gets (specialists doing the work, AI doing the
+groundwork so more gets done, every piece of work in one place) and that the
+fee is fixed and never a percentage of ad spend. Thymelab is a platform
+people pay to get results from, so it is never called an experiment and its
+tools are never "instruments". It is pitched as their marketing in one place
+instead of five tools: connect, it names the next step, they approve, it
+goes live, they see what changed. Its home page carries a "what works today"
+list, and that list moves only when the product does.
+
 **Two sides, one domain.** The agency is the root of the site, light theme,
 following the system's dark mode. The do-it-yourself tools are Thymelab, under
 `/thymelab` (`LAB` and `LAB_PATH` in `lib/brand.ts`), with its own layout,

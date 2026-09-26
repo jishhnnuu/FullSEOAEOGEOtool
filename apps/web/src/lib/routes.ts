@@ -7,6 +7,8 @@
  * finding this product raises against other people's sites.
  */
 
+import { LAB } from "./brand";
+
 export type PublicRoute = {
   path: string;
   /** Title, used in the llms.txt listing and in navigation. */
@@ -23,7 +25,7 @@ export type PublicRoute = {
 export const ROUTES: PublicRoute[] = [
   {
     path: "/",
-    title: "A real marketing team, at AI prices",
+    title: "Your marketing, handled",
     answers: "A digital marketing agency for founders: a person on your account, AI doing the legwork, across websites, SEO, content, social and paid ads.",
     priority: 1.0,
     changeFrequency: "weekly",
@@ -72,7 +74,7 @@ export const ROUTES: PublicRoute[] = [
   {
     path: "/pricing",
     title: "Pricing",
-    answers: "How each service is priced against a traditional agency, what the person on your account does, and the tools you can use yourself.",
+    answers: "How each service is priced, what the specialist on your account does, and where the do-it-yourself tools are.",
     priority: 0.9,
     changeFrequency: "monthly",
     section: "product",
@@ -121,7 +123,7 @@ export const ROUTES: PublicRoute[] = [
   {
     path: "/seo",
     title: "SEO, done for you by a person and an AI team",
-    answers: "What the SEO service does, who does the work, what it refuses, and what it costs against a traditional agency.",
+    answers: "What the SEO service does, who does the work, what it refuses, and how it is priced.",
     priority: 0.95,
     changeFrequency: "monthly",
     section: "product",
@@ -168,16 +170,16 @@ export const ROUTES: PublicRoute[] = [
   },
   {
     path: "/thymelab",
-    title: "Thymelab: marketing tools you run yourself",
+    title: `${LAB}: all your marketing in one place`,
     answers:
-      "The do-it-yourself side: an SEO lab, a content lab, a social lab and an ads lab, each with its own workbench, free to start.",
+      "The do-it-yourself platform: website, Google data, content, social and ads in one place, with the next step always named and fixes published on approval.",
     priority: 0.9,
     changeFrequency: "monthly",
     section: "tools",
   },
   {
     path: "/thymelab/seo",
-    title: "The SEO lab",
+    title: `${LAB} SEO`,
     answers:
       "Audit a website, see every finding with the fix written out, and run single quick checks on a URL. Free, no account.",
     priority: 0.9,
@@ -204,7 +206,7 @@ export const ROUTES: PublicRoute[] = [
   },
   {
     path: "/thymelab/content",
-    title: "The content lab",
+    title: `${LAB} Content`,
     answers:
       "Measure a page's voice and readability against the pages ranking around it, and see what to change.",
     priority: 0.85,
@@ -222,7 +224,7 @@ export const ROUTES: PublicRoute[] = [
   },
   {
     path: "/thymelab/social",
-    title: "The social lab",
+    title: `${LAB} Social`,
     answers:
       "Read a competitor's public posts, find what beats their own median, and name the hook the winners share.",
     priority: 0.85,
@@ -240,7 +242,7 @@ export const ROUTES: PublicRoute[] = [
   },
   {
     path: "/thymelab/ads",
-    title: "The ads lab",
+    title: `${LAB} Ads`,
     answers:
       "Check whether an ad budget can work before it is spent, per platform, with the arithmetic shown.",
     priority: 0.85,
@@ -258,7 +260,7 @@ export const ROUTES: PublicRoute[] = [
   },
   {
     path: "/thymelab/website",
-    title: "The website lab (in the works)",
+    title: `${LAB} Websites (in the works)`,
     answers:
       "A website builder with hosting is being built. Join the list, or have the agency build your site now.",
     priority: 0.6,
@@ -267,7 +269,7 @@ export const ROUTES: PublicRoute[] = [
   },
   {
     path: "/thymelab/pricing",
-    title: "Thymelab pricing",
+    title: `${LAB} pricing`,
     answers:
       "What the tool plans cost, what is free, and what each plan adds, for people who want to do it themselves.",
     priority: 0.8,

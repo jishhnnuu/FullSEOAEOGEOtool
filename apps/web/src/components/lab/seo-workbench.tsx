@@ -7,19 +7,23 @@ import { AuditScope } from "@/components/audit-scope";
 import { LabBuddy } from "@/components/crew/scenes";
 import type { RunProgress } from "@/engine/run";
 import type { AuditResult, Finding, ScoreBreakdown, Severity } from "@/engine/types";
-import { labPath } from "@/lib/brand";
+import { LAB, labPath } from "@/lib/brand";
 import { startRun } from "@/lib/runner";
-import { id, logActivity, update, type SiteRecord } from "@/lib/store";
+import { id, load, logActivity, pendingApprovals, update, type SiteRecord } from "@/lib/store";
 
 /**
- * The SEO lab's workbench: the interface someone actually works in.
+ * Thymelab SEO: the screen someone actually works in.
  *
- * Three states, one screen. Before a run it is a specimen slot: paste any
- * address. During a run it is an instrument panel: pages read, the step in
- * progress, and a live log. After it is a triage board: coverage first (the
- * rule is that a score is a score of what was read, and the reader is told
- * above the number), then the four scores, then every finding grouped by
- * problem with its fix written out and a copy button.
+ * Three states, one screen. Before a run it is one box: paste any address.
+ * During a run it is a progress panel: pages read, the step in progress, and
+ * a live log. After it is a working board: coverage first (a score is a score
+ * of what was read, and the reader is told above the number), then the one
+ * thing to do first and where to approve it, then the four scores, then every
+ * finding grouped by problem with its fix written out.
+ *
+ * People pay for this to get results, not to browse findings, so the board
+ * always ends a run with a next step: the fixes are already in the approval
+ * queue, and the AI CMO answers "what now" from the same data.
  *
  * It runs the same engine as the workspace and saves the run there, so
  * "open the full workspace" shows the same result with everything else the
@@ -100,7 +104,7 @@ export function SeoWorkbench() {
     }
     setError(null);
     setResult(null);
-    setLog([`specimen: ${domain}`]);
+    setLog([`site: ${domain}`]);
     setPhase("running");
     const site = newSite(domain);
     setSiteId(site.id);
@@ -109,7 +113,7 @@ export function SeoWorkbench() {
         w.account = { email: "", name: "", company: site.name, plan: "trial", createdAt: new Date().toISOString() };
       }
       w.sites.push(site);
-      logActivity(w, { siteId: site.id, actor: "you", action: "Site added", detail: `${domain}, from the SEO lab` });
+      logActivity(w, { siteId: site.id, actor: "you", action: "Site added", detail: `${domain}, from ${LAB} SEO` });
     });
     const handle = startRun(site, onProgress);
     stopRef.current = handle.stop;
@@ -144,20 +148,20 @@ export function SeoWorkbench() {
           <div className="wb-crumbs lab-mono">
             <Link href={labPath()}>thymelab</Link> / <Link href={labPath("/seo")}>seo</Link> / <b>workbench</b>
           </div>
-          <h1 className="wb-title">The SEO lab</h1>
+          <h1 className="wb-title">{LAB} SEO</h1>
         </div>
         <span className={`wb-state ${phase}`}>{phase === "idle" ? "Ready" : phase === "running" ? "Running" : phase === "done" ? "Complete" : "Stopped"}</span>
       </div>
 
       <form
-        className="wb-specimen"
+        className="wb-entry"
         onSubmit={(event) => {
           event.preventDefault();
           if (phase !== "running") void run(input);
         }}
       >
-        <label htmlFor="wb-url" className="lab-mono">Specimen</label>
-        <div className="wb-specimen-row">
+        <label htmlFor="wb-url" className="lab-mono">Your website</label>
+        <div className="wb-entry-row">
           <span className="wb-proto lab-mono">https://</span>
           <input
             id="wb-url"
@@ -171,10 +175,10 @@ export function SeoWorkbench() {
           {phase === "running" ? (
             <button type="button" className="lab-btn ghost" onClick={() => stopRef.current?.()}>Stop</button>
           ) : (
-            <button type="submit" className="lab-btn">{result ? "Run again" : "Run experiment"} &rarr;</button>
+            <button type="submit" className="lab-btn">{result ? "Check again" : "Check my site"} &rarr;</button>
           )}
         </div>
-        <p className="wb-hint lab-mono">Any website: yours or a competitor&rsquo;s. Up to 40 pages on the free lab.</p>
+        <p className="wb-hint lab-mono">Yours or a competitor&rsquo;s. Up to 40 pages on the free plan.</p>
         {error ? <p className="wb-error" role="alert">{error}</p> : null}
       </form>
 
@@ -292,6 +296,8 @@ function Results({ result, siteId }: { result: AuditResult; siteId: string | nul
         <p>{result.coverage.headline}</p>
       </div>
 
+      {groups[0] ? <NextUp top={groups[0]} total={groups.length} siteId={siteId} /> : null}
+
       <div className="wb-scores">
         {SCORE_LABELS.map(({ key, label, hint }) => (
           <Dial key={key} label={label} hint={hint} score={result.scores[key]} />
@@ -315,15 +321,66 @@ function Results({ result, siteId }: { result: AuditResult; siteId: string | nul
         <button role="tab" aria-selected={tab === "pages"} onClick={() => setTab("pages")}>Pages <span className="lab-mono">{result.inventory.length}</span></button>
       </div>
 
-      {tab === "findings" ? <FindingList groups={shown} /> : null}
+      {tab === "findings" ? <div id="wb-findings"><FindingList groups={shown} /></div> : null}
       {tab === "wins" ? <FindingList groups={wins} empty="No quick wins on this run." /> : null}
       {tab === "pages" ? <Pages result={result} /> : null}
 
       <div className="wb-next">
-        {siteId ? <Link href={`/app/sites/${siteId}`} className="lab-btn">Open the full workspace &rarr;</Link> : null}
+        {siteId ? <Link href={`/app/sites/${siteId}`} className="lab-btn">Open your dashboard &rarr;</Link> : null}
         <Link href="/book?service=search" className="lab-btn ghost">Have a specialist fix these</Link>
       </div>
       <AuditScope compact />
+    </div>
+  );
+}
+
+/**
+ * The one thing to do first, and where it goes from here.
+ *
+ * The run has already put every written fix into this site's approval queue,
+ * so the count is read from there rather than assumed. The queue is the
+ * handover: approve, and with a WordPress connection it publishes with undo;
+ * without one, the approved change is written out exactly for pasting.
+ */
+/** "On 12 pages, with the fix written." A site-wide finding gets no page count, since "on 1 page" would misdescribe it. */
+function scopeNote(group: Group): string {
+  const where = group.count > 1 ? `On ${group.count} pages` : "";
+  if (where && group.fix) return `${where}, with the fix written.`;
+  if (where) return `${where}.`;
+  return group.fix ? "The fix is written." : "";
+}
+
+function NextUp({ top, total, siteId }: { top: Group; total: number; siteId: string | null }) {
+  const waiting = useMemo(() => (siteId ? pendingApprovals(load(), siteId).length : 0), [siteId]);
+  return (
+    <div className="wb-nextup">
+      <div className="wb-nextup-main">
+        <span className="lab-mono wb-k">Do this first</span>
+        <h2>{top.title}</h2>
+        <p>
+          {top.recommendation} <span className="lab-muted">{scopeNote(top)}</span>
+        </p>
+        <a href="#wb-findings" className="lab-link">See why, and the fix &darr;</a>
+      </div>
+      {siteId ? (
+        <ol className="wb-nextup-steps">
+          <li>
+            <b>Approve</b>
+            <span>{waiting > 0 ? `${waiting} ${waiting === 1 ? "fix is" : "fixes are"} waiting for your yes.` : `${total} problems found, ready to work through.`}</span>
+            <Link href={`/app/sites/${siteId}/approvals`} className="lab-btn small">Review and approve</Link>
+          </li>
+          <li>
+            <b>Publish</b>
+            <span>Connect WordPress and approved fixes go live, with undo. Elsewhere you get the exact change to paste.</span>
+            <Link href={`/app/sites/${siteId}/integrations`} className="lab-btn small ghost">Connect your site</Link>
+          </li>
+          <li>
+            <b>See results</b>
+            <span>Connect Google once, and your searches, clicks and conversions sit in the same dashboard as the work.</span>
+            <Link href={`/app/sites/${siteId}/cmo`} className="lab-btn small ghost">Ask the AI CMO what&rsquo;s next</Link>
+          </li>
+        </ol>
+      ) : null}
     </div>
   );
 }

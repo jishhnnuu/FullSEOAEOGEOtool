@@ -67,7 +67,7 @@ export default function TheFirmPage() {
         </h1>
         <p className="hero-lede">
           You talk to a marketing specialist who knows your business. They run an AI team that does the research, the fixes, the
-          drafts and the reports, which is how we charge a fraction of what an agency does.
+          drafts and the reports, so their time goes on decisions about your business.
         </p>
         <div className="hero-actions">
           <Link href={BOOK.href} className="big-button primary">Meet us on a call &rarr;</Link>

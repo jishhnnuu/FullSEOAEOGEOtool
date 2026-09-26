@@ -78,10 +78,10 @@ export function SiteFooter() {
         <div>
           <h4>Do it yourself</h4>
           <Link href={LAB_PATH}>{LAB}, our tools</Link>
-          <Link href={labPath("seo")}>SEO lab</Link>
-          <Link href={labPath("content")}>Content lab</Link>
-          <Link href={labPath("social")}>Social lab</Link>
-          <Link href={labPath("ads")}>Ads lab</Link>
+          <Link href={labPath("seo")}>SEO</Link>
+          <Link href={labPath("content")}>Content</Link>
+          <Link href={labPath("social")}>Social</Link>
+          <Link href={labPath("ads")}>Ads</Link>
         </div>
         <div>
           <h4>Company</h4>

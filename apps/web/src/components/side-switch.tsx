@@ -20,7 +20,7 @@ export function SideSwitch({ current }: { current: "agency" | "lab" }) {
         </Link>
         <Link href={LAB_PATH} className={current === "lab" ? "side on" : "side"} aria-current={current === "lab" ? "page" : undefined}>
           <b>{LAB}</b>
-          <span>Do it yourself, with our tools</span>
+          <span>Do it yourself, all in one place</span>
         </Link>
       </div>
     </div>

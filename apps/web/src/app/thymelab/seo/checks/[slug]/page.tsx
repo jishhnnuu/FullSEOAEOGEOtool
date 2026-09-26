@@ -5,7 +5,7 @@ import { LabCta } from "@/components/lab/chrome";
 import { ToolPage } from "@/components/tool-page";
 import { TOOLS_BY_SLUG, allTools } from "@/content/tools";
 import { CATALOG } from "@/engine/catalog";
-import { labPath } from "@/lib/brand";
+import { LAB, labPath } from "@/lib/brand";
 import { breadcrumbNode, faqNode, graph } from "@/lib/schema";
 
 export function generateStaticParams() {
@@ -36,7 +36,7 @@ export default async function QuickCheck({ params }: { params: Promise<{ slug: s
         dangerouslySetInnerHTML={{
           __html: graph(
             breadcrumbNode([
-              { name: "Thymelab", path: "/thymelab" },
+              { name: LAB, path: "/thymelab" },
               { name: "Quick checks", path: "/thymelab/seo/checks" },
               { name: tool.name, path: `/thymelab/seo/checks/${tool.slug}` },
             ]),
@@ -92,7 +92,7 @@ export default async function QuickCheck({ params }: { params: Promise<{ slug: s
         <p style={{ marginTop: "1.2rem" }}><Link href={labPath("/seo/checks")}>Every quick check &rarr;</Link></p>
       </section>
 
-      <LabCta title="Or check everything at once." body="The SEO lab reads the whole site and writes every fix." primary={{ href: labPath("/seo/audit"), label: "Run the SEO lab" }} />
+      <LabCta title="Or check everything at once." body={`${LAB} SEO reads the whole site and writes every fix.`} primary={{ href: labPath("/seo/audit"), label: "Check my site" }} />
     </div>
   );
 }

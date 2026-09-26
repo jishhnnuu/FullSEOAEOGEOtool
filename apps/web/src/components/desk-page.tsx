@@ -50,7 +50,7 @@ export function DeskPage({ desk, extra }: { desk: Desk; extra?: React.ReactNode 
     },
     {
       q: "What does it cost?",
-      a: `${servicePrice(service)}. A fixed monthly fee, month to month, with a specialist on your account. A traditional agency typically charges ${service.agency} for the same scope. If you'd rather do it yourself, the tools alone are ${deskPrice(desk)} a month${plan ? ` on the ${plan.name} plan` : ""}.`,
+      a: `${servicePrice(service)}. A fixed monthly fee, month to month, with a specialist on your account. Never a percentage of your ad spend. If you'd rather do it yourself, the tools are in ${LAB} from ${deskPrice(desk)} a month${plan ? ` on the ${plan.name} plan` : ""}.`,
     },
   ];
 
@@ -178,18 +178,14 @@ export function DeskPage({ desk, extra }: { desk: Desk; extra?: React.ReactNode 
             <div className="ps-us" style={service.from === null ? { fontSize: "1.35rem" } : undefined}>{servicePrice(service)}</div>
             <div className="small muted">Fixed monthly fee, specialist-led. Month to month.</div>
           </div>
-          <div className="ps-them">
-            A typical agency: <s>{service.agency}</s>
-          </div>
+          <ul className="ps-incl">
+            <li>A specialist on your account</li>
+            <li>Never a percentage of ad spend</li>
+            <li>Everything we make stays yours</li>
+          </ul>
           <Link href={`${BOOK.href}?service=${desk.key}`} className="big-button primary">{BOOK.label}</Link>
         </div>
         <details className="acc" style={{ marginTop: "1rem" }}>
-          <summary>Where the agency number comes from</summary>
-          <div className="acc-body">
-            <p>{service.agencyBasis}</p>
-          </div>
-        </details>
-        <details className="acc">
           <summary>Rather do it yourself?</summary>
           <div className="acc-body">
             <p>

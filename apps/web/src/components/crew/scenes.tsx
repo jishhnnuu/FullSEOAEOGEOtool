@@ -278,7 +278,7 @@ const BUDDY: Record<BuddyTool, { variant: Variant; pose: string; lines: string[]
   content: {
     variant: "content",
     pose: "hold",
-    lines: ["Let's find your voice together.", "Words are my favourite experiment.", "Ready when you are!"],
+    lines: ["Let's find your voice together.", "Words are my favourite thing.", "Ready when you are!"],
   },
   social: {
     variant: "social",

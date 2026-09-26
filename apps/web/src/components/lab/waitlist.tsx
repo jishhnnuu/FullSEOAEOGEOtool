@@ -3,7 +3,7 @@
 import { useRef, useState } from "react";
 
 /**
- * Join the website lab's waitlist. Stored through the same enquiry path as a
+ * Join the website builder's waitlist. Stored through the same enquiry path as a
  * call request, tagged so the inbox shows it as a waitlist entry rather than
  * someone expecting a call.
  */
@@ -41,7 +41,7 @@ export function Waitlist() {
   }
 
   if (state === "done") {
-    return <p className="lab-card" role="status">You&rsquo;re on the list. We&rsquo;ll email you when the website lab opens, and only then.</p>;
+    return <p className="lab-card" role="status">You&rsquo;re on the list. We&rsquo;ll email you when the website builder opens, and only then.</p>;
   }
 
   return (

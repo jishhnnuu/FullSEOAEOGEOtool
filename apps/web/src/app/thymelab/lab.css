@@ -3,7 +3,7 @@
  *
  * Always dark, on purpose. The agency is warm paper and follows the reader's
  * system setting; the lab is the night shift, a room with the lights low and
- * the instruments glowing. Nobody opening it at midnight gets a white page,
+ * the jars glowing. Nobody opening it at midnight gets a white page,
  * and nobody mistakes it for the agency.
  *
  * Every token the rest of the site uses is redefined inside `.lab`, so the
@@ -230,8 +230,8 @@ html:has(.lab), html:has(.lab) body { background: #0a0e0c; }
 /* ======================================================= workbenches */
 /*
  * A workbench is where someone works, so it is quieter than a landing page:
- * no hero, a thin instrument bar, and the whole width given to the task.
- * Each instrument has its own layout (the SEO console, the writing desk,
+ * no hero, a thin top bar, and the whole width given to the task.
+ * Each tool has its own layout (the SEO console, the writing desk,
  * the signal room, the budget console) so none reads as a copy of another.
  */
 .wb { max-width: 1240px; margin: 0 auto; padding: 1.2rem 1.25rem 3rem; }
@@ -246,14 +246,14 @@ html:has(.lab), html:has(.lab) body { background: #0a0e0c; }
 .wb h3 { font-size: 1.2rem; margin-bottom: 0.3rem; }
 
 /* The SEO console. */
-.wb-specimen { background: var(--surface); border: 1px solid color-mix(in srgb, var(--tone) 30%, var(--border)); border-radius: 18px; padding: 1.1rem 1.2rem 1rem; box-shadow: 0 0 60px color-mix(in srgb, var(--tone) 7%, transparent); }
-.wb-specimen label { font-size: 0.7rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--tone); }
-.wb-specimen-row { display: flex; align-items: center; gap: 0.6rem; margin-top: 0.5rem; }
+.wb-entry { background: var(--surface); border: 1px solid color-mix(in srgb, var(--tone) 30%, var(--border)); border-radius: 18px; padding: 1.1rem 1.2rem 1rem; box-shadow: 0 0 60px color-mix(in srgb, var(--tone) 7%, transparent); }
+.wb-entry label { font-size: 0.7rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--tone); }
+.wb-entry-row { display: flex; align-items: center; gap: 0.6rem; margin-top: 0.5rem; }
 .wb-proto { color: var(--text-faint); }
-.wb-specimen input { flex: 1 1 auto; min-width: 0; font: 600 1.35rem/1.2 var(--display); padding: 0.75rem 0.9rem; letter-spacing: -0.01em; }
+.wb-entry input { flex: 1 1 auto; min-width: 0; font: 600 1.35rem/1.2 var(--display); padding: 0.75rem 0.9rem; letter-spacing: -0.01em; }
 .wb-hint { color: var(--text-faint); margin: 0.6rem 0 0; font-size: 0.74rem; }
 .wb-error { color: var(--bad); margin: 0.6rem 0 0; }
-@media (max-width: 640px) { .wb-specimen-row { flex-wrap: wrap; } .wb-proto { display: none; } .wb-specimen-row .lab-btn { width: 100%; justify-content: center; } }
+@media (max-width: 640px) { .wb-entry-row { flex-wrap: wrap; } .wb-proto { display: none; } .wb-entry-row .lab-btn { width: 100%; justify-content: center; } }
 
 .wb-idle { margin-top: 1.4rem; }
 .wb-idle-grid { display: grid; gap: 1rem; grid-template-columns: repeat(3, minmax(0, 1fr)); margin-bottom: 1rem; }
@@ -366,7 +366,7 @@ html:has(.lab), html:has(.lab) body { background: #0a0e0c; }
 .wb-rail .lab-card h3 { font-size: 1.05rem; }
 .wb-rail ul { margin: 0.4rem 0 0; padding-left: 1.1rem; color: var(--text-muted); display: grid; gap: 0.35rem; font-size: 0.92rem; }
 
-/* The budget console (ads): an instrument with a floor gauge. */
+/* The budget console (ads): a panel with a floor gauge. */
 .wb-console { display: grid; gap: 1.4rem; grid-template-columns: minmax(0, 0.85fr) minmax(0, 2fr); }
 @media (max-width: 960px) { .wb-console { grid-template-columns: 1fr; } }
 .wb-gaugecard { background: linear-gradient(180deg, color-mix(in srgb, var(--tone) 10%, transparent), transparent), var(--surface); border: 1px solid color-mix(in srgb, var(--tone) 35%, var(--border)); border-radius: 18px; padding: 1.3rem; }
@@ -385,4 +385,43 @@ html:has(.lab), html:has(.lab) body { background: #0a0e0c; }
 .lab:has(.wb) .lab-nav,
 .lab:has(.wb) .lab-footer { display: none; }
 .lab:has(.wb) .lab-header { position: static; background: transparent; border-bottom-color: transparent; }
-.wb-specimen button, .wb-specimen .lab-btn { white-space: nowrap; }
+.wb-entry button, .wb-entry .lab-btn { white-space: nowrap; }
+
+/* The next step. Every run ends with one thing to do and where to approve it. */
+.wb-nextup { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr); gap: 1.2rem; margin: 1rem 0 1.2rem; padding: 1.2rem; border-radius: 18px; background: linear-gradient(135deg, color-mix(in srgb, var(--tone) 14%, var(--surface)), var(--surface) 70%); border: 1px solid color-mix(in srgb, var(--tone) 45%, var(--border)); }
+.wb-nextup h2 { font-size: clamp(1.25rem, 2.4vw, 1.6rem); margin: 0.45rem 0 0.5rem; letter-spacing: -0.02em; }
+.wb-nextup p { margin: 0 0 0.7rem; }
+.lab-link { color: var(--tone); font-weight: 700; text-decoration: none; }
+.lab-link:hover { text-decoration: underline; }
+.wb-nextup-steps { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.6rem; counter-reset: nx; }
+.wb-nextup-steps li { counter-increment: nx; display: grid; grid-template-columns: 1.8rem minmax(0, 1fr) auto; grid-template-rows: auto auto; column-gap: 0.7rem; align-items: center; padding: 0.7rem 0.8rem; border-radius: 12px; background: color-mix(in srgb, var(--bg) 60%, transparent); border: 1px solid var(--border); }
+.wb-nextup-steps li::before { content: counter(nx); grid-row: 1 / span 2; width: 1.8rem; height: 1.8rem; display: grid; place-items: center; border-radius: 50%; background: var(--tone); color: #0a0e0c; font-weight: 800; font-family: var(--mono); font-size: 0.85rem; }
+.wb-nextup-steps b { grid-column: 2; }
+.wb-nextup-steps span { grid-column: 2; color: var(--text-muted); font-size: 0.88rem; }
+.wb-nextup-steps .lab-btn { grid-column: 3; grid-row: 1 / span 2; white-space: nowrap; }
+@media (max-width: 860px) {
+  .wb-nextup { grid-template-columns: 1fr; }
+  .wb-nextup-steps li { grid-template-columns: 1.8rem minmax(0, 1fr); }
+  .wb-nextup-steps .lab-btn { grid-column: 2; grid-row: auto; justify-self: start; margin-top: 0.5rem; }
+}
+
+/* Lab home: the loop, the swap, and the honest ledger. */
+.lab-steps.four { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+@media (max-width: 1000px) { .lab-steps.four { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 560px) { .lab-steps.four { grid-template-columns: 1fr; } }
+.lab-swap { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 1rem; margin-top: 1.6rem; }
+.lab-swap .lab-mono { font-size: 0.75rem; letter-spacing: 0.12em; text-transform: uppercase; }
+.lab-swap .lab-list { margin-top: 0.8rem; }
+.lab-card-on { border-color: color-mix(in srgb, var(--accent) 55%, var(--border)); background: linear-gradient(160deg, color-mix(in srgb, var(--accent) 10%, var(--surface)), var(--surface) 65%); }
+.lab-card-on > .lab-mono { color: var(--accent); }
+.lab-list.plain li { color: var(--text-muted); }
+.lab-list.plain li::before { content: "\25E6"; color: var(--text-faint); }
+@media (max-width: 760px) { .lab-swap { grid-template-columns: 1fr; } }
+.lab-today { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.6rem 1rem; margin-top: 1.6rem; }
+.lab-today > div { display: grid; grid-template-columns: 5.2rem minmax(0, 1fr); column-gap: 0.8rem; padding: 0.8rem 0.9rem; border: 1px solid var(--border); border-radius: 12px; background: var(--surface); }
+.lab-today > div > .lab-mono { grid-row: 1 / span 2; align-self: start; font-size: 0.68rem; letter-spacing: 0.1em; text-transform: uppercase; padding: 0.2rem 0.4rem; border-radius: 6px; text-align: center; }
+.lab-today .live > .lab-mono { color: #0a0e0c; background: var(--accent); }
+.lab-today .next > .lab-mono { color: var(--text-muted); border: 1px dashed var(--text-faint); }
+.lab-today strong { font-size: 0.98rem; }
+.lab-today .lab-muted { font-size: 0.88rem; }
+@media (max-width: 760px) { .lab-today { grid-template-columns: 1fr; } }

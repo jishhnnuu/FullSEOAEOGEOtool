@@ -1,3 +1,4 @@
+import { LAB } from "@/lib/brand";
 import Link from "next/link";
 
 import { ToolBench } from "@/components/lab/tool-bench";
@@ -5,7 +6,7 @@ import { SocialTeardownTool } from "@/components/social-teardown-tool";
 import { PLATFORMS, readableForCompetitors } from "@/lib/social-platforms";
 
 export const metadata = {
-  title: "The social lab: study a competitor's posts",
+  title: `${LAB} Social: study a competitor's posts`,
   description:
     "Read a competitor's public posts, find the ones that beat their own median, and name the hook the winners share. YouTube needs no key at all. No signup.",
   alternates: { canonical: "/thymelab/social/teardown" },
@@ -18,7 +19,7 @@ export default function TeardownBench() {
       tool="social"
       path="social"
       layout="signal"
-      title="The social lab"
+      title={`${LAB} Social`}
       lead="Type a competitor's handle. See which of their posts beat their own usual, and what the winners have in common."
       aside={
         <>

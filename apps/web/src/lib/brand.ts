@@ -55,14 +55,14 @@ export const IS_LAUNCHED = SITE_URL !== FALLBACK_URL;
 export const TAGLINE = "A digital marketing agency run by people, powered by AI";
 
 export const DESCRIPTION =
-  "A digital marketing agency for founders without a marketing team. A real person looks after " +
-  "your account, and AI does the legwork: websites built and optimised, SEO, content, social and " +
-  "paid ads. That is why it costs a fraction of a traditional agency. Nothing goes live without " +
-  "your yes, and you can see every piece of work in your own dashboard.";
+  "A digital marketing agency for founders without a marketing team. A specialist looks after " +
+  "your account and AI does the groundwork: websites built and optimised, SEO, content, social and " +
+  "paid ads. Nothing goes live without your yes, and you see every piece of work, and what it did, " +
+  "in one place.";
 
 /** One sentence, used where a description has to be short. */
 export const SHORT_DESCRIPTION =
-  "A real marketing team at AI prices: a person on your account, AI doing the legwork.";
+  "Your marketing, handled: a specialist on your account, AI doing the groundwork.";
 
 /** Absolute URL for a path. Every canonical and sitemap entry goes through this. */
 export function url(path = "/"): string {

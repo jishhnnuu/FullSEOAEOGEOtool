@@ -3,10 +3,10 @@ import Link from "next/link";
 import { ToolLanding } from "@/components/lab/tool-landing";
 import { allTools } from "@/content/tools";
 import { CATALOG_SIZE } from "@/engine/catalog";
-import { labPath } from "@/lib/brand";
+import { LAB, labPath } from "@/lib/brand";
 
 export const metadata = {
-  title: "The SEO lab: check any website's SEO, free",
+  title: `${LAB} SEO: check any website's SEO, free`,
   description: `Run a full SEO check on any website: ${CATALOG_SIZE} checks across technical SEO, content, structured data and AI search, with every fixable problem's fix written out. Free, in your browser.`,
   alternates: { canonical: "/thymelab/seo" },
 };
@@ -16,16 +16,16 @@ export default function LabSeo() {
   return (
     <ToolLanding
       tool="seo"
-      eyebrow="Exp 01 / The SEO lab"
+      eyebrow={`${LAB} SEO`}
       title="See your website the way"
       glow="Google does."
       lede={`Paste any website. We read it the way search engines and AI assistants do, run ${CATALOG_SIZE} checks, and write the fix for every problem we can.`}
-      primary={{ href: labPath("/seo/audit"), label: "Run the SEO lab" }}
+      primary={{ href: labPath("/seo/audit"), label: "Check my site" }}
       secondary={{ href: labPath("/seo/checks"), label: "Quick checks" }}
       does={[
         { title: "Reads every page", body: "Robots rules, sitemaps and your pages, the way a crawler sees them. Up to 40 pages free." },
         { title: "Finds what's wrong", body: "Technical problems, thin pages, broken structured data, and what stops AI assistants quoting you." },
-        { title: "Writes the fixes", body: "New titles, descriptions, redirects and schema, written out so you can copy them in." },
+        { title: "Writes and ships the fixes", body: "Titles, descriptions, redirects and schema, written and queued for your yes. Approved fixes publish to WordPress, with undo." },
       ]}
       readout={[
         { label: "pages read .................", value: "38 of 40", tone: "hi" },

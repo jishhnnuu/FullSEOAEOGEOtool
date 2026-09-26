@@ -5,9 +5,9 @@ import { LabCta } from "@/components/lab/chrome";
 import { faqNode, graph } from "@/lib/schema";
 
 /**
- * One instrument's front page: the promise, the scientist who runs it, what
+ * One tool's front page: the promise, the scientist who runs it, what
  * it does, what the readout looks like, and the button into the workbench.
- * Every instrument uses this shape, so they read as one lab, and each sets
+ * Every tool uses this shape, so they read as one lab, and each sets
  * its own tone and assistant, so none is mistaken for another.
  */
 export function ToolLanding({

@@ -2,12 +2,12 @@ import Link from "next/link";
 
 import { LabBuddy } from "@/components/crew/scenes";
 import { Waitlist } from "@/components/lab/waitlist";
-import { labPath } from "@/lib/brand";
+import { LAB, labPath } from "@/lib/brand";
 
 export const metadata = {
-  title: "The website lab: build your own website, coming soon",
+  title: `${LAB} Websites: build your own website, coming soon`,
   description:
-    "Thymelab's website builder is in the works: build and host your own website, set up to be found on Google from day one. Join the list to hear when it opens.",
+    `${LAB}'s website builder is in the works: build and host your own website, set up to be found on Google from day one. Join the list to hear when it opens.`,
   alternates: { canonical: "/thymelab/website" },
 };
 
@@ -20,12 +20,12 @@ export default function LabWebsite() {
     <div className="tone-website">
       <section className="lab-section lab-hero">
         <div>
-          <span className="lab-eyebrow">Exp 05 / The website lab &middot; in the works</span>
+          <span className="lab-eyebrow">{LAB} Websites &middot; in the works</span>
           <h1 className="lab-title">
             Build your own website. <span className="glow">Soon.</span>
           </h1>
           <p className="lab-lede">
-            We&rsquo;re building a website lab: describe your business, get a site you can edit, host it, and have it set
+            We&rsquo;re building a website builder: describe your business, get a site you can edit, host it, and have it set
             up to be found on Google from the first day. It isn&rsquo;t open yet.
           </p>
           <div style={{ marginTop: "1.6rem", maxWidth: 640 }}>
@@ -33,7 +33,7 @@ export default function LabWebsite() {
           </div>
           <p className="lab-muted small" style={{ marginTop: "1rem" }}>
             Need a website now? <Link href="/websites">Our agency builds them</Link>, or run the{" "}
-            <Link href={labPath("/seo/audit")}>SEO lab</Link> on the one you have.
+            <Link href={labPath("/seo/audit")}>SEO check</Link> on the one you have.
           </p>
         </div>
         <LabBuddy tool="website" />
@@ -52,7 +52,7 @@ export default function LabWebsite() {
           </div>
           <div className="lab-card">
             <h3>Launch it, found</h3>
-            <p>Hosted, fast, and checked by the SEO lab before anyone sees it.</p>
+            <p>Hosted, fast, and checked by {LAB} SEO before anyone sees it.</p>
           </div>
         </div>
       </section>

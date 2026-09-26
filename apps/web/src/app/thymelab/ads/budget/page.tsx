@@ -1,3 +1,4 @@
+import { LAB } from "@/lib/brand";
 import Link from "next/link";
 
 import { AdBudgetTool } from "@/components/ad-budget-tool";
@@ -5,7 +6,7 @@ import { ToolBench } from "@/components/lab/tool-bench";
 import { SMART_BIDDING_MONTHLY } from "@/engine/ads";
 
 export const metadata = {
-  title: "The ads lab: will this ad budget actually work?",
+  title: `${LAB} Ads: will this ad budget actually work?`,
   description: `Automated bidding needs about ${SMART_BIDDING_MONTHLY} conversions a month per platform before its model fits. Check whether your budget clears that, and what to change if it doesn't. Free, in your browser.`,
   alternates: { canonical: "/thymelab/ads/budget" },
 };
@@ -16,7 +17,7 @@ export default function BudgetBench() {
       tool="ads"
       path="ads"
       layout="console"
-      title="The ads lab"
+      title={`${LAB} Ads`}
       lead="Three numbers in, a straight answer out. The maths an agency on commission rarely shows you."
       aside={
         <>

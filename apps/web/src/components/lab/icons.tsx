@@ -1,4 +1,4 @@
-/** Line icons for the lab's instruments. Stroke colour comes from the card's tone. */
+/** Line icons for the lab's tools. Stroke colour comes from the card's tone. */
 export function ToolIcon({ tool }: { tool: "seo" | "content" | "social" | "ads" | "website" }) {
   if (tool === "seo") {
     return (

@@ -1,10 +1,11 @@
+import { LAB } from "@/lib/brand";
 import Link from "next/link";
 
 import { ToolBench } from "@/components/lab/tool-bench";
 import { VoiceTool } from "@/components/voice-tool";
 
 export const metadata = {
-  title: "The writing lab: test your writing against your rivals",
+  title: `${LAB} Content: test your writing against your rivals`,
   description:
     "Measure your page's rhythm, filler, hedging, specifics and reading level against up to five competitors. Counted, not judged. No AI, no signup.",
   alternates: { canonical: "/thymelab/content/voice" },
@@ -16,7 +17,7 @@ export default function VoiceBench() {
       tool="content"
       path="content"
       layout="desk"
-      title="The writing lab"
+      title={`${LAB} Content`}
       lead="Your page against up to five rivals. Counted, not judged, so the same page always gets the same answer."
       aside={
         <>

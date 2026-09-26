@@ -1,8 +1,8 @@
 import { ToolLanding } from "@/components/lab/tool-landing";
-import { labPath } from "@/lib/brand";
+import { LAB, labPath } from "@/lib/brand";
 
 export const metadata = {
-  title: "The social lab: see what's working for your competitors",
+  title: `${LAB} Social: see what's working for your competitors`,
   description:
     "Study any public YouTube channel: which posts beat that account's own usual, and what the winners have in common. No fake reach numbers. Free, no signup.",
   alternates: { canonical: "/thymelab/social" },
@@ -12,7 +12,7 @@ export default function LabSocial() {
   return (
     <ToolLanding
       tool="social"
-      eyebrow="Exp 03 / The social lab"
+      eyebrow={`${LAB} Social`}
       title="See what's working for"
       glow="your rivals."
       lede="Type a competitor's handle. We find the posts that beat their own usual, and what those winners have in common, so you know what to try next."

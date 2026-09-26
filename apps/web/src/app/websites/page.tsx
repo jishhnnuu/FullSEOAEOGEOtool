@@ -9,7 +9,7 @@ import { breadcrumbNode, faqNode, graph } from "@/lib/schema";
 export const metadata = {
   title: "Website design and build for new businesses",
   description:
-    "A website built with you, on a platform you own, with SEO done properly from launch. A specialist leads the build and AI speeds up the legwork, so it costs a fraction of an agency build.",
+    "A website built with you, on a platform you own, with SEO done properly from launch. A specialist leads the build, AI speeds up the groundwork, and the price is fixed before we start.",
   alternates: { canonical: "/websites" },
 };
 
@@ -141,15 +141,13 @@ export default function WebsitesPage() {
             <div className="ps-us" style={service.from === null ? { fontSize: "1.35rem" } : undefined}>{servicePrice(service)}</div>
             <div className="small muted">A fixed price for the build, agreed before we start.</div>
           </div>
-          <div className="ps-them">
-            A typical agency build: <s>{service.agency}</s>
-          </div>
+          <ul className="ps-incl">
+            <li>A specialist leads the build</li>
+            <li>SEO done properly from launch</li>
+            <li>You own the site and the logins</li>
+          </ul>
           <Link href={`${BOOK.href}?service=websites`} className="big-button primary">{BOOK.label}</Link>
         </div>
-        <details className="acc" style={{ marginTop: "1rem" }}>
-          <summary>Where the agency number comes from</summary>
-          <div className="acc-body"><p>{service.agencyBasis}</p></div>
-        </details>
       </section>
 
       <section className="section">

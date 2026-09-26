@@ -30,13 +30,13 @@ const STEPS: Step[] = [
     title: `Try a tool in ${LAB}`,
     cost: "Costs: nothing",
     body: "Our do-it-yourself lab. Paste a URL or a rival's handle. Real results, in your browser, in seconds.",
-    links: [{ href: LAB_PATH, label: "Open the lab", primary: true }],
+    links: [{ href: LAB_PATH, label: `Open ${LAB}`, primary: true }],
   },
   {
     n: "2",
     title: "Check any website's SEO",
     cost: "Costs: a URL",
-    body: "The SEO lab reads up to 40 pages and writes every fix for you, free.",
+    body: "Reads up to 40 pages, writes every fix and queues it for your yes. Free.",
     links: [{ href: labPath("seo/audit"), label: "Check a website", primary: true }],
   },
   {

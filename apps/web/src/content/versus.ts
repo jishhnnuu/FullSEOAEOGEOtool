@@ -78,7 +78,7 @@ export const VERSUS: Versus[] = [
       {
         question: "Cost for the same scope",
         agency: "£1,800 to £4,000 a month at 20 to 40 hours, usually on a twelve-month minimum.",
-        here: "A fixed monthly fee at a fraction of that, month to month, because the hours of legwork are done by AI.",
+        here: "A fixed monthly fee agreed on your call, month to month, never a percentage of spend. The groundwork is done by AI.",
         winner: "here",
       },
       {
@@ -137,7 +137,7 @@ export const VERSUS: Versus[] = [
       {
         question: "Cost",
         agency: "£2,000 to £5,000 a month for strategy, four to eight pieces and distribution.",
-        here: "A fixed monthly fee at a fraction of that, because the research and the drafting are done by AI.",
+        here: "A fixed monthly fee agreed on your call. The research and first drafts are done by AI, so the hours go on your business.",
         winner: "here",
       },
     ],
@@ -231,7 +231,7 @@ export const VERSUS: Versus[] = [
       {
         question: "Cost",
         agency: "£1,200 to £3,000 a month for planning, production, scheduling and community management.",
-        here: "A fixed monthly fee at a fraction of that, because research and drafting are done by AI.",
+        here: "A fixed monthly fee agreed on your call. Research and first drafts are done by AI, so the hours go on your business.",
         winner: "here",
       },
     ],

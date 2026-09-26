@@ -3,7 +3,7 @@ import Link from "next/link";
 import { labPath } from "@/lib/brand";
 
 /**
- * The frame around an instrument that already exists (the voice check, the
+ * The frame around a tool that already exists (the voice check, the
  * social teardown, the budget check). Each gets its own room: the writing
  * desk puts the tool on a sheet of paper, the signal room puts a scanner
  * above it, the budget console puts the learning-floor gauge beside it. The

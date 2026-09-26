@@ -1,8 +1,8 @@
 import { ToolLanding } from "@/components/lab/tool-landing";
-import { labPath } from "@/lib/brand";
+import { LAB, labPath } from "@/lib/brand";
 
 export const metadata = {
-  title: "The writing lab: test how your writing sounds",
+  title: `${LAB} Content: test how your writing sounds`,
   description:
     "Measure your page's rhythm, filler, hedging, specifics and reading level against up to five competitors. Counted, not judged. Free, no signup, no AI.",
   alternates: { canonical: "/thymelab/content" },
@@ -12,7 +12,7 @@ export default function LabContent() {
   return (
     <ToolLanding
       tool="content"
-      eyebrow="Exp 02 / The writing lab"
+      eyebrow={`${LAB} Content`}
       title="Sound like you, not"
       glow="everyone else."
       lede="Put your page next to the ones you compete with. We count what makes writing sound generic, so you can see where yours blends in and where it stands out."

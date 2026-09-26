@@ -8,7 +8,7 @@ import { breadcrumbNode, graph } from "@/lib/schema";
 export const metadata = {
   title: "Full-service marketing",
   description:
-    "Your website, SEO, content, social and paid ads, handled together by one specialist on your account and an AI team behind them. One plan, a fraction of a full-service agency.",
+    "Your website, SEO, content, social and paid ads, handled together by one specialist on your account and an AI team behind them. One plan, one fixed monthly fee.",
   alternates: { canonical: "/the-whole-agency" },
 };
 
@@ -110,7 +110,7 @@ export default function WholeAgencyPage() {
           <summary>What you&rsquo;re signing up to</summary>
           <div className="acc-body">
             <ul>
-              <li>{servicePrice(everything)}. A traditional full-service agency typically charges {everything.agency}.</li>
+              <li>{servicePrice(everything)}. One fixed monthly fee, never a percentage of your ad spend.</li>
               <li>Month to month. Add or drop a service whenever you like.</li>
               <li>Everything we build is yours: the website, the accounts, the content and every fix.</li>
             </ul>

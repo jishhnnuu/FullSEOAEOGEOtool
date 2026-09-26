@@ -6,9 +6,9 @@ import { LAB, labPath } from "@/lib/brand";
 import { faqNode, graph } from "@/lib/schema";
 
 export const metadata = {
-  title: "Thymelab pricing",
+  title: `${LAB} pricing`,
   description:
-    "Thymelab is free to start. Paid plans raise the page limit, keep your history, re-run checks weekly and publish fixes to your website. Per site, per month, cancel anytime.",
+    `${LAB} is free to start. Paid plans raise the page limit, keep your history, re-run checks weekly and publish fixes to your website. Per site, per month, cancel anytime.`,
   alternates: { canonical: "/thymelab/pricing" },
 };
 
@@ -50,7 +50,7 @@ export default function LabPricing() {
       <section className="lab-section" style={{ paddingBottom: "1.5rem" }}>
         <span className="lab-eyebrow">{LAB} pricing</span>
         <h1 className="lab-title">Free to start. <span className="glow">Fair</span> after that.</h1>
-        <p className="lab-lede">Every instrument works free. Pay when you want bigger checks, history and fixes published for you.</p>
+        <p className="lab-lede">Every tool works free. Pay when you want bigger checks, history and fixes published for you.</p>
       </section>
 
       <section className="lab-section tight">

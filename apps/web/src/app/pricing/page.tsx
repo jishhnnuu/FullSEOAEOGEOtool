@@ -8,7 +8,7 @@ import { faqNode, graph } from "@/lib/schema";
 export const metadata = {
   title: "Pricing",
   description:
-    "Pay for the services you pick, each AI-powered and overseen by a specialist, at a fraction of a traditional agency. Or use the tools yourself in Thymelab, free to start.",
+    "Pay for the services you pick. Each has a specialist on your account and a fixed monthly fee, quoted on a free call and never a percentage of your ad spend.",
   alternates: { canonical: "/pricing" },
 };
 
@@ -25,11 +25,11 @@ export const metadata = {
 const FAQ = [
   {
     q: "Why aren't all the prices on the page?",
-    a: "Because the right price depends on your business: how many pages, how many ad platforms, how much content. We'd rather quote a fixed monthly fee after thirty minutes than publish a starting price you'd never actually pay. The quote is in writing, and it's always well under the agency figure beside each service.",
+    a: "Because the right price depends on your business: how many pages, how many ad platforms, how much content. We'd rather quote a fixed monthly fee after thirty minutes than publish a starting price you'd never actually pay. The quote is in writing and it doesn't move once agreed.",
   },
   {
-    q: "Why do you cost less than an agency?",
-    a: "Most of an agency's fee pays for hours of legwork: research, audits, first drafts, reports. Our AI team does that. You pay for the specialist who looks after you and for the results.",
+    q: "What does AI-powered mean for my bill?",
+    a: "The research, audits, first drafts and reports are done by our AI team and checked by your specialist. So the hours you pay for go on decisions about your business, not legwork, and more gets done each month for the same fee.",
   },
   {
     q: "What does my specialist actually do?",
@@ -54,11 +54,11 @@ export default function PricingPage() {
       <section className="section fresh-hero">
         <div className="eyebrow"><span className="dot" aria-hidden="true" />Pricing</div>
         <h1 className="hero-title">
-          Agency work. <span className="hl">Not</span> agency prices.
+          Clear prices. <span className="hl">No</span> surprises.
         </h1>
         <p className="hero-lede">
-          Pick one service or all of them. Each is overseen by a specialist, and costs a fraction of an agency because
-          AI does the legwork.
+          Pick one service or all of them. Each has a specialist on your account and a fixed monthly fee, agreed on a
+          free call. Never a percentage of your ad spend.
         </p>
         <div className="hero-actions">
           <Link href={BOOK.href} className="big-button primary">Get a quote on a free call &rarr;</Link>
@@ -69,15 +69,15 @@ export default function PricingPage() {
         <h2 className="section-title">Our services.</h2>
         <div className="vgrid services-grid" style={{ marginTop: "1.2rem" }}>
           <div className="vg-head">Service</div>
-          <div className="vg-head">A traditional agency</div>
-          <div className="vg-head us">Us: AI-powered, specialist-led</div>
+          <div className="vg-head">Who it&rsquo;s for</div>
+          <div className="vg-head us">Price</div>
           {SERVICES.map((service) => (
             <ServiceRow key={service.key} service={service} />
           ))}
         </div>
         <p className="small muted" style={{ marginTop: "0.9rem" }}>
-          Agency figures are typical UK ranges for the same scope, with the basis on each service page. Ad spend is
-          never included and never marked up.
+          Every service is specialist-led and AI-powered. Ad spend is never included, never marked up, and never
+          sets our fee.
         </p>
       </section>
 
@@ -93,7 +93,7 @@ export default function PricingPage() {
           </div>
           <div className="hero-actions">
             <Link href={labPath("pricing")} className="big-button">{LAB} pricing &rarr;</Link>
-            <Link href={LAB_PATH} className="fresh-btn ghost lab-ghost">Look around the lab</Link>
+            <Link href={LAB_PATH} className="fresh-btn ghost lab-ghost">Look around {LAB}</Link>
           </div>
         </div>
       </section>
@@ -122,7 +122,7 @@ function ServiceRow({ service }: { service: (typeof SERVICES)[number] }) {
         <Link href={service.path}><strong>{service.label}</strong></Link>
         <span className="small muted">{service.line}</span>
       </div>
-      <div className="vg-them">{service.agency}</div>
+      <div className="vg-them">{service.forWho}</div>
       <div className="vg-us">{servicePrice(service)}</div>
     </>
   );

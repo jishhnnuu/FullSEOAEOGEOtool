@@ -11,7 +11,7 @@ export const metadata = {
   // The homepage keeps the layout's default title rather than restating it,
   // so the product name lives in exactly one place.
   description:
-    "An AI-powered marketing agency for founders without a marketing team. AI does the legwork on your website, SEO, ads, social and content, a specialist oversees every piece, and it costs a fraction of a traditional agency. Book a free call.",
+    "A digital marketing agency for founders who want it done for them. Specialists build your website and run your SEO, content, social and ads, with AI doing the groundwork. Every piece of work in one place. Book a free call.",
   alternates: { canonical: "/" },
 };
 
@@ -21,8 +21,9 @@ export const metadata = {
  * The person this is written for may not have a website yet, has never hired
  * an agency, and will not hand their business to software they have never
  * heard of. So the first thing on the page is a specialist to talk to, the second
- * is what they would get, and the AI is the reason it is affordable rather
- * than the thing being sold. The do-it-yourself tools live on their own side
+ * is what they would get, and the AI is how more gets done each week rather
+ * than the thing being sold. We are an agency, so the page never pitches us
+ * as "less than" one: it says what the founder gets. The do-it-yourself tools live on their own side
  * of the site, Thymelab, and this page points there exactly once in the hero
  * and once in a band further down, so nobody mistakes the agency for software.
  */
@@ -30,7 +31,7 @@ export const metadata = {
 const FAQ = [
   {
     q: "Is this AI, or a real specialist?",
-    a: "Both, on purpose. A marketing specialist from our team looks after your account: they get to know your business on a call, set everything up with you, check the work and answer when you ask. Behind them, an AI team does the legwork, like research, writing drafts, fixing your site and building reports. That split is why we cost a fraction of a traditional agency.",
+    a: "Both, on purpose. A marketing specialist from our team looks after your account: they get to know your business on a call, set everything up with you, check the work and answer when you ask. Behind them, an AI team does the legwork, like research, writing drafts, fixing your site and building reports. That split means your specialist's time goes on your business, not on legwork.",
   },
   {
     q: "I don't have a website yet. Can you help?",
@@ -63,11 +64,12 @@ export default function Home() {
       <section className="section fresh-hero agency-hero">
         <div className="agency-hero-copy">
           <h1 className="hero-title">
-            A full marketing team, for <span className="hl">less</span> than an agency.
+            Your marketing, <span className="hl">handled</span>.
           </h1>
           <p className="hero-lede">
-            An AI-powered marketing agency for founders. AI does the legwork on your website, SEO, ads, social and
-            content, and a specialist oversees every piece. You pay a fraction of what a traditional agency charges.
+            A digital marketing agency for founders who want it done for them. Our specialists build your website
+            and run your SEO, content, social and ads. AI does the groundwork, so more gets done every week, and you
+            see every piece of it in one place.
           </p>
           <div className="hero-actions">
             <Link href={BOOK.href} className="big-button primary">{BOOK.label} &rarr;</Link>
@@ -216,26 +218,30 @@ export default function Home() {
         </p>
       </section>
 
-      {/* 7. Why it costs less. */}
+      {/* 7. What AI-powered means for the client. */}
       <section className="section">
-        <h2 className="section-title">Why we cost less than an agency.</h2>
+        <h2 className="section-title">What AI-powered means for you.</h2>
         <p className="section-lede">
-          At a traditional agency, most of your fee pays for hours of legwork. Ours is done by AI, so you pay for
-          the specialist and the results.
+          Not a chatbot, and not fewer people. It means your specialist spends their hours on decisions about your
+          business, because the groundwork is already done.
         </p>
-        <div className="vgrid" style={{ marginTop: "1.4rem" }}>
-          <div className="vg-head">A traditional agency</div>
-          <div className="vg-head us">Us</div>
-          <div className="vg-them">&pound;2,500 to &pound;15,000 a month</div>
-          <div className="vg-us">A fraction of that, quoted on the call</div>
-          <div className="vg-them">Juniors doing the legwork, billed by the hour</div>
-          <div className="vg-us">AI does the legwork. A specialist checks it.</div>
-          <div className="vg-them">A monthly PDF of problems</div>
-          <div className="vg-us">The fixes, made and live, with your yes</div>
-          <div className="vg-them">Spends first, explains later</div>
-          <div className="vg-us">Won&rsquo;t spend what it can&rsquo;t measure</div>
-          <div className="vg-them">Locked in for 12 months</div>
-          <div className="vg-us">Month to month. Everything stays yours.</div>
+        <div className="judgement" style={{ marginTop: "1.4rem" }}>
+          <div>
+            <h3>More done, every week</h3>
+            <p>Research, audits, first drafts and reports are ready before your specialist starts. Their time goes on the calls that matter.</p>
+          </div>
+          <div>
+            <h3>Everything in one place</h3>
+            <p>Every change, post and ad, and what it did, in one dashboard. No chasing, no monthly PDF to decode.</p>
+          </div>
+          <div>
+            <h3>Numbers you can trust</h3>
+            <p>Every figure comes from your own accounts. If something isn&rsquo;t measured yet, we say so instead of guessing.</p>
+          </div>
+          <div>
+            <h3>A fee you can plan around</h3>
+            <p>Fixed monthly, agreed on your call. Never a percentage of your ad spend. Month to month, and the work stays yours.</p>
+          </div>
         </div>
       </section>
 
@@ -256,8 +262,8 @@ export default function Home() {
             <span className="lab-band-tag">{LAB}</span>
             <h2>Rather do it yourself?</h2>
             <p>
-              The tools our team works with are open in {LAB}, our do-it-yourself lab. Audit a website, check an ad
-              budget, read a competitor&rsquo;s socials. Free to start, no call needed.
+              {LAB} puts your website, Google data, content, social and ads in one place. It tells you what to do
+              next, you approve, and it goes live. Free to start, no call needed.
             </p>
           </div>
           <Link href={LAB_PATH} className="big-button">Open {LAB} &rarr;</Link>

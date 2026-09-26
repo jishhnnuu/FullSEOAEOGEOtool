@@ -9,7 +9,8 @@ import { SideSwitch } from "@/components/side-switch";
  * Thymelab's own chrome: its own header, footer and actions.
  *
  * The lab is sold to a different person from the agency (someone who wants
- * to do it themselves) so nothing here borrows the agency's navigation. The
+ * to do it themselves, with the platform guiding every step) so nothing here
+ * borrows the agency's navigation. The
  * only way back is the switch strip at the top and one line in the footer.
  */
 export const LAB_TOOLS = [
@@ -71,7 +72,7 @@ function LabFooter() {
             </span>
           </Link>
           <p className="lab-muted small" style={{ maxWidth: "30ch" }}>
-            The do-it-yourself marketing lab. The same tools our agency&rsquo;s specialists use, for you to run.
+            Your marketing in one place. It finds what to do next, you approve it, and you see what it earned.
           </p>
         </div>
         <div>
@@ -107,8 +108,8 @@ function LabFooter() {
 
 /** The closing band on a lab page. */
 export function LabCta({
-  title = "Your lab is ready.",
-  body = "Free to start. No signup for the first experiment.",
+  title = "Start with your website.",
+  body = "Free, no signup. Paste your address and see what to fix first, with the fix already written.",
   primary = { href: labPath("/seo/audit"), label: "Start free" },
   secondary,
 }: {

@@ -2404,6 +2404,8 @@ button.primary:hover:not(:disabled), .button.primary:hover { background: var(--z
 .price-strip .ps-us { font-family: var(--display); font-weight: 800; font-size: clamp(1.6rem, 3vw, 2.2rem); letter-spacing: -0.03em; }
 .price-strip .ps-them { color: var(--text-muted); }
 .price-strip .ps-them s { text-decoration-thickness: 2px; }
+.price-strip .ps-incl { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.3rem; color: var(--text-muted); font-size: 0.95rem; }
+.price-strip .ps-incl li::before { content: "\2713"; color: var(--accent); font-weight: 800; margin-right: 0.45rem; }
 
 /* Spacing is tighter everywhere: shorter pages, less scrolling. */
 .section { padding-top: clamp(2.5rem, 6vw, 4.5rem); padding-bottom: clamp(2.5rem, 6vw, 4.5rem); }

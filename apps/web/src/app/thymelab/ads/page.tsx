@@ -1,9 +1,9 @@
 import { ToolLanding } from "@/components/lab/tool-landing";
 import { SMART_BIDDING_MONTHLY } from "@/engine/ads";
-import { labPath } from "@/lib/brand";
+import { LAB, labPath } from "@/lib/brand";
 
 export const metadata = {
-  title: "The ads lab: will your ad budget actually work?",
+  title: `${LAB} Ads: will your ad budget actually work?`,
   description: `Automated bidding needs about ${SMART_BIDDING_MONTHLY} conversions a month per platform before it works. Check whether your budget clears that, and what to change if it doesn't. Free, in your browser.`,
   alternates: { canonical: "/thymelab/ads" },
 };
@@ -12,7 +12,7 @@ export default function LabAds() {
   return (
     <ToolLanding
       tool="ads"
-      eyebrow="Exp 04 / The ads lab"
+      eyebrow={`${LAB} Ads`}
       title="Know your ad budget works"
       glow="before you spend it."
       lede="Three numbers in, a straight answer out. See if your budget is big enough for each platform to learn, and where splitting it would waste it."

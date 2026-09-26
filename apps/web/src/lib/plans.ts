@@ -154,9 +154,9 @@ export const PLANS: Record<PlanId, Plan> = {
     },
     features: [
       "Everything in Starter, on up to 2,000 pages",
-      "The content desk: posts written in your voice",
-      "The social desk: rival teardowns and a drafted calendar",
-      "The paid desk: ads planned, built and honestly reported",
+      "Content tools: posts written in your voice",
+      "Social tools: rival teardowns and a drafted calendar",
+      "Ads tools: planned, built and honestly reported",
       "Local: your Google profile, posts and review replies",
       "Link outreach, drafted from your own inbox",
       "A monthly report that shows its working",

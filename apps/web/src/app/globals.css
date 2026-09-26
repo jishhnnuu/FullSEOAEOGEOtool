@@ -2649,3 +2649,7 @@ button.primary:hover:not(:disabled), .button.primary:hover { background: var(--z
   .vgrid.services-grid > .vg-head:first-child { display: none; }
   .vgrid.services-grid > .vg-name { grid-column: 1 / -1; border-right: 0; border-bottom: 0; padding-bottom: 0.2rem; }
 }
+.book-form .choice { white-space: nowrap; }
+/* A phone header holds the wordmark and the one action. Pricing is in the
+   footer and on every service page. */
+@media (max-width: 480px) { .site-nav a:not(.cta) { display: none; } }

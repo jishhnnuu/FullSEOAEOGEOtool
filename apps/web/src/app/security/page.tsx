@@ -17,7 +17,7 @@ export default function SecurityPage() {
         <h1 className="hero-title">Your data. <span className="hl">Your</span> rules.</h1>
         <p className="hero-lede">Short version: the audit runs in your browser, keys are never stored, and it all works without us.</p>
         <div className="hero-actions">
-          <Link href="/app/new" className="big-button primary">Try it, nothing to sign &rarr;</Link>
+          <Link href="/thymelab/seo/audit" className="big-button primary">Try it, nothing to sign &rarr;</Link>
         </div>
       </section>
 

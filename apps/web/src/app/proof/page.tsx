@@ -57,7 +57,7 @@ export default function ProofPage() {
               <p>
                 It is also the only claim on this site that cannot be faked, because the audit runs in your browser against
                 our live origin. If you do not believe the numbers, the same engine is{" "}
-                <Link href="/tools">available as free tools</Link> and you can point them here.
+                <Link href="/thymelab">available as free tools</Link> and you can point them here.
               </p>
             </div>
           </details>
@@ -88,7 +88,7 @@ export default function ProofPage() {
       <CtaBand
         title="Your turn."
         body="Same engine, same treatment, on your site. No account, no card."
-        primary={{ href: "/app/new", label: "Check any website's SEO" }}
+        primary={{ href: "/thymelab/seo/audit", label: "Check any website's SEO" }}
         secondary={{ href: "/book", label: "Or talk to a specialist" }}
       />
     </MarketingChrome>

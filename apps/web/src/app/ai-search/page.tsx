@@ -45,8 +45,8 @@ export default function AiSearchPage() {
         <h1 className="hero-title">Get <span className="hl">cited</span>, not just ranked.</h1>
         <p className="hero-lede">When ChatGPT or Google&rsquo;s AI answers, nobody clicks. They read who got quoted. We make you quotable.</p>
         <div className="hero-actions">
-          <Link href="/tools/ai-crawler-check" className="big-button primary">Can AI read my site? &rarr;</Link>
-          <Link href="/app/new" className="big-button">Full audit</Link>
+          <Link href="/thymelab/seo/checks/ai-crawler-check" className="big-button primary">Can AI read my site? &rarr;</Link>
+          <Link href="/thymelab/seo/audit" className="big-button">Full audit</Link>
         </div>
       </section>
 
@@ -150,7 +150,7 @@ export default function AiSearchPage() {
       <CtaBand
         title="Can ChatGPT even see you?"
         body="Find out in about ten seconds. Free, no account."
-        primary={{ href: "/tools/ai-crawler-check", label: "Check my site" }}
+        primary={{ href: "/thymelab/seo/checks/ai-crawler-check", label: "Check my site" }}
       />
     </MarketingChrome>
   );

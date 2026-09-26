@@ -1,5 +1,6 @@
 import Link from "next/link";
 
+import { LAB, LAB_PATH } from "@/lib/brand";
 import { CtaBand, MarketingChrome } from "@/components/marketing";
 import { CATEGORY_LABEL, CONNECTORS } from "@/lib/connectors";
 import { AUTONOMY_LEVELS } from "@/lib/store";
@@ -53,7 +54,8 @@ export default function HowItWorksPage() {
           </div>
         </div>
         <p className="section-lede" style={{ marginTop: "1.6rem" }}>
-          Prefer to do some of it yourself? Every tool your specialist uses is in your dashboard too.
+          Prefer to do some of it yourself? The tools your specialist uses are open to you in{" "}
+          <Link href={LAB_PATH}>{LAB}</Link>, our do-it-yourself lab.
         </p>
         <details className="acc" style={{ marginTop: "1.8rem" }}>
           <summary>What the AI does to your website, all nine steps</summary>

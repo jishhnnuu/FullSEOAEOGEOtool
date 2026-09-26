@@ -74,7 +74,7 @@ export default function PlatformPage() {
         <h1 className="hero-title">{CATALOG_SIZE} checks. <span className="hl">Every</span> one explained.</h1>
         <p className="hero-lede">Our whole method, in the open. Agencies call this their secret framework.</p>
         <div className="hero-actions">
-          <Link href="/app/new" className="big-button primary">Run them on my site &rarr;</Link>
+          <Link href="/thymelab/seo/audit" className="big-button primary">Run them on my site &rarr;</Link>
           <Link href="/library" className="big-button">Browse every check</Link>
         </div>
       </section>

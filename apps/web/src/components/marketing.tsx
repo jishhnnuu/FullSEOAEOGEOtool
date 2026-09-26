@@ -1,7 +1,8 @@
 import Link from "next/link";
 
-import { BRAND } from "@/lib/brand";
+import { BRAND, LAB, LAB_PATH, labPath } from "@/lib/brand";
 import { LogoMark } from "@/components/logo";
+import { SideSwitch } from "@/components/side-switch";
 import { BOOK } from "@/lib/services";
 
 /**
@@ -15,6 +16,7 @@ import { BOOK } from "@/lib/services";
 export function MarketingChrome({ children }: { children: React.ReactNode }) {
   return (
     <>
+      <SideSwitch current="agency" />
       <SiteHeader />
       <main>{children}</main>
       <SiteFooter />
@@ -74,12 +76,12 @@ export function SiteFooter() {
           <Link href="/the-whole-agency">Everything</Link>
         </div>
         <div>
-          <h4>Free tools</h4>
-          <Link href="/app/new">Check any website&rsquo;s SEO</Link>
-          <Link href="/tools/social-teardown">Scout a competitor</Link>
-          <Link href="/tools/ad-budget-check">Check my ad budget</Link>
-          <Link href="/tools/voice-check">Test my writing</Link>
-          <Link href="/tools">All tools</Link>
+          <h4>Do it yourself</h4>
+          <Link href={LAB_PATH}>{LAB}, our tools</Link>
+          <Link href={labPath("seo")}>SEO lab</Link>
+          <Link href={labPath("content")}>Content lab</Link>
+          <Link href={labPath("social")}>Social lab</Link>
+          <Link href={labPath("ads")}>Ads lab</Link>
         </div>
         <div>
           <h4>Company</h4>
@@ -115,14 +117,14 @@ export function SiteFooter() {
 
 /**
  * The closing band on every page: one line, one action. By default that
- * action is a call with a person, and the free site check is the quieter
- * second option for someone not ready to talk yet.
+ * action is a call with a person, and the lab is the quieter second option
+ * for someone who would rather do it themselves.
  */
 export function CtaBand({
   title = "Tell us about your business.",
   body = "Thirty minutes with a specialist. You leave with a plan, whether or not you hire us.",
   primary = BOOK,
-  secondary = { href: "/app/new", label: "Or check any website's SEO" },
+  secondary = { href: LAB_PATH, label: `Or try it yourself in ${LAB}` },
 }: {
   title?: string;
   body?: string;

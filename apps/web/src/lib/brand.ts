@@ -95,3 +95,17 @@ export const SOCIAL: { label: string; href: string }[] = [
   // sameAs array is honest; one pointing at a placeholder profile is not, and
   // sameAs is exactly where an answer engine looks to resolve an entity.
 ];
+
+/**
+ * Thymelab: the do-it-yourself side, sold and marketed separately from the
+ * agency. It lives under one path on the same domain so the two share one
+ * domain's authority; everything under it is self-contained, so moving it to
+ * a subdomain or its own domain later is a set of redirects, not a rebuild.
+ */
+export const LAB = env("NEXT_PUBLIC_LAB_NAME", "Thymelab");
+export const LAB_PATH = "/thymelab";
+
+/** A path inside the lab. Every lab link goes through this. */
+export function labPath(path = ""): string {
+  return `${LAB_PATH}${path ? (path.startsWith("/") ? path : `/${path}`) : ""}`;
+}

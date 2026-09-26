@@ -89,7 +89,7 @@ export function BookForm() {
           <p>Your details are with us. We&rsquo;ll email {done.email} to find a time that suits you.</p>
         )}
         <p className="small muted">
-          While you wait, you can <Link href="/app/new">run the free check on your website</Link>, so we can look at the
+          While you wait, you can <Link href="/thymelab/seo/audit">run the free check on your website</Link>, so we can look at the
           results together on the call.
         </p>
       </div>

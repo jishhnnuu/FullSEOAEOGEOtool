@@ -68,7 +68,7 @@ export function ToolPage({ tool }: { tool: ToolDef }) {
               This is one page and one question. The full audit crawls the site, runs all 90 checks and writes the
               fixes rather than listing them. It is also free and needs no account.
             </p>
-            <Link href="/app/new" className="button primary">
+            <Link href="/thymelab/seo/audit" className="button primary">
               Run the full audit
             </Link>
           </div>

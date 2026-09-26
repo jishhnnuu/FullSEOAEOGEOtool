@@ -1,45 +1,27 @@
 import Link from "next/link";
 
 import { CtaBand, MarketingChrome } from "@/components/marketing";
-import { EXCLUDED_FOR, PLANS, PLAN_ORDER, priceLabel } from "@/lib/plans";
+import { LAB, LAB_PATH, labPath } from "@/lib/brand";
 import { BOOK, SERVICES, servicePrice } from "@/lib/services";
 import { faqNode, graph } from "@/lib/schema";
 
 export const metadata = {
   title: "Pricing",
   description:
-    "Pay for the services you pick, each AI-powered and overseen by a specialist, at a fraction of a traditional agency. Or use the same tools yourself, free to start.",
+    "Pay for the services you pick, each AI-powered and overseen by a specialist, at a fraction of a traditional agency. Or use the tools yourself in Thymelab, free to start.",
   alternates: { canonical: "/pricing" },
 };
 
 /**
- * Two kinds of price, kept apart on purpose.
+ * The agency's prices only.
  *
- * The services (a person plus the AI team) are the business, and their prices
- * come from `services.ts`, where a price that has not been set says it is
- * quoted on the call rather than showing a made-up number. The tool plans come
- * from `plans.ts`, the single definition the server enforces, so the grid can
- * never tick something the product gates elsewhere.
+ * The services (a specialist plus the AI team) come from `services.ts`, where
+ * a price that has not been set says it is quoted on the call rather than
+ * showing a made-up number. The tool plans used to sit underneath in a second
+ * grid, which made the agency read like a software company with a services
+ * add-on. They now live on the lab's own pricing page, and this page points
+ * there once.
  */
-const CTA: Record<string, { href: string; label: string }> = {
-  free: { href: "/app/new", label: "Start free" },
-  starter: { href: "/app/new", label: "Check my site first" },
-  growth: { href: "/app/new", label: "Check my site first" },
-  scale: { href: BOOK.href, label: "Talk to us" },
-};
-
-const CAPABILITY_LABEL: Record<string, string> = {
-  scheduling: "weekly check-ups",
-  publishing: "fixes pushed live",
-  answerVisibility: "AI answer tracking",
-  linkProgramme: "link outreach",
-  local: "local",
-  contentDesk: "content tools",
-  socialDesk: "social tools",
-  paidDesk: "ads tools",
-  whiteLabel: "your own branding",
-};
-
 const FAQ = [
   {
     q: "Why aren't all the prices on the page?",
@@ -60,7 +42,7 @@ const FAQ = [
   },
   {
     q: "Can I just use the tools myself?",
-    a: "Yes. The tool plans below are the same software our team uses. Start free, and book a specialist whenever you want one.",
+    a: `Yes. The tools our team works with are in ${LAB}, our do-it-yourself lab, with their own plans. Start free, and book a specialist whenever you want one.`,
   },
 ];
 
@@ -99,34 +81,20 @@ export default function PricingPage() {
         </p>
       </section>
 
-      <section className="section section-alt">
-        <h2 className="section-title">Rather do it yourself?</h2>
-        <p className="section-lede">
-          The same tools our team uses, on your own. No specialist included, but you can book one any time.
-        </p>
-        <div className="price-grid fresh-prices" style={{ marginTop: "1.4rem" }}>
-          {PLAN_ORDER.map((id) => {
-            const plan = PLANS[id];
-            const excludes = EXCLUDED_FOR[id];
-            const cta = CTA[id];
-            return (
-              <div className="price" key={plan.id}>
-                <div className="name">{plan.name}</div>
-                <div className="who">{plan.blurb}</div>
-                <div className="amount">{priceLabel(plan)}</div>
-                <div className="per">{plan.per}</div>
-                <Link href={cta.href} className={id === "free" ? "big-button primary" : "big-button"}>
-                  {cta.label}
-                </Link>
-                <ul>
-                  {plan.features.map((item) => <li key={item}>{item}</li>)}
-                </ul>
-                {excludes.length > 0 && (
-                  <p className="not-incl">Not included: {excludes.map((c) => CAPABILITY_LABEL[c] ?? c).join(", ")}.</p>
-                )}
-              </div>
-            );
-          })}
+      <section className="section">
+        <div className="lab-band">
+          <div>
+            <span className="lab-band-tag">{LAB}</span>
+            <h2>Rather do it yourself?</h2>
+            <p>
+              The tools our team works with have their own plans in {LAB}, our do-it-yourself lab. Free to start, no
+              specialist included, and you can book one any time.
+            </p>
+          </div>
+          <div className="hero-actions">
+            <Link href={labPath("pricing")} className="big-button">{LAB} pricing &rarr;</Link>
+            <Link href={LAB_PATH} className="fresh-btn ghost lab-ghost">Look around the lab</Link>
+          </div>
         </div>
       </section>
 

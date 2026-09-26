@@ -76,7 +76,7 @@ export function assessCoverage(report: CrawlReport): Coverage {
       gaps: [],
       headline: report.capped
         ? `Read ${read} pages and stopped at the limit. There is no sitemap to say how many exist, so treat these scores as a sample.`
-        : `Read ${read} pages. No sitemap was found, so nothing declares how many there should be.`,
+        : `Read ${read} page${read === 1 ? "" : "s"}. No sitemap was found, so nothing declares how many there should be.`,
     };
   }
 

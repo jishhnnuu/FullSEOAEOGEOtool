@@ -259,7 +259,7 @@ export default function ResearchPage() {
       <CtaBand
         title="Run the same measurements on your own site"
         body="The crawler access check and the extractability check are free, need no account, and use the same engine that produced this dataset."
-        primary={{ href: "/tools/ai-crawler-check", label: "Check my site" }}
+        primary={{ href: "/thymelab/seo/checks/ai-crawler-check", label: "Check my site" }}
       />
     </MarketingChrome>
   );

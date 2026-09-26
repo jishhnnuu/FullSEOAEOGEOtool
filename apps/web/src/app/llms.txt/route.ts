@@ -47,7 +47,7 @@ export function GET() {
         // catalogue slices, so they come from the route table. Listing them
         // first is deliberate: they are the two that take your own input.
         ...ROUTES.filter((r) => r.section === "tools").map((r) => `- [${r.title}](${url(r.path)}): ${r.answers}`),
-        ...allTools().map((t) => `- [${t.name}](${url(`/tools/${t.slug}`)}): ${t.blurb}`),
+        ...allTools().map((t) => `- [${t.name}](${url(`/thymelab/seo/checks/${t.slug}`)}): ${t.blurb}`),
       ],
     ),
     ...section(

@@ -1,5 +1,6 @@
 import Link from "next/link";
 
+import { LAB, labPath } from "@/lib/brand";
 import { CtaBand, MarketingChrome } from "@/components/marketing";
 import { Seat } from "@/components/seat";
 import { DESKS, deskPrice, managerFor, type Desk } from "@/lib/desks";
@@ -192,12 +193,13 @@ export function DeskPage({ desk, extra }: { desk: Desk; extra?: React.ReactNode 
           <summary>Rather do it yourself?</summary>
           <div className="acc-body">
             <p>
-              The same tools our team uses are yours to use on your own
+              The tools our team uses are open in {LAB}, our do-it-yourself lab
               {plan ? `, from ${deskPrice(desk)} a month on the ${plan.name} plan` : ""}. You can start free, and
-              book a person any time.
+              book a specialist any time.
             </p>
             <p>
-              <Link href={desk.tryIt.href}>{desk.tryIt.label}</Link> &middot; <Link href="/pricing">Every price</Link>
+              <Link href={desk.tryIt.href}>{desk.tryIt.label}</Link> &middot;{" "}
+              <Link href={labPath("pricing")}>{LAB} pricing</Link>
             </p>
           </div>
         </details>

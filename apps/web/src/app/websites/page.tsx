@@ -83,7 +83,7 @@ export default function WebsitesPage() {
         </p>
         <div className="hero-actions">
           <Link href={`${BOOK.href}?service=websites`} className="big-button primary">{BOOK.label} &rarr;</Link>
-          <Link href="/app/new" className="big-button">Check my current site free</Link>
+          <Link href="/thymelab/seo/audit" className="big-button">Check my current site free</Link>
         </div>
         <p className="hero-status">
           <span className="dot" aria-hidden="true" />

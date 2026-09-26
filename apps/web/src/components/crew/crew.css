@@ -1,0 +1,183 @@
+/*
+ * The crew in a scene: the agency's round table and Thymelab's lab.
+ *
+ * Unlike the flying mascot on the service pages, these stay inside their own
+ * box, so they can never cover text or a button. Everything is decoration:
+ * the scene is hidden from screen readers, takes no clicks, and a reader who
+ * asks for reduced motion gets the same picture standing still.
+ *
+ * Sizes are in container units, so the whole scene scales as one drawing.
+ */
+.crew-scene {
+  position: relative;
+  width: 100%;
+  container-type: inline-size;
+  pointer-events: none;
+  user-select: none;
+  --s-ink: #16130f;
+  --s-body: #1f8f60;
+  --s-belly: #58c98f;
+  --s-leaf: #7fdc9f;
+  --s-cheek: #ff6b4a;
+}
+.crew-scene * { pointer-events: none; }
+.crew-scene .crew-actor {
+  position: absolute;
+  --h: 24cqw;
+  width: calc(var(--h) * 0.8);
+  height: var(--h);
+  transform: translate(-50%, -100%);
+  opacity: 1;
+}
+.crew-scene .crew-actor .sprig-body { transition: none; }
+.crew-scene .crew-actor svg { width: 100%; height: 100%; overflow: visible; display: block; }
+.crew-scene .crew-actor.flip .sprig-body { transform: scaleX(-1); }
+
+/* The scientist's coat and goggles. */
+.sprig .s-coat-body { fill: #f4f7f2; stroke: var(--s-ink); stroke-width: 3.5; stroke-linejoin: round; }
+.sprig .s-coat-collar { fill: #dfe7dc; stroke: var(--s-ink); stroke-width: 2.5; stroke-linejoin: round; }
+.sprig .s-coat-line { fill: none; stroke: #b8c4b5; stroke-width: 2; stroke-linecap: round; }
+.sprig .s-coat-pocket { fill: #dfe7dc; stroke: var(--s-ink); stroke-width: 2; }
+.sprig .s-coat-pen { fill: none; stroke: #5ee6d2; stroke-width: 2.5; stroke-linecap: round; }
+.sprig .s-goggle-band { fill: none; stroke: #2b2620; stroke-width: 4; stroke-linecap: round; }
+.sprig .s-goggle { fill: #7ff0de; fill-opacity: 0.75; stroke: var(--s-ink); stroke-width: 3; }
+.sprig .s-goggle-glint { fill: none; stroke: #fff; stroke-width: 2; stroke-linecap: round; }
+.sprig.scientist .s-belly { display: none; }
+
+/* ------------------------------------------------------------ life */
+.crew-actor .s-eyes { animation: crew-blink 5.5s infinite; }
+.crew-actor.d1 .s-eyes { animation-delay: -1.3s; }
+.crew-actor.d2 .s-eyes { animation-delay: -2.7s; }
+.crew-actor.d3 .s-eyes { animation-delay: -4.1s; }
+@keyframes crew-blink { 0%, 95%, 100% { transform: scaleY(1); } 97% { transform: scaleY(0.1); } }
+
+.crew-actor.nod .s-face, .crew-actor.nod .s-sprout { animation: crew-nod 1.9s ease-in-out infinite; }
+.crew-actor.nod.d1 .s-face, .crew-actor.nod.d1 .s-sprout { animation-delay: -0.6s; }
+.crew-actor.nod.d2 .s-face, .crew-actor.nod.d2 .s-sprout { animation-delay: -1.2s; }
+@keyframes crew-nod { 0%, 60%, 100% { transform: translateY(0); } 70% { transform: translateY(3px); } 80% { transform: translateY(0); } 88% { transform: translateY(2.5px); } }
+
+.crew-actor .s-pupils { transition: none; }
+.crew-actor.look-l .s-pupils { animation: crew-look-l 7s ease-in-out infinite; }
+.crew-actor.look-r .s-pupils { animation: crew-look-r 7s ease-in-out infinite; }
+@keyframes crew-look-l { 0%, 40%, 100% { transform: translate(0, 0); } 48%, 80% { transform: translate(-4px, 0); } }
+@keyframes crew-look-r { 0%, 30%, 100% { transform: translate(0, 0); } 38%, 70% { transform: translate(4px, 0); } }
+.crew-actor.look-down .s-pupils { transform: translate(0, 3px); }
+
+.crew-actor.write .s-arm-r { animation: crew-write 0.9s ease-in-out infinite; }
+@keyframes crew-write { 0%, 100% { transform: rotate(-8deg); } 25% { transform: rotate(-2deg); } 50% { transform: rotate(-10deg); } 75% { transform: rotate(-4deg); } }
+
+.crew-actor.type .s-arm-l { animation: crew-type-l 0.28s ease-in-out infinite alternate; }
+.crew-actor.type .s-arm-r { animation: crew-type-r 0.28s ease-in-out infinite alternate; }
+@keyframes crew-type-l { from { transform: rotate(-24deg); } to { transform: rotate(-34deg); } }
+@keyframes crew-type-r { from { transform: rotate(30deg); } to { transform: rotate(20deg); } }
+
+.crew-actor.present .s-arm-r { animation: crew-present 3.4s ease-in-out infinite; }
+@keyframes crew-present { 0%, 100% { transform: rotate(-58deg); } 30% { transform: rotate(-112deg); } 45% { transform: rotate(-100deg); } 60% { transform: rotate(-118deg); } 80% { transform: rotate(-70deg); } }
+.crew-actor.present .s-arm-l { transform: rotate(18deg); }
+
+.crew-actor.raise .s-arm-r { transform: rotate(-128deg); }
+
+@keyframes crew-swirl { 0%, 100% { transform: rotate(-128deg); } 50% { transform: rotate(-140deg); } }
+
+.crew-actor.peer .s-bodyall { animation: crew-peer 2.6s ease-in-out infinite; transform-origin: 60px 140px; }
+@keyframes crew-peer { 0%, 100% { transform: rotate(8deg); } 50% { transform: rotate(12deg) translateY(2px); } }
+
+.crew-actor.hold .s-arm-l { transform: rotate(-40deg); }
+.crew-actor.hold .s-arm-r { transform: rotate(34deg); }
+
+.crew-actor.inspect .s-arm-r { transform: rotate(-38deg); }
+.crew-actor.inspect .s-prop-mag { display: inline; }
+.crew-actor.inspect .s-bodyall { animation: crew-peer 3s ease-in-out infinite; }
+
+.crew-actor.talking .s-mouth { display: none; }
+.crew-actor.talking .s-mouth-open { display: inline; animation: crew-talk 0.36s steps(2, jump-none) infinite; }
+@keyframes crew-talk { 0% { opacity: 1; } 100% { opacity: 0.15; } }
+.crew-actor.happy .s-eyes { display: none; }
+.crew-actor.happy .s-happy { display: inline; }
+
+.crew-actor.bounce .s-bodyall { animation: crew-bounce 1.2s ease-in-out infinite; }
+@keyframes crew-bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-4px); } }
+
+/* ---------------------------------------------------------- bubbles */
+.crew-bubble {
+  position: absolute; z-index: 5;
+  transform: translate(-50%, -100%) scale(0.6);
+  transform-origin: 50% 100%;
+  opacity: 0;
+  transition: opacity 0.2s, transform 0.28s cubic-bezier(0.3, 1.6, 0.5, 1);
+  font-family: var(--display, system-ui), system-ui, sans-serif;
+  font-weight: 800; letter-spacing: -0.01em;
+  font-size: clamp(11px, 2.5cqw, 15px); line-height: 1.2;
+  color: #16130f; background: #fff;
+  border: 2.5px solid #16130f; border-radius: 12px;
+  padding: 0.4em 0.75em;
+  box-shadow: 3px 3px 0 #16130f;
+  width: max-content; max-width: 34cqw; text-align: center;
+}
+.crew-bubble.show { opacity: 1; transform: translate(-50%, -100%) scale(1); }
+.crew-bubble::after {
+  content: ""; position: absolute; left: 50%; top: 100%;
+  width: 10px; height: 10px; background: #fff;
+  border-right: 2.5px solid #16130f; border-bottom: 2.5px solid #16130f;
+  transform: translate(-50%, -50%) rotate(45deg);
+}
+.lab .crew-bubble {
+  background: #0f1512; color: #eef5e8; border-color: var(--tone, #d4f55a);
+  box-shadow: 0 0 0 1px rgba(212, 245, 90, 0.2), 0 0 24px rgba(212, 245, 90, 0.2);
+}
+.lab .crew-bubble::after { background: #0f1512; border-color: var(--tone, #d4f55a); }
+
+/* ------------------------------------------------ the round table */
+.rt-scene { aspect-ratio: 100 / 76; max-width: 620px; margin-left: auto; }
+.rt-scene .rt-board, .rt-scene .rt-table { position: absolute; inset: 0; width: 100%; height: 100%; }
+.rt-scene .rt-board { z-index: 0; }
+.rt-scene .crew-actor { z-index: 1; }
+.rt-scene .rt-table { z-index: 2; }
+.rt-scene .rt-line { stroke-dasharray: 120; stroke-dashoffset: 120; animation: rt-draw 6s ease-in-out infinite; }
+@keyframes rt-draw { 0% { stroke-dashoffset: 120; } 45%, 85% { stroke-dashoffset: 0; } 100% { stroke-dashoffset: 0; opacity: 0; } }
+.rt-scene .rt-steam { animation: rt-steam 2.8s ease-in-out infinite; transform-box: fill-box; transform-origin: center bottom; }
+.rt-scene .rt-steam.s2 { animation-delay: -1.4s; }
+@keyframes rt-steam { 0% { opacity: 0; transform: translateY(2px) scaleY(0.8); } 40% { opacity: 0.8; } 100% { opacity: 0; transform: translateY(-6px) scaleY(1.1); } }
+
+/* ------------------------------------------------------- the lab */
+.lab-scene { aspect-ratio: 100 / 78; max-width: 640px; margin-left: auto; overflow: clip; }
+.lab-scene .ls-room, .lab-scene .ls-bench { position: absolute; inset: 0; width: 100%; height: 100%; }
+.lab-scene .ls-room { z-index: 0; }
+.lab-scene .crew-actor { z-index: 1; }
+.lab-scene .ls-bench { z-index: 2; }
+.lab-scene .ls-front { z-index: 3; }
+.lab-scene .ls-screen-line { animation: ls-code 2.4s linear infinite; }
+.lab-scene .ls-screen-line.l2 { animation-delay: -0.8s; }
+.lab-scene .ls-screen-line.l3 { animation-delay: -1.6s; }
+@keyframes ls-code { 0% { transform: scaleX(0); } 40%, 100% { transform: scaleX(1); } }
+.lab-scene .ls-screen-line { transform-box: fill-box; transform-origin: left center; }
+.lab-scene .ls-bubble { animation: ls-rise 2.6s ease-in infinite; transform-box: fill-box; transform-origin: center; }
+.lab-scene .ls-bubble.b2 { animation-delay: -0.9s; }
+.lab-scene .ls-bubble.b3 { animation-delay: -1.7s; }
+@keyframes ls-rise { 0% { transform: translateY(0); opacity: 0; } 20% { opacity: 1; } 100% { transform: translateY(-18px); opacity: 0; } }
+.lab-scene .ls-glow { animation: ls-glow 3s ease-in-out infinite; }
+@keyframes ls-glow { 50% { opacity: 0.55; } }
+.lab-scene .ls-chart { stroke-dasharray: 160; stroke-dashoffset: 160; animation: ls-chart 5s ease-in-out infinite; }
+@keyframes ls-chart { 0% { stroke-dashoffset: 160; } 50%, 90% { stroke-dashoffset: 0; } 100% { stroke-dashoffset: 0; opacity: 0; } }
+.lab-scene .ls-runner { position: absolute; left: 0; bottom: 0; width: 100%; height: 100%; z-index: 1; animation: ls-run 11s linear infinite; }
+@keyframes ls-run { 0% { transform: translateX(-18%); } 55% { transform: translateX(118%); } 100% { transform: translateX(118%); } }
+.lab-scene .ls-runner .crew-actor { left: 0; top: 57%; }
+.lab-scene .ls-runner .s-leg-l { animation: sprig-leg-a 0.3s ease-in-out infinite alternate; }
+.lab-scene .ls-runner .s-leg-r { animation: sprig-leg-b 0.3s ease-in-out infinite alternate; }
+.lab-scene .ls-runner .s-bodyall { animation: sprig-bob 0.15s ease-in-out infinite alternate; }
+
+/* A single scientist beside a tool's hero. */
+.lab-buddy { aspect-ratio: 1 / 1; max-width: 360px; margin-left: auto; }
+.lab-buddy .crew-actor { --h: 62cqw; left: 50%; top: 92%; }
+.lab-buddy .lb-glow {
+  position: absolute; left: 50%; top: 58%; width: 80%; aspect-ratio: 1; border-radius: 50%;
+  transform: translate(-50%, -50%);
+  background: radial-gradient(circle, color-mix(in srgb, var(--tone, #d4f55a) 24%, transparent), transparent 65%);
+}
+.lab-buddy .lb-prop { position: absolute; z-index: 2; }
+.lab-buddy .lb-floor { position: absolute; left: 12%; right: 12%; top: 91%; height: 3%; border-radius: 50%; background: rgba(0, 0, 0, 0.45); filter: blur(4px); }
+
+@media (prefers-reduced-motion: reduce) {
+  .crew-scene *, .crew-scene *::before, .crew-scene *::after { animation: none !important; transition: none !important; }
+  .lab-scene .ls-runner { display: none; }
+}

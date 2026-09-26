@@ -82,7 +82,7 @@ export function InsideDesks() {
           <TryBand
             title="Now do yours"
             body={`Same engine, same ${CATALOG_SIZE} checks, about four minutes. No account.`}
-            href="/app/new"
+            href="/thymelab/seo/audit"
             label="Check any website's SEO"
             primary
           />

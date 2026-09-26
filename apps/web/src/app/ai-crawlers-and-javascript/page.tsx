@@ -128,7 +128,7 @@ export default function AiCrawlersPage() {
 curl -sS -A "GPTBot" https://example.com/your-page | grep -o "<title>[^<]*"`}</code>
         </pre>
         <p>
-          Or use the <Link href="/tools/extractability-check">extractability checker</Link>, which does the same fetch
+          Or use the <Link href="/thymelab/seo/checks/extractability-check">extractability checker</Link>, which does the same fetch
           and counts the words, the title, the description and the structured data that survive. It is free and needs
           no account.
         </p>
@@ -172,7 +172,7 @@ curl -sS -A "GPTBot" https://example.com/your-page | grep -o "<title>[^<]*"`}</c
       <CtaBand
         title="Check what a crawler actually receives"
         body="The extractability checker fetches your page with no JavaScript and shows what survives. Free, no account."
-        primary={{ href: "/tools/extractability-check", label: "Check a page" }}
+        primary={{ href: "/thymelab/seo/checks/extractability-check", label: "Check a page" }}
       />
     </MarketingChrome>
   );

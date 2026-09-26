@@ -41,9 +41,9 @@ export default function sitemap(): MetadataRoute.Sitemap {
   ];
 
   const tools = [
-    { url: url("/tools"), lastModified: now, changeFrequency: "monthly" as const, priority: 0.9 },
+    { url: url("/thymelab"), lastModified: now, changeFrequency: "monthly" as const, priority: 0.9 },
     ...allTools().map((t) => ({
-      url: url(`/tools/${t.slug}`),
+      url: url(`/thymelab/seo/checks/${t.slug}`),
       lastModified: now,
       changeFrequency: "monthly" as const,
       priority: 0.7,

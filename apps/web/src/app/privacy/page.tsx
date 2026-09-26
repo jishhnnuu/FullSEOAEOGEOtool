@@ -189,7 +189,7 @@ export default function PrivacyPage() {
         title="The short version"
         body="The audit sends us nothing. An account adds a server copy of your own workspace. Connected tokens are sealed per record and never returned by any route. You can delete all of it yourself, immediately."
         primary={{ href: "/security", label: "How the data is actually held" }}
-        secondary={{ href: "/app/new", label: "Try it without an account" }}
+        secondary={{ href: "/thymelab/seo/audit", label: "Try it without an account" }}
       />
     </MarketingChrome>
   );

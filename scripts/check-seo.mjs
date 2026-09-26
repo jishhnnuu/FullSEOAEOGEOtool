@@ -51,7 +51,7 @@ function pages(dir) {
  */
 function countH1(source, file) {
   let count = (source.match(/<h1[\s>]/g) ?? []).length;
-  const imports = [...source.matchAll(/from\s+"@\/components\/([a-z0-9-]+)"/g)].map((m) => m[1]);
+  const imports = [...source.matchAll(/from\s+"@\/components\/([a-z0-9\/-]+)"/g)].map((m) => m[1]);
   for (const name of imports) {
     for (const ext of [".tsx", ".ts"]) {
       const candidate = join(ROOT, "apps/web/src/components", name + ext);

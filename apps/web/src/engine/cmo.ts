@@ -312,7 +312,7 @@ export function reply(message: string, ctx: Context): Reply {
         ],
         actions: ctx.desks.social
           ? [{ label: "Tear down a competitor", href: `${base}/social/teardown` }, { label: "What each platform allows", href: `${base}/social/platforms` }]
-          : [{ label: "Try the teardown free", href: "/tools/social-teardown" }, { label: "Plans", href: "/pricing" }],
+          : [{ label: "Try the teardown free", href: "/thymelab/social/teardown" }, { label: "Plans", href: "/pricing" }],
         desk: "Head of social",
         blocked: !ctx.desks.social,
       });
@@ -328,7 +328,7 @@ export function reply(message: string, ctx: Context): Reply {
         ],
         actions: ctx.desks.paid
           ? [{ label: "Can we spend yet", href: `${base}/paid/readiness` }, { label: "The budget arithmetic", href: `${base}/paid/plan` }]
-          : [{ label: "Check a budget free", href: "/tools/ad-budget-check" }, { label: "Plans", href: "/pricing" }],
+          : [{ label: "Check a budget free", href: "/thymelab/ads/budget" }, { label: "Plans", href: "/pricing" }],
         desk: "Head of paid media",
         blocked: !ctx.desks.paid,
       });

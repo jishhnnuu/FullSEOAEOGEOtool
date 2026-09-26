@@ -105,7 +105,7 @@ export default function LibraryPage() {
       <CtaBand
         title={`Run all ${CATALOG_SIZE} against your site`}
         body="About four minutes, in your browser. No account, no card. Every finding that can arrive with the fix already written, does."
-        primary={{ href: "/app/new", label: "See what we would fix this week" }}
+        primary={{ href: "/thymelab/seo/audit", label: "See what we would fix this week" }}
         secondary={{ href: "/inside", label: "Look inside a live account" }}
       />
     </MarketingChrome>

@@ -19,7 +19,20 @@ the calls, sets up the connections with them and checks the work; the AI CMO
 and the desk teams do the legwork behind that person, which is why it costs a
 fraction of an agency. The tools are part of the offer, not the offer: a
 client can use them, but is never made to. "Book a free call" is the main
-action on every public page, and the free site check is the second.
+action on every agency page, and the one way across to the tools is the
+second.
+
+**Two sides, one domain.** The agency is the root of the site, light theme,
+following the system's dark mode. The do-it-yourself tools are Thymelab, under
+`/thymelab` (`LAB` and `LAB_PATH` in `lib/brand.ts`), with its own layout,
+header, footer and pricing, and a dark theme that stays dark whatever the
+system says. Three levels, each with its own look: the agency pages, the lab
+pages (`/thymelab`, one landing per tool), and the workbenches where a tool is
+actually used (`/thymelab/seo/audit`, `/content/voice`, `/social/teardown`,
+`/ads/budget`), each a distinct interface with no navigation crossover. The
+old `/tools` URLs redirect permanently from `next.config.mjs`. Everything the
+lab needs sits under `app/thymelab` and `components/lab`, so moving it to its
+own domain later is redirects, not a rebuild.
 `lib/services.ts` is the menu and the only place a service price lives; a
 price that has not been set says it is quoted on the call. Enquiries land in
 D1 (`enquiries`), are emailed when `CONTACT_EMAIL` and `RESEND_API_KEY` are
@@ -28,6 +41,16 @@ set, and are readable at `/app/enquiries` by the addresses in `OWNER_EMAILS`.
 ```
 115 agents · 17 missions · 89 tools · 21 connectors · 90 checks · 43 tables · 204 tests
 ```
+
+## Open items to raise with the owner
+
+Mention these at the start of any conversation where they are relevant, and
+at least once in any long session, until the owner closes them. `docs/ROADMAP.md`
+has the detail.
+
+- **The Thymelab website builder.** Research existing builders and open-source
+  projects that include hosting, then recommend build, fork or partner. Today
+  `/thymelab/website` is a waiting list and the agency builds sites by hand.
 
 ## Working with the owner
 
@@ -224,10 +247,10 @@ style disagreement.
   teardown and the voice comparison lived three clicks inside a workspace that
   required creating a site first, so the two most capable things the platform
   does were invisible to anyone deciding whether to use it. Both now have
-  public URLs under `/tools`, both take the visitor's own input, and `/inside`
+  public URLs in Thymelab, both take the visitor's own input, and `/inside`
   runs one per desk rather than an SEO crawl and two pages of prose. `TheFlow`
-  in `components/the-flow.tsx` states the path on screen: free tools, then your
-  own site checked, then a call with a person. That component exists because somebody
+  in `components/the-flow.tsx` states the path on screen: a tool in the lab,
+  then your own site checked, then a call with a person. That component exists because somebody
   read the whole site and still asked where the dashboard was.
 - **The no-key social read is YouTube's Atom feed, not Reddit.** Reddit refuses
   data-centre address ranges, so the deployed Worker gets 403 and the demo
@@ -404,15 +427,24 @@ style disagreement.
   (content), Rosie (social), Sage (paid), plus the CMO in a suit and
   glasses who checks in on the desk pages. They live entirely in
   `apps/web/src/components/sprig/` and each page renders them with one line
-  (home, the four desk pages, /tools and the tool pages); deleting the folder
-  and those lines removes them. On arrival they fly in and sit on the
+  (the four desk pages and /websites); deleting the folder and those lines
+  removes them. On arrival they fly in and sit on the
   headline word marked `data-sprig-seat`, then follow the reader between real
   edges. Their lines are friendly small talk with no commands, no teasing and
   no numbers. They take no clicks, are hidden from screen readers, and
   measure the page before standing anywhere, so they never cover text, a
   button or the menu bar: where there is not room they squeeze under or do
   not go. The seat is the one deliberate exception: sitting on the word is
-  the point.
+  the point. Two staged scenes reuse the same drawing from
+  `components/crew/`: on the agency home the crew sit at a round table while
+  the CMO talks them through a new client, and across Thymelab they wear lab
+  coats and goggles, typing, holding flasks and peering down microscopes.
+  Same rules: short, warm, excited lines, never a number or an instruction.
+- **Sample work is illustration, and says so on the card.** The agency home
+  shows what the work looks like with invented businesses on `.example`
+  domains, each card marked "Illustration". It is never presented as a client
+  result, because invented proof is the thing this product refuses everywhere
+  else.
 - **Our own site passes our own checks.** `npm run seo:check` requires one h1,
   a meta description and a self-referential canonical on every public page, and
   `/proof` runs the real audit against this deployment and publishes what it

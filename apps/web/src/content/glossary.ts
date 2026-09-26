@@ -58,7 +58,7 @@ const ENTRIES: GlossaryEntry[] = [
       "It is not a sitemap. A sitemap lists everything a crawler should know exists; llms.txt lists the handful of pages that are worth an answer engine's attention, with a line describing what each one covers. That description is the part a model cannot work out on its own from a URL.",
       "Support is a convention rather than a standard, and no engine has committed to reading it. It costs almost nothing to publish, it is trivially verifiable, and it makes a site's own view of its best content explicit.",
     ],
-    relatedTo: { label: "Generate one from a crawl", href: "/tools/llms-txt-generator" },
+    relatedTo: { label: "Generate one from a crawl", href: "/thymelab/seo/checks/llms-txt-generator" },
     seeAlso: ["answer-engine-optimisation", "robots-txt"],
   },
   {
@@ -82,7 +82,7 @@ const ENTRIES: GlossaryEntry[] = [
       "The two purposes behave differently and are worth separating. Retrieval agents such as OAI-SearchBot, ClaudeBot, PerplexityBot and ChatGPT-User fetch a page because someone asked a question now, and they decide whether a brand appears in that answer. Training agents such as CCBot gather corpora for later.",
       "A site can allow one and refuse the other, and robots.txt is where that decision is expressed. Blocking retrieval agents is the most direct way to become invisible in AI answers, and it is usually done by accident rather than on purpose.",
     ],
-    relatedTo: { label: "Check which crawlers your site allows", href: "/tools/ai-crawler-check" },
+    relatedTo: { label: "Check which crawlers your site allows", href: "/thymelab/seo/checks/ai-crawler-check" },
     seeAlso: ["robots-txt", "extractability"],
   },
   {
@@ -94,7 +94,7 @@ const ENTRIES: GlossaryEntry[] = [
       "It controls crawling, not indexing. A page disallowed in robots.txt can still appear in search results if other pages link to it, because the crawler is told not to fetch it rather than not to list it. To keep a page out of an index, a noindex directive on the page itself is the correct mechanism, and that only works if the crawler is allowed to fetch the page and see it.",
       "The most expensive robots.txt mistake is a blanket rule that catches an AI retrieval agent nobody meant to block. The second most expensive is a file that declares nothing at all, which is what a default managed file usually amounts to.",
     ],
-    relatedTo: { label: "Check your robots.txt against every AI agent", href: "/tools/ai-crawler-check" },
+    relatedTo: { label: "Check your robots.txt against every AI agent", href: "/thymelab/seo/checks/ai-crawler-check" },
     seeAlso: ["ai-crawler", "canonical-tag"],
   },
   {
@@ -118,7 +118,7 @@ const ENTRIES: GlossaryEntry[] = [
       "Two rules decide whether it helps or hurts. It has to match the visible page, because markup describing content the page does not contain is a manual action risk rather than a technicality. And an entity should be defined once and referenced by @id everywhere else, because a validator that does not resolve the reference will propose completing it, which writes a second conflicting definition and breaks the graph it was trying to fix.",
       "Required properties are the ones that gate a rich result. A validator that reports every optional property as a warning trains people to ignore it.",
     ],
-    relatedTo: { label: "Generate valid JSON-LD from a page", href: "/tools/schema-generator" },
+    relatedTo: { label: "Generate valid JSON-LD from a page", href: "/thymelab/seo/checks/schema-generator" },
     seeAlso: ["entity", "answer-engine-optimisation"],
   },
   {

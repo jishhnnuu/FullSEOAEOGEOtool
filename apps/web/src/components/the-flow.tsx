@@ -1,5 +1,7 @@
 import Link from "next/link";
 
+import { LAB, LAB_PATH, labPath } from "@/lib/brand";
+
 /*
  * Where the product actually is.
  *
@@ -25,17 +27,17 @@ type Step = {
 const STEPS: Step[] = [
   {
     n: "1",
-    title: "Try a free tool",
+    title: `Try a tool in ${LAB}`,
     cost: "Costs: nothing",
-    body: "Paste a URL or a rival's handle. Real results, in your browser, in seconds.",
-    links: [{ href: "/tools", label: "Pick a tool", primary: true }],
+    body: "Our do-it-yourself lab. Paste a URL or a rival's handle. Real results, in your browser, in seconds.",
+    links: [{ href: LAB_PATH, label: "Open the lab", primary: true }],
   },
   {
     n: "2",
     title: "Check any website's SEO",
     cost: "Costs: a URL",
-    body: "Your own dashboard, with every fix written for you, free.",
-    links: [{ href: "/app/new", label: "Check a website", primary: true }],
+    body: "The SEO lab reads up to 40 pages and writes every fix for you, free.",
+    links: [{ href: labPath("seo/audit"), label: "Check a website", primary: true }],
   },
   {
     n: "3",

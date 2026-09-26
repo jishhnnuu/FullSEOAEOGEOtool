@@ -139,7 +139,7 @@ export default async function CheckPage({ params }: { params: Promise<{ code: st
       <CtaBand
         title="Check your own site for this"
         body="The whole catalogue over a real crawl, in about four minutes, in your browser. No account and no card."
-        primary={{ href: "/app/new", label: "See what we would fix this week" }}
+        primary={{ href: "/thymelab/seo/audit", label: "See what we would fix this week" }}
         secondary={{ href: "/library", label: "Back to the library" }}
       />
     </MarketingChrome>

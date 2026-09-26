@@ -81,7 +81,7 @@ test("cmo: a desk the plan does not include is named as not included", () => {
   assert.equal(off.blocked, true);
   assert.match(off.says.join(" "), /not on your plan yet/);
   // And the free route is offered rather than only the upgrade.
-  assert.ok(off.actions.some((a) => a.href === "/tools/ad-budget-check"));
+  assert.ok(off.actions.some((a) => a.href === "/thymelab/ads/budget"));
 
   const on = reply("can you run our ads", ctx({
     result: resultWith(),

@@ -1,8 +1,9 @@
 import Link from "next/link";
 
+import { RoundTable } from "@/components/crew/scenes";
 import { MarketingChrome } from "@/components/marketing";
-import { Sprig } from "@/components/sprig";
-import { UrlStart } from "@/components/url-start";
+import { SampleWork } from "@/components/sample-work";
+import { LAB, LAB_PATH } from "@/lib/brand";
 import { BOOK, SERVICES } from "@/lib/services";
 import { faqNode, graph } from "@/lib/schema";
 
@@ -21,8 +22,9 @@ export const metadata = {
  * an agency, and will not hand their business to software they have never
  * heard of. So the first thing on the page is a specialist to talk to, the second
  * is what they would get, and the AI is the reason it is affordable rather
- * than the thing being sold. The free tools are still here, one section down,
- * for anyone who wants to look before they talk.
+ * than the thing being sold. The do-it-yourself tools live on their own side
+ * of the site, Thymelab, and this page points there exactly once in the hero
+ * and once in a band further down, so nobody mistakes the agency for software.
  */
 
 const FAQ = [
@@ -36,7 +38,7 @@ const FAQ = [
   },
   {
     q: "Do I have to use any tools or dashboards?",
-    a: "No. Your specialist does the setup and the work. You get a dashboard where you can see everything that's been done and approve what's next, and you can open it whenever you like. If you'd rather do some things yourself, the same tools are yours to use.",
+    a: `No. Your specialist does the setup and the work. You get a dashboard where you can see everything that's been done and approve what's next, and you can open it whenever you like. If you'd rather do some things yourself, the tools our team works with are in ${LAB}, our do-it-yourself lab.`,
   },
   {
     q: "Can I hire you for just one thing?",
@@ -57,30 +59,30 @@ export default function Home() {
     <MarketingChrome>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: graph(faqNode(FAQ)) }} />
 
-      {/* 1. The promise, and a specialist to talk to. */}
-      <section className="section fresh-hero seat-room">
-        <div className="hero-stickers" aria-hidden="true">
-          <span className="sticker s1" data-desk="search">Specialist-checked &#10003;</span>
-          <span className="sticker s2" data-desk="content">Websites built &#128295;</span>
-          <span className="sticker s3" data-desk="social">Socials, sorted</span>
-          <span className="sticker s4" data-desk="paid">Ads that pay &#128184;</span>
-          <span className="sticker s5">AI-powered</span>
+      {/* 1. The promise, a specialist to talk to, and the team at work. */}
+      <section className="section fresh-hero agency-hero">
+        <div className="agency-hero-copy">
+          <h1 className="hero-title">
+            A full marketing team, for <span className="hl">less</span> than an agency.
+          </h1>
+          <p className="hero-lede">
+            An AI-powered marketing agency for founders. AI does the legwork on your website, SEO, ads, social and
+            content, and a specialist oversees every piece. You pay a fraction of what a traditional agency charges.
+          </p>
+          <div className="hero-actions">
+            <Link href={BOOK.href} className="big-button primary">{BOOK.label} &rarr;</Link>
+            <Link href={LAB_PATH} className="big-button lab-jump">
+              Rather do it yourself? Try {LAB}
+            </Link>
+          </div>
+          <p className="hero-status">
+            <span className="dot" aria-hidden="true" />
+            <span><b>30 minutes, no obligation.</b> You leave with a plan whether or not you hire us.</span>
+          </p>
         </div>
-        <h1 className="hero-title">
-          A full <span data-sprig-seat="">marketing</span> team, for <span className="hl">less</span> than an agency.
-        </h1>
-        <p className="hero-lede">
-          An AI-powered marketing agency for founders. AI does the legwork on your website, SEO, ads, social and
-          content, and a specialist oversees every piece. You pay a fraction of what a traditional agency charges.
-        </p>
-        <div className="hero-actions">
-          <Link href={BOOK.href} className="big-button primary">{BOOK.label} &rarr;</Link>
-          <Link href="/app/new" className="big-button">Check any website&rsquo;s SEO, free</Link>
+        <div className="agency-hero-scene">
+          <RoundTable />
         </div>
-        <p className="hero-status">
-          <span className="dot" aria-hidden="true" />
-          <span><b>30 minutes, no obligation.</b> You leave with a plan whether or not you hire us.</span>
-        </p>
       </section>
 
       {/* 2. Who this is for: three kinds of founder, each with where they start. */}
@@ -109,8 +111,39 @@ export default function Home() {
         </div>
       </section>
 
-      {/* 3. How working with us goes. */}
+      {/* 3. Judgement: what someone who has done this before does first. */}
       <section className="section">
+        <h2 className="section-title">What we do first, and why.</h2>
+        <p className="section-lede">
+          Most marketing budgets are lost in the order things are done, not in the things themselves. So we start
+          where the money is safest.
+        </p>
+        <div className="judgement" style={{ marginTop: "1.6rem" }}>
+          <div>
+            <span className="j-num">1</span>
+            <h3>Make sure you can be found</h3>
+            <p>A website Google can read and people can use. Ads sent to a slow or broken page pay to lose customers.</p>
+          </div>
+          <div>
+            <span className="j-num">2</span>
+            <h3>Measure before spending</h3>
+            <p>Enquiries and sales tracked properly first. We won&rsquo;t run ads we can&rsquo;t measure, even if you ask.</p>
+          </div>
+          <div>
+            <span className="j-num">3</span>
+            <h3>Fix before writing</h3>
+            <p>A handful of fixes to pages you already have usually beats ten new blog posts. New content comes next.</p>
+          </div>
+          <div>
+            <span className="j-num">4</span>
+            <h3>Grow what&rsquo;s working</h3>
+            <p>Social and ads follow what your customers already respond to, not what&rsquo;s fashionable this month.</p>
+          </div>
+        </div>
+      </section>
+
+      {/* 4. How working with us goes. */}
+      <section className="section section-alt">
         <h2 className="section-title">How it works.</h2>
         <p className="section-lede">A specialist at every step. AI does the heavy lifting in between.</p>
         <div className="steps3 four" style={{ marginTop: "1.6rem" }}>
@@ -133,8 +166,8 @@ export default function Home() {
         </div>
       </section>
 
-      {/* 4. The menu. */}
-      <section className="section section-alt" id="services">
+      {/* 5. The menu. */}
+      <section className="section" id="services">
         <h2 className="section-title">Pick one thing, or all of it.</h2>
         <p className="section-lede">Every service is AI-powered, and overseen by a specialist who knows your business.</p>
         <div className="fresh-desks three" style={{ marginTop: "1.4rem" }}>
@@ -151,8 +184,8 @@ export default function Home() {
         </div>
       </section>
 
-      {/* 5. Who does what. */}
-      <section className="section">
+      {/* 6. Who does what. */}
+      <section className="section section-alt">
         <h2 className="section-title">A specialist up front. AI behind them.</h2>
         <div className="duo" style={{ marginTop: "1.4rem" }}>
           <div className="duo-card person">
@@ -183,8 +216,8 @@ export default function Home() {
         </p>
       </section>
 
-      {/* 6. Why it costs less. */}
-      <section className="section section-alt">
+      {/* 7. Why it costs less. */}
+      <section className="section">
         <h2 className="section-title">Why we cost less than an agency.</h2>
         <p className="section-lede">
           At a traditional agency, most of your fee pays for hours of legwork. Ours is done by AI, so you pay for
@@ -206,39 +239,32 @@ export default function Home() {
         </div>
       </section>
 
-      {/* 7. For the ones who want to look first. */}
+      {/* 8. Examples of the work, drawn for illustration and labelled as such. */}
+      <section className="section section-alt">
+        <h2 className="section-title">What the work looks like.</h2>
+        <p className="section-lede">
+          The kind of thing that lands in your dashboard for a yes. These are illustrations with made-up businesses,
+          not client results: real work is shown on your own call, with your own numbers.
+        </p>
+        <SampleWork />
+      </section>
+
+      {/* 9. The one door to the do-it-yourself side. */}
       <section className="section">
-        <h2 className="section-title">Want to look before you talk?</h2>
-        <p className="section-lede">These are the tools our team works with. Free, no signup, results in seconds.</p>
-        <div className="tool-cards" style={{ marginTop: "1.4rem" }}>
-          <Link href="/app/new" className="tool-card">
-            <span className="tc-emoji" style={{ background: "var(--desk-search)" }} aria-hidden="true">&#128269;</span>
-            <h3>Check any website&rsquo;s SEO</h3>
-            <p>Yours or a competitor&rsquo;s: what&rsquo;s holding it back, with the fixes already written.</p>
-            <span className="tc-go">Start &rarr;</span>
-          </Link>
-          <Link href="/tools/social-teardown" className="tool-card">
-            <span className="tc-emoji" style={{ background: "var(--desk-social)" }} aria-hidden="true">&#128373;</span>
-            <h3>Scout a competitor</h3>
-            <p>See which of their posts actually worked, and why.</p>
-            <span className="tc-go">Start &rarr;</span>
-          </Link>
-          <Link href="/tools/ad-budget-check" className="tool-card">
-            <span className="tc-emoji" style={{ background: "var(--desk-paid)" }} aria-hidden="true">&#128184;</span>
-            <h3>Check my ad budget</h3>
-            <p>Is it enough to work? The honest maths, in ten seconds.</p>
-            <span className="tc-go">Start &rarr;</span>
-          </Link>
-          <Link href="/tools/voice-check" className="tool-card">
-            <span className="tc-emoji" style={{ background: "var(--desk-content)" }} aria-hidden="true">&#9997;</span>
-            <h3>Test my writing</h3>
-            <p>Do you sound like you, or like everyone else?</p>
-            <span className="tc-go">Start &rarr;</span>
-          </Link>
+        <div className="lab-band">
+          <div>
+            <span className="lab-band-tag">{LAB}</span>
+            <h2>Rather do it yourself?</h2>
+            <p>
+              The tools our team works with are open in {LAB}, our do-it-yourself lab. Audit a website, check an ad
+              budget, read a competitor&rsquo;s socials. Free to start, no call needed.
+            </p>
+          </div>
+          <Link href={LAB_PATH} className="big-button">Open {LAB} &rarr;</Link>
         </div>
       </section>
 
-      {/* 8. The promises. */}
+      {/* 10. The promises. */}
       <section className="section section-alt">
         <h2 className="section-title">Things we&rsquo;ll never do.</h2>
         <div className="never-grid" style={{ marginTop: "1.4rem" }}>
@@ -261,7 +287,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* 9. Questions, folded. */}
+      {/* 11. Questions, folded. */}
       <section className="section">
         <h2 className="section-title">Quick questions.</h2>
         <div style={{ marginTop: "1.2rem" }}>
@@ -274,7 +300,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* 10. The action, again. */}
+      {/* 12. The action, again. */}
       <section className="section">
         <div className="cta-band final-cta">
           <h2>Tell us about your business.</h2>
@@ -282,14 +308,8 @@ export default function Home() {
           <div className="hero-actions" style={{ justifyContent: "center" }}>
             <Link href={BOOK.href} className="big-button primary">{BOOK.label}</Link>
           </div>
-          <p className="small" style={{ marginTop: "1.2rem" }}>Or check the SEO of any website first:</p>
-          <div style={{ display: "flex", justifyContent: "center" }}>
-            <UrlStart note={false} />
-          </div>
         </div>
       </section>
-      {/* The mascot crew. Delete this line and components/sprig to remove them. */}
-      <Sprig crew="rotate" />
     </MarketingChrome>
   );
 }

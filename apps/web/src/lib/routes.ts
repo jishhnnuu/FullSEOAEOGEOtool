@@ -167,7 +167,70 @@ export const ROUTES: PublicRoute[] = [
     section: "learn",
   },
   {
-    path: "/tools/social-teardown",
+    path: "/thymelab",
+    title: "Thymelab: marketing tools you run yourself",
+    answers:
+      "The do-it-yourself side: an SEO lab, a content lab, a social lab and an ads lab, each with its own workbench, free to start.",
+    priority: 0.9,
+    changeFrequency: "monthly",
+    section: "tools",
+  },
+  {
+    path: "/thymelab/seo",
+    title: "The SEO lab",
+    answers:
+      "Audit a website, see every finding with the fix written out, and run single quick checks on a URL. Free, no account.",
+    priority: 0.9,
+    changeFrequency: "monthly",
+    section: "tools",
+  },
+  {
+    path: "/thymelab/seo/audit",
+    title: "SEO audit workbench",
+    answers:
+      "Crawl up to 40 pages of any site, score what can be measured from the crawl, and get the fixes written for you.",
+    priority: 0.85,
+    changeFrequency: "monthly",
+    section: "tools",
+  },
+  {
+    path: "/thymelab/seo/checks",
+    title: "SEO quick checks",
+    answers:
+      "Single checks on one URL: titles, canonicals, schema, robots, AI crawler access and more, each with the fix.",
+    priority: 0.8,
+    changeFrequency: "monthly",
+    section: "tools",
+  },
+  {
+    path: "/thymelab/content",
+    title: "The content lab",
+    answers:
+      "Measure a page's voice and readability against the pages ranking around it, and see what to change.",
+    priority: 0.85,
+    changeFrequency: "monthly",
+    section: "tools",
+  },
+  {
+    path: "/thymelab/content/voice",
+    title: "Voice and readability against your rivals",
+    answers:
+      "Measure a page's rhythm, hedging, filler, specifics and reading grade, then compare it with the pages ranking around it.",
+    priority: 0.85,
+    changeFrequency: "monthly",
+    section: "tools",
+  },
+  {
+    path: "/thymelab/social",
+    title: "The social lab",
+    answers:
+      "Read a competitor's public posts, find what beats their own median, and name the hook the winners share.",
+    priority: 0.85,
+    changeFrequency: "monthly",
+    section: "tools",
+  },
+  {
+    path: "/thymelab/social/teardown",
     title: "Competitor social teardown",
     answers:
       "Read a competitor's public posts, find the ones that beat their own median, and name the hook the winners share. No account.",
@@ -176,7 +239,16 @@ export const ROUTES: PublicRoute[] = [
     section: "tools",
   },
   {
-    path: "/tools/ad-budget-check",
+    path: "/thymelab/ads",
+    title: "The ads lab",
+    answers:
+      "Check whether an ad budget can work before it is spent, per platform, with the arithmetic shown.",
+    priority: 0.85,
+    changeFrequency: "monthly",
+    section: "tools",
+  },
+  {
+    path: "/thymelab/ads/budget",
     title: "Will this ad budget actually work",
     answers:
       "Whether a monthly budget clears the conversion volume automated bidding needs, per platform, and what to change if it does not.",
@@ -185,11 +257,20 @@ export const ROUTES: PublicRoute[] = [
     section: "tools",
   },
   {
-    path: "/tools/voice-check",
-    title: "Voice and readability against your rivals",
+    path: "/thymelab/website",
+    title: "The website lab (in the works)",
     answers:
-      "Measure a page's rhythm, hedging, filler, specifics and reading grade, then compare it with the pages ranking around it.",
-    priority: 0.85,
+      "A website builder with hosting is being built. Join the list, or have the agency build your site now.",
+    priority: 0.6,
+    changeFrequency: "monthly",
+    section: "tools",
+  },
+  {
+    path: "/thymelab/pricing",
+    title: "Thymelab pricing",
+    answers:
+      "What the tool plans cost, what is free, and what each plan adds, for people who want to do it themselves.",
+    priority: 0.8,
     changeFrequency: "monthly",
     section: "tools",
   },

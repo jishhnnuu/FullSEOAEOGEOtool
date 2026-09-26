@@ -141,7 +141,7 @@ export default async function ComparisonPage({ params }: { params: Promise<{ slu
       <CtaBand
         title="The audit is the comparison that matters"
         body="Run it on your own site. No account, no card, and you keep everything it produces."
-        primary={{ href: "/app/new", label: "Check any website's SEO" }}
+        primary={{ href: "/thymelab/seo/audit", label: "Check any website's SEO" }}
         secondary={{ href: "/book", label: "Or talk to a specialist" }}
       />
     </MarketingChrome>

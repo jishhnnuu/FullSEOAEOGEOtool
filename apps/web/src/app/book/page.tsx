@@ -67,7 +67,7 @@ export default function BookPage() {
               <p className="small muted" style={{ margin: "0 0 0.6rem" }}>
                 Run the free check on your website first. It takes about four minutes.
               </p>
-              <Link href="/app/new" className="fresh-btn ghost" style={{ paddingLeft: 0 }}>Check my website &rarr;</Link>
+              <Link href="/thymelab/seo/audit" className="fresh-btn ghost" style={{ paddingLeft: 0 }}>Check my website &rarr;</Link>
             </div>
           </aside>
         </div>

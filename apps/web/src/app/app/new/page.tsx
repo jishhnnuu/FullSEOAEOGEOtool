@@ -232,7 +232,7 @@ function NewSite() {
             {/* The fast path is the primary action: the details below sharpen
                 the run, but nobody should have to answer them to see results. */}
             <button className="primary" onClick={() => (domain ? void begin() : setError("Pop your website address in first."))}>
-              Run my audit &rarr;
+              Check this website &rarr;
             </button>
             <button onClick={() => (domain ? setStep(2) : setError("Pop your website address in first."))}>
               Add more detail first

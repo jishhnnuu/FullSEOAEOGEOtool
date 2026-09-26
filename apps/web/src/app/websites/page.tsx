@@ -92,7 +92,7 @@ export default function WebsitesPage() {
       </section>
 
       <section className="section">
-        <blockquote className="worry-quote">&ldquo;I know I need a website. I don&rsquo;t know where to start.&rdquo;</blockquote>
+        <blockquote className="worry-quote">I know I need a website. I don&rsquo;t know where to start.</blockquote>
         <p className="section-lede" style={{ marginBottom: 0 }}>
           That&rsquo;s the usual starting point, and it&rsquo;s fine. You bring the business. We bring the plan, the
           words, the design and the setup.

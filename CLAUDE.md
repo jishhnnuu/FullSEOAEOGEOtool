@@ -44,6 +44,14 @@ actually used (`/thymelab/seo/audit`, `/content/voice`, `/social/teardown`,
 old `/tools` URLs redirect permanently from `next.config.mjs`. Everything the
 lab needs sits under `app/thymelab` and `components/lab`, so moving it to its
 own domain later is redirects, not a rebuild.
+
+**The agency's look lives in one file.** `components/agency.css` is scoped to
+the `.agency` wrapper that `MarketingChrome` renders: green `#00A446` for
+anything pressed and small accents, butter `#FFEEA4` for alternate sections,
+sky `#8EBBDA` for heroes, black ink, flat colour blocks with no outlines or
+offset shadows, Archivo (wide, heavy) for headlines and Plex Mono for label
+print. Text on green is always ink, because white on that green fails
+contrast. The workspace and Thymelab do not read this file.
 `lib/services.ts` is the menu and the only place a service price lives; a
 price that has not been set says it is quoted on the call. Enquiries land in
 D1 (`enquiries`), are emailed when `CONTACT_EMAIL` and `RESEND_API_KEY` are

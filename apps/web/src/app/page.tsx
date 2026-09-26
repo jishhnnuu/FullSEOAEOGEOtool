@@ -84,6 +84,12 @@ export default function Home() {
         </div>
         <div className="agency-hero-scene">
           <RoundTable />
+          <div className="spec-label" aria-hidden="true">
+            <div><b>Client:</b>Your business</div>
+            <div><b>Led by:</b>A specialist</div>
+            <div><b>Groundwork:</b>AI, every day</div>
+            <div><b>Notes:</b>Nothing live without your yes</div>
+          </div>
         </div>
       </section>
 

@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Bricolage_Grotesque } from "next/font/google";
+import { Archivo, Bricolage_Grotesque, IBM_Plex_Mono } from "next/font/google";
 
 import { BRAND, DESCRIPTION, IS_LAUNCHED, OG_IMAGE, SITE_URL, TAGLINE } from "@/lib/brand";
 import { graph, organizationNode, softwareNode, websiteNode } from "@/lib/schema";
@@ -18,6 +18,25 @@ const display = Bricolage_Grotesque({
   subsets: ["latin"],
   weight: ["500", "700", "800"],
   variable: "--font-display",
+  display: "swap",
+});
+
+/*
+ * The agency's own faces. Archivo carries a width axis, so one file gives a
+ * wide, heavy headline cut and a normal-width body; Plex Mono is the label
+ * print. Both are scoped to `.agency` in agency.css, so Thymelab and the
+ * workspace keep the display face above.
+ */
+const agency = Archivo({
+  subsets: ["latin"],
+  axes: ["wdth"],
+  variable: "--font-agency",
+  display: "swap",
+});
+const agencyMono = IBM_Plex_Mono({
+  subsets: ["latin"],
+  weight: ["400", "600"],
+  variable: "--font-agency-mono",
   display: "swap",
 });
 
@@ -70,7 +89,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={display.variable}>
+    <html lang="en" className={`${display.variable} ${agency.variable} ${agencyMono.variable}`}>
       <head>
         {/*
           One graph, not three script tags. Defining the organisation once and

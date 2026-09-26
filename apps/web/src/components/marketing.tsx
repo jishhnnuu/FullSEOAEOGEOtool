@@ -5,6 +5,8 @@ import { LogoMark } from "@/components/logo";
 import { SideSwitch } from "@/components/side-switch";
 import { BOOK } from "@/lib/services";
 
+import "./agency.css";
+
 /**
  * The public site's chrome.
  *
@@ -12,15 +14,18 @@ import { BOOK } from "@/lib/services";
  * puts parentheses into the built asset paths, and enough CDNs and proxies
  * mishandle those to make it not worth the saved lines. Each page wraps itself
  * instead.
+ *
+ * The `.agency` wrapper scopes the agency's palette and type (agency.css),
+ * so Thymelab and the workspace keep their own look.
  */
 export function MarketingChrome({ children }: { children: React.ReactNode }) {
   return (
-    <>
+    <div className="agency">
       <SideSwitch current="agency" />
       <SiteHeader />
       <main>{children}</main>
       <SiteFooter />
-    </>
+    </div>
   );
 }
 

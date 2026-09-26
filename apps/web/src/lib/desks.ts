@@ -84,11 +84,11 @@ export const DESKS: Desk[] = [
     ready: { tone: "go", label: "Fixes ready today" },
     readyNote: "Nothing goes live until you say yes.",
     seat: "SEO",
-    tryIt: { href: "/app/new", label: "Audit my site free" },
+    tryIt: { href: "/app/new", label: "Check any website's SEO" },
     audience: "Founders whose website isn't bringing in customers from Google or from AI answers.",
-    lede: "Your marketing lead and our AI team find what's holding your site back, fix it, and show you what changed. You just say yes.",
+    lede: "Your specialist and our AI team find what's holding your site back, fix it, and show you what changed. You just say yes.",
     worry: "I don't really know what SEO is. I just know nobody finds us.",
-    answer: "You don't need to know. Your person explains it in plain English, and the AI team does the fixing.",
+    answer: "You don't need to know. Your specialist explains it in plain English, and the AI team does the fixing.",
     work: [
       { title: "The full check-up", body: "Every page read, every problem found, in about four minutes.", applied: true },
       { title: "Fixes, written and shipped", body: "Titles, meta, redirects, sitemaps. Written, pushed live, double-checked.", applied: true },
@@ -113,7 +113,7 @@ export const DESKS: Desk[] = [
     audience: "Founders who need to explain what they do, and be found for it.",
     lede: "We work out with you what you should be saying, then write it so people read to the end.",
     worry: "I know we should be writing things. I never have the time, and I don't know what to say.",
-    answer: "Your person agrees one clear idea with you on a call. The AI team researches and drafts. You approve.",
+    answer: "Your specialist agrees one clear idea with you on a call. The AI team researches and drafts. You approve.",
     work: [
       { title: "Your big idea", body: "One clear point of view, agreed once, behind everything we write.", applied: true },
       { title: "Research first", body: "We read your business and your rivals before writing a word.", applied: true },
@@ -136,7 +136,7 @@ export const DESKS: Desk[] = [
     seat: "Ads",
     tryIt: { href: "/tools/ad-budget-check", label: "Check my ad budget free" },
     audience: "Founders ready to pay for customers, who want to know the numbers are real.",
-    lede: "Google, Meta, TikTok and more, planned with your marketing lead and built by our AI team. We won't spend a penny we can't measure.",
+    lede: "Google, Meta, TikTok and more, planned with your specialist and built by our AI team. We won't spend a penny we can't measure.",
     worry: "We tried ads once. We spent the money and couldn't tell what it bought.",
     answer: "We check your tracking before we spend anything, and report your real sales, not what each platform claims.",
     work: [
@@ -161,7 +161,7 @@ export const DESKS: Desk[] = [
     seat: "Socials",
     tryIt: { href: "/tools/social-teardown", label: "Scout a competitor free" },
     audience: "Founders who know they should be posting and never have the time.",
-    lede: "Your person picks the right platforms with you. Our AI team studies what works for your competitors and drafts every post.",
+    lede: "Your specialist picks the right platforms with you. Our AI team studies what works for your competitors and drafts every post.",
     worry: "We post when we remember. Nothing happens.",
     answer: "Posting more won't fix that. We look at which of your competitors' posts actually worked, and plan yours from that.",
     work: [

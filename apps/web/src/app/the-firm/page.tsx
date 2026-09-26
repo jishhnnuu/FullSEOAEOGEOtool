@@ -9,7 +9,7 @@ import { breadcrumbNode, graph } from "@/lib/schema";
 export const metadata = {
   title: "The team",
   description:
-    "A real person looks after your account. Behind them, an AI CMO and an AI team for each service do the legwork, each specialist with the one thing it will never do.",
+    "A marketing specialist looks after your account. Behind them, an AI CMO and an AI team for each service do the legwork, each AI agent with the one thing it will never do.",
   alternates: { canonical: "/the-firm" },
 };
 
@@ -63,10 +63,10 @@ export default function TheFirmPage() {
       <section className="section fresh-hero">
         <div className="eyebrow"><span className="dot" aria-hidden="true" />The team</div>
         <h1 className="hero-title">
-          People up front. <span className="hl">AI</span> behind them.
+          Specialists up front. <span className="hl">AI</span> behind them.
         </h1>
         <p className="hero-lede">
-          You talk to a person who knows your business. They run an AI team that does the research, the fixes, the
+          You talk to a marketing specialist who knows your business. They run an AI team that does the research, the fixes, the
           drafts and the reports, which is how we charge a fraction of what an agency does.
         </p>
         <div className="hero-actions">
@@ -76,11 +76,11 @@ export default function TheFirmPage() {
       </section>
 
       <section className="section section-alt">
-        <h2 className="section-title">The person you talk to.</h2>
+        <h2 className="section-title">The specialist you talk to.</h2>
         <div className="duo" style={{ marginTop: "1.4rem" }}>
           <div className="duo-card person">
-            <span className="duo-tag">Your marketing lead</span>
-            <h3>A real person on our team</h3>
+            <span className="duo-tag">Your specialist</span>
+            <h3>A marketing specialist on our team</h3>
             <ul>
               <li>Runs your free call and learns your business</li>
               <li>Sets up your website, Google and ad accounts with you</li>
@@ -114,7 +114,7 @@ export default function TheFirmPage() {
 
       <section className="section">
         <h2 className="section-title">An AI team for each service.</h2>
-        <p className="section-lede">Each small job has its own AI specialist that does only that, and one thing it will never do.</p>
+        <p className="section-lede">Each small job has its own AI agent that does only that, and one thing it will never do.</p>
         <div className="fresh-desks" style={{ marginTop: "1.4rem" }}>
           {DESKS.map((desk) => (
             <Link key={desk.key} href={desk.path} className="fresh-desk" data-desk={desk.key}>
@@ -132,7 +132,7 @@ export default function TheFirmPage() {
             <details className="acc" key={manager.key} id={manager.key}>
               <summary>Everyone on the {manager.name.toLowerCase()} team</summary>
               <div className="acc-body" style={{ maxWidth: "none" }}>
-                <p><strong>Led by the AI {manager.title.toLowerCase()}, under your marketing lead.</strong> {manager.remit}</p>
+                <p><strong>Led by the AI {manager.title.toLowerCase()}, under your specialist.</strong> {manager.remit}</p>
                 {manager.overlap && <p><strong>Where this team overlaps another:</strong> {manager.overlap}</p>}
                 <People people={manager.team} />
                 <p style={{ marginTop: "1rem" }}><strong>What this team will never do</strong></p>
@@ -153,7 +153,7 @@ export default function TheFirmPage() {
         </div>
       </section>
 
-      <CtaBand title="Meet the person behind it." />
+      <CtaBand title="Meet the specialist behind it." />
     </MarketingChrome>
   );
 }

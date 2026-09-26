@@ -7,10 +7,11 @@ import type { RunProgress } from "@/engine/run";
 import { CATEGORY_LABEL } from "@/engine/catalog";
 import { startRun } from "@/lib/runner";
 import { overdueInBrowser, useSchedule } from "@/lib/schedule";
-import { useSession } from "@/lib/session";
+import { useConnections, useSession } from "@/lib/session";
 import { useSite } from "@/lib/site-hooks";
 import { DirectorBrief } from "@/components/director";
 import { KeepThisRun } from "@/components/gate";
+import { AuditScope } from "@/components/audit-scope";
 import {
   Badge,
   Card,
@@ -27,6 +28,9 @@ import {
 export default function SiteDashboard() {
   const { site, result, runs, workspace } = useSite();
   const { session } = useSession();
+  // The overview note stays until Search Console is connected for this site,
+  // because until then the report is built from public pages alone.
+  const { connections } = useConnections(Boolean(session.user));
   const [progress, setProgress] = useState<RunProgress | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [startedBySchedule, setStartedBySchedule] = useState(false);
@@ -83,6 +87,10 @@ export default function SiteDashboard() {
       />
 
       <DirectorBrief site={site} result={result ?? null} diff={diff} workspace={workspace} />
+
+      {!connections.some((c) => c.provider === "gsc" && c.status === "connected" && (!c.siteId || c.siteId === site.id)) ? (
+        <AuditScope compact />
+      ) : null}
 
       {startedBySchedule ? (
         <Notice kind="ok" title="This run started on its own">

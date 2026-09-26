@@ -2653,3 +2653,11 @@ button.primary:hover:not(:disabled), .button.primary:hover { background: var(--z
 /* A phone header holds the wordmark and the one action. Pricing is in the
    footer and on every service page. */
 @media (max-width: 480px) { .site-nav a:not(.cta) { display: none; } }
+.start-card .start-tag {
+  align-self: flex-start; font-size: 0.72rem; font-weight: 800; letter-spacing: 0.02em;
+  background: var(--zest); color: #16130f; border: 1.5px solid #16130f; border-radius: 999px; padding: 0.15rem 0.6rem;
+}
+.wordmark .logo-mark { flex: none; display: block; }
+.wordmark:hover .logo-mark { transform: rotate(-8deg); transition: transform 0.2s ease; }
+.brand-row { display: inline-flex; align-items: center; gap: 0.45rem; }
+.brand-row .logo-mark { flex: none; }

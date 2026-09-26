@@ -83,7 +83,7 @@ export function InsideDesks() {
             title="Now do yours"
             body={`Same engine, same ${CATALOG_SIZE} checks, about four minutes. No account.`}
             href="/app/new"
-            label="Audit my site free"
+            label="Check any website's SEO"
             primary
           />
         </div>
@@ -98,7 +98,7 @@ export function InsideDesks() {
           <VoiceTool defaultMine={SITE_URL} />
           <TryBand
             title="That's one trick of many"
-            body="For a client, the AI team also briefs, drafts and edits against your own point of view, and your person checks it."
+            body="For a client, the AI team also briefs, drafts and edits against your own point of view, and your specialist checks it."
             href="/content"
             label="How our content works"
           />
@@ -128,7 +128,7 @@ export function InsideDesks() {
           <AdBudgetTool />
           <TryBand
             title="The maths is the easy bit"
-            body="For a client, your person and the AI team take it from here: tracking checked, ads built paused, results you can trust."
+            body="For a client, your specialist and the AI team take it from here: tracking checked, ads built paused, results you can trust."
             href="/paid"
             label="How our paid ads work"
           />

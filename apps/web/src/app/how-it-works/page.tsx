@@ -22,9 +22,9 @@ export default function HowItWorksPage() {
     <MarketingChrome>
       <section className="section fresh-hero">
         <div className="eyebrow"><span className="dot" aria-hidden="true" />How we work</div>
-        <h1 className="hero-title">A person you trust. <span className="hl">AI</span> that works.</h1>
+        <h1 className="hero-title">A specialist you trust. <span className="hl">AI</span> that works.</h1>
         <p className="hero-lede">
-          You talk to a real person. They run an AI team that does the legwork. Nothing goes live until you say yes.
+          You talk to a marketing specialist. They run an AI team that does the legwork. Nothing goes live until you say yes.
         </p>
         <div className="hero-actions">
           <Link href={BOOK.href} className="big-button primary">{BOOK.label} &rarr;</Link>
@@ -41,11 +41,11 @@ export default function HowItWorksPage() {
           </div>
           <div>
             <h3>Set up together</h3>
-            <p>Your person connects your website, Google and ad accounts with you, on a call. You never handle a key.</p>
+            <p>Your specialist connects your website, Google and ad accounts with you, on a call. You never handle a key.</p>
           </div>
           <div>
             <h3>The AI team works</h3>
-            <p>Research, fixes, drafts and campaigns, day and night. Your person checks what reaches you.</p>
+            <p>Research, fixes, drafts and campaigns, day and night. Your specialist checks what reaches you.</p>
           </div>
           <div>
             <h3>You approve and watch</h3>
@@ -53,7 +53,7 @@ export default function HowItWorksPage() {
           </div>
         </div>
         <p className="section-lede" style={{ marginTop: "1.6rem" }}>
-          Prefer to do some of it yourself? Every tool your person uses is in your dashboard too.
+          Prefer to do some of it yourself? Every tool your specialist uses is in your dashboard too.
         </p>
         <details className="acc" style={{ marginTop: "1.8rem" }}>
           <summary>What the AI does to your website, all nine steps</summary>
@@ -145,7 +145,7 @@ export default function HowItWorksPage() {
         <div>
           <h2 className="section-title">What gets connected.</h2>
           <p className="section-lede">
-            Your person connects these with you. Each one lets the team do a bit more, and each can be switched off
+            Your specialist connects these with you. Each one lets the team do a bit more, and each can be switched off
             from your own account at any time.
           </p>
           {Object.entries(byCategory).map(([category, connectors]) => (

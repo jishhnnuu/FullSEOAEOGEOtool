@@ -41,7 +41,7 @@ export default async function VersusPage({ params }: { params: Promise<{ slug: s
             ]),
             faqNode([
               { q: `Should I use ${BRAND} or ${v.rival}?`, a: `${v.decision} ${v.chooseAgency[0]}` },
-              { q: "What does it cost?", a: `${servicePrice(service)}, a fixed monthly fee with a person included. ${v.rival} typically charges ${service.agency}: ${service.agencyBasis.toLowerCase()}` },
+              { q: "What does it cost?", a: `${servicePrice(service)}, a fixed monthly fee with a specialist on your account. ${v.rival} typically charges ${service.agency}: ${service.agencyBasis.toLowerCase()}` },
             ]),
           ),
         }}
@@ -99,7 +99,7 @@ export default async function VersusPage({ params }: { params: Promise<{ slug: s
 
       <CtaBand
         title="Ask us the hard questions."
-        body="A free call with a person. If a traditional agency suits you better, we'll say so."
+        body="A free call with a specialist. If a traditional agency suits you better, we'll say so."
         primary={BOOK}
         secondary={{ href: "/inside", label: "See the dashboard first" }}
       />

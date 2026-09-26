@@ -9,7 +9,7 @@ import { breadcrumbNode, faqNode, graph } from "@/lib/schema";
 export const metadata = {
   title: "Website design and build for new businesses",
   description:
-    "A website built with you, on a platform you own, with SEO done properly from launch. A real person leads the build and AI speeds up the legwork, so it costs a fraction of an agency build.",
+    "A website built with you, on a platform you own, with SEO done properly from launch. A specialist leads the build and AI speeds up the legwork, so it costs a fraction of an agency build.",
   alternates: { canonical: "/websites" },
 };
 
@@ -31,7 +31,7 @@ const FAQ = [
   },
   {
     q: "Do I need to write the words?",
-    a: "No. Your person talks it through with you, our AI drafts the pages from that conversation and from what your competitors say, and you correct anything that isn't quite you.",
+    a: "No. Your specialist talks it through with you, our AI drafts the pages from that conversation and from what your competitors say, and you correct anything that isn't quite you.",
   },
   {
     q: "How long does it take?",
@@ -49,7 +49,7 @@ const FAQ = [
 
 const WORK = [
   { title: "A plan first", body: "Who it's for, what they need to read, and what you want them to do. Agreed on a call." },
-  { title: "Words written for you", body: "Drafted by AI from your conversation, edited by your person, approved by you." },
+  { title: "Words written for you", body: "Drafted by AI from your conversation, edited by your specialist, approved by you." },
   { title: "Design that fits you", body: "Clean, fast and on-brand, laid out around what your customers came to find." },
   { title: "On a platform you own", body: "WordPress, Webflow, Shopify or similar, in your name. No lock-in, no mystery hosting." },
   { title: "Found from day one", body: "Titles, structure, speed, schema and sitemaps checked by our own audit before launch." },
@@ -87,7 +87,7 @@ export default function WebsitesPage() {
         </div>
         <p className="hero-status">
           <span className="dot" aria-hidden="true" />
-          <span><b>Led by a person.</b> AI speeds up the legwork. You approve every page before it goes live.</span>
+          <span><b>Led by a specialist.</b> AI speeds up the legwork. You approve every page before it goes live.</span>
         </p>
       </section>
 
@@ -121,7 +121,7 @@ export default function WebsitesPage() {
           </div>
           <div>
             <h3>Words and design</h3>
-            <p>Drafted fast with AI, shaped by your person, sent to you to approve page by page.</p>
+            <p>Drafted fast with AI, shaped by your specialist, sent to you to approve page by page.</p>
           </div>
           <div>
             <h3>Checked before launch</h3>

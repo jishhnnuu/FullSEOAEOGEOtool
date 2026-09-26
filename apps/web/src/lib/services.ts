@@ -4,7 +4,7 @@
  * The four AI desks in `desks.ts` do the work behind search, content, social
  * and paid. A founder does not buy a desk, though: they buy "a website", "SEO"
  * or "someone to run our ads", and they buy it from people. So this list is
- * the menu, and every item on it comes with a person on the account.
+ * the menu, and every item on it comes with a specialist on the account.
  *
  * Websites is on the menu and has no desk, on purpose. A build is led by a
  * person on our team, with the audit engine checking it before launch; the
@@ -105,8 +105,8 @@ export const SERVICES: Service[] = [
     key: "everything",
     path: "/the-whole-agency",
     label: "Everything",
-    line: "Your whole marketing, handled. One person, one plan.",
-    forWho: "Founders who want all of it done, and one person to talk to about it.",
+    line: "Your whole marketing, handled. One specialist, one plan.",
+    forWho: "Founders who want all of it done, and one specialist to talk to about it.",
     from: null,
     oneOff: false,
     agency: "£5,000 to £15,000 a month",

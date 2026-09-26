@@ -7,7 +7,7 @@ import { breadcrumbNode, graph } from "@/lib/schema";
 export const metadata = {
   title: "Book a free call",
   description:
-    "Thirty minutes with a person about your business: your website, your customers and your budget. You leave with a plan and a fixed quote, whether or not you hire us.",
+    "Thirty minutes with a marketing specialist about your business: your website, your customers and your budget. You leave with a plan and a fixed quote, whether or not you hire us.",
   alternates: { canonical: "/book" },
 };
 
@@ -38,7 +38,7 @@ export default function BookPage() {
           Let&rsquo;s <span className="hl">talk</span> about your business.
         </h1>
         <p className="hero-lede">
-          Tell us a little about where you are. A real person will get back to you to find a time.
+          Tell us a little about where you are. A specialist will get back to you to find a time.
         </p>
       </section>
 

@@ -62,8 +62,8 @@ export default function GlossaryPage() {
       <CtaBand
         title="Definitions are cheap. The audit is the useful part."
         body="Run it on your own site and see which of these terms is currently costing you something."
-        primary={{ href: "/app/new", label: "Check my site free" }}
-        secondary={{ href: "/book", label: "Or talk to a person" }}
+        primary={{ href: "/app/new", label: "Check any website's SEO" }}
+        secondary={{ href: "/book", label: "Or talk to a specialist" }}
       />
     </MarketingChrome>
   );

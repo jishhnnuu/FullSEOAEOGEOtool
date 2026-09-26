@@ -33,7 +33,7 @@ export function DeskPage({ desk, extra }: { desk: Desk; extra?: React.ReactNode 
   const faq = [
     {
       q: "Who will I actually talk to?",
-      a: "A real person from our team, your marketing lead. They get to know your business on a free call, set everything up with you, check the work before it reaches you and walk you through the results. Behind them, an AI team does the legwork.",
+      a: "A marketing specialist from our team. They get to know your business on a free call, set everything up with you, check the work before it reaches you and walk you through the results. Behind them, an AI team does the legwork.",
     },
     {
       q: `What does the ${service.label.toLowerCase()} service include?`,
@@ -49,7 +49,7 @@ export function DeskPage({ desk, extra }: { desk: Desk; extra?: React.ReactNode 
     },
     {
       q: "What does it cost?",
-      a: `${servicePrice(service)}. A fixed monthly fee, month to month, with a person included. A traditional agency typically charges ${service.agency} for the same scope. If you'd rather do it yourself, the tools alone are ${deskPrice(desk)} a month${plan ? ` on the ${plan.name} plan` : ""}.`,
+      a: `${servicePrice(service)}. A fixed monthly fee, month to month, with a specialist on your account. A traditional agency typically charges ${service.agency} for the same scope. If you'd rather do it yourself, the tools alone are ${deskPrice(desk)} a month${plan ? ` on the ${plan.name} plan` : ""}.`,
     },
   ];
 
@@ -80,7 +80,7 @@ export function DeskPage({ desk, extra }: { desk: Desk; extra?: React.ReactNode 
         </div>
         <p className="hero-status">
           <span className="dot" aria-hidden="true" />
-          <span><b>A person on your account.</b> {desk.readyNote}</span>
+          <span><b>AI-powered, overseen by a specialist.</b> {desk.readyNote}</span>
         </p>
       </section>
 
@@ -106,7 +106,7 @@ export function DeskPage({ desk, extra }: { desk: Desk; extra?: React.ReactNode 
         </div>
         <p className="small muted" style={{ marginTop: "1rem" }}>
           &ldquo;Done for you&rdquo; means we make the change and check it went live. &ldquo;Drafted for you&rdquo;
-          means it&rsquo;s written, checked by your person, and waiting for your yes.
+          means it&rsquo;s written, checked by your specialist, and waiting for your yes.
         </p>
       </section>
 
@@ -115,7 +115,7 @@ export function DeskPage({ desk, extra }: { desk: Desk; extra?: React.ReactNode 
         <h2 className="section-title">Who does the work.</h2>
         <div className="duo" style={{ marginTop: "1.4rem" }}>
           <div className="duo-card person">
-            <span className="duo-tag">Your marketing lead</span>
+            <span className="duo-tag">Your specialist</span>
             <h3>The person you talk to</h3>
             <p>
               Learns your business on the first call, sets up your accounts with you, checks everything the AI team
@@ -145,9 +145,9 @@ export function DeskPage({ desk, extra }: { desk: Desk; extra?: React.ReactNode 
             </div>
           </details>
           <details className="acc">
-            <summary>Every AI specialist on this team</summary>
+            <summary>Every AI agent on this team</summary>
             <div className="acc-body">
-              <p>Each one does a single job, under your marketing lead, and each has one thing it will never do.</p>
+              <p>Each one does a single job, under your specialist, and each has one thing it will never do.</p>
               <div className="firm-people" style={{ marginTop: "0.4rem" }}>
                 {manager.team.map((member) => (
                   <div className="person" key={member.key}>
@@ -175,7 +175,7 @@ export function DeskPage({ desk, extra }: { desk: Desk; extra?: React.ReactNode 
         <div className="price-strip" style={{ marginTop: "1.2rem" }}>
           <div>
             <div className="ps-us" style={service.from === null ? { fontSize: "1.35rem" } : undefined}>{servicePrice(service)}</div>
-            <div className="small muted">Fixed monthly fee, person included. Month to month.</div>
+            <div className="small muted">Fixed monthly fee, specialist-led. Month to month.</div>
           </div>
           <div className="ps-them">
             A typical agency: <s>{service.agency}</s>

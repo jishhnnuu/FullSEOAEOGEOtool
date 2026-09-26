@@ -88,8 +88,8 @@ export default function ProofPage() {
       <CtaBand
         title="Your turn."
         body="Same engine, same treatment, on your site. No account, no card."
-        primary={{ href: "/app/new", label: "Check my site free" }}
-        secondary={{ href: "/book", label: "Or talk to a person" }}
+        primary={{ href: "/app/new", label: "Check any website's SEO" }}
+        secondary={{ href: "/book", label: "Or talk to a specialist" }}
       />
     </MarketingChrome>
   );

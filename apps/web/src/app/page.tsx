@@ -10,7 +10,7 @@ export const metadata = {
   // The homepage keeps the layout's default title rather than restating it,
   // so the product name lives in exactly one place.
   description:
-    "A digital marketing agency for founders without a marketing team. A real person on your account, AI doing the legwork: websites, SEO, ads, social and content, at a fraction of agency prices. Book a free call.",
+    "An AI-powered marketing agency for founders without a marketing team. AI does the legwork on your website, SEO, ads, social and content, a specialist oversees every piece, and it costs a fraction of a traditional agency. Book a free call.",
   alternates: { canonical: "/" },
 };
 
@@ -19,7 +19,7 @@ export const metadata = {
  *
  * The person this is written for may not have a website yet, has never hired
  * an agency, and will not hand their business to software they have never
- * heard of. So the first thing on the page is a person to talk to, the second
+ * heard of. So the first thing on the page is a specialist to talk to, the second
  * is what they would get, and the AI is the reason it is affordable rather
  * than the thing being sold. The free tools are still here, one section down,
  * for anyone who wants to look before they talk.
@@ -27,8 +27,8 @@ export const metadata = {
 
 const FAQ = [
   {
-    q: "Is this a person or an AI?",
-    a: "Both, on purpose. A real person from our team looks after your account: they get to know your business on a call, set everything up with you, check the work and answer when you ask. Behind them, an AI team does the legwork, like research, writing drafts, fixing your site and building reports. That split is why we cost a fraction of a traditional agency.",
+    q: "Is this AI, or a real specialist?",
+    a: "Both, on purpose. A marketing specialist from our team looks after your account: they get to know your business on a call, set everything up with you, check the work and answer when you ask. Behind them, an AI team does the legwork, like research, writing drafts, fixing your site and building reports. That split is why we cost a fraction of a traditional agency.",
   },
   {
     q: "I don't have a website yet. Can you help?",
@@ -36,7 +36,7 @@ const FAQ = [
   },
   {
     q: "Do I have to use any tools or dashboards?",
-    a: "No. Your person does the setup and the work. You get a dashboard where you can see everything that's been done and approve what's next, and you can open it whenever you like. If you'd rather do some things yourself, the same tools are yours to use.",
+    a: "No. Your specialist does the setup and the work. You get a dashboard where you can see everything that's been done and approve what's next, and you can open it whenever you like. If you'd rather do some things yourself, the same tools are yours to use.",
   },
   {
     q: "Can I hire you for just one thing?",
@@ -57,25 +57,25 @@ export default function Home() {
     <MarketingChrome>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: graph(faqNode(FAQ)) }} />
 
-      {/* 1. The promise, and a person to talk to. */}
+      {/* 1. The promise, and a specialist to talk to. */}
       <section className="section fresh-hero seat-room">
         <div className="hero-stickers" aria-hidden="true">
-          <span className="sticker s1" data-desk="search">A real person &#10003;</span>
+          <span className="sticker s1" data-desk="search">Specialist-checked &#10003;</span>
           <span className="sticker s2" data-desk="content">Websites built &#128295;</span>
           <span className="sticker s3" data-desk="social">Socials, sorted</span>
           <span className="sticker s4" data-desk="paid">Ads that pay &#128184;</span>
-          <span className="sticker s5">AI does the legwork</span>
+          <span className="sticker s5">AI-powered</span>
         </div>
         <h1 className="hero-title">
-          A real <span data-sprig-seat="">marketing</span> team, at <span className="hl">AI</span> prices.
+          A full <span data-sprig-seat="">marketing</span> team, for <span className="hl">less</span> than an agency.
         </h1>
         <p className="hero-lede">
-          For founders without a marketing team. A person looks after your website, SEO, ads, socials and content.
-          AI does the legwork, so it costs a fraction of an agency.
+          An AI-powered marketing agency for founders. AI does the legwork on your website, SEO, ads, social and
+          content, and a specialist oversees every piece. You pay a fraction of what a traditional agency charges.
         </p>
         <div className="hero-actions">
           <Link href={BOOK.href} className="big-button primary">{BOOK.label} &rarr;</Link>
-          <Link href="/app/new" className="big-button">Check my website free</Link>
+          <Link href="/app/new" className="big-button">Check any website&rsquo;s SEO, free</Link>
         </div>
         <p className="hero-status">
           <span className="dot" aria-hidden="true" />
@@ -83,24 +83,28 @@ export default function Home() {
         </p>
       </section>
 
-      {/* 2. Where the founder is starting from. */}
+      {/* 2. Who this is for: three kinds of founder, each with where they start. */}
       <section className="section section-alt">
-        <h2 className="section-title">Wherever you&rsquo;re starting from.</h2>
+        <h2 className="section-title">Who we help.</h2>
+        <p className="section-lede">Most founders come to us from one of three places. Which sounds like you?</p>
         <div className="steps3 plain" style={{ marginTop: "1.6rem" }}>
           <Link href="/websites" className="start-card">
-            <h3>&ldquo;We don&rsquo;t have a website yet.&rdquo;</h3>
-            <p>We build one with you, on a platform you own, set up to be found from day one.</p>
-            <span className="tc-go">Websites &rarr;</span>
+            <span className="start-tag">Just starting out</span>
+            <h3>You don&rsquo;t have a website yet</h3>
+            <p>We build one with you, on a platform you own, set up to be found on Google from day one.</p>
+            <span className="tc-go">Website building &rarr;</span>
           </Link>
           <Link href="/seo" className="start-card">
-            <h3>&ldquo;We have one. Nobody finds it.&rdquo;</h3>
-            <p>We fix what&rsquo;s holding it back on Google and in AI answers, and write what&rsquo;s missing.</p>
+            <span className="start-tag">Stuck</span>
+            <h3>You have a website, but nobody finds it</h3>
+            <p>We fix what&rsquo;s holding it back on Google and in AI answers, and write the pages that are missing.</p>
             <span className="tc-go">SEO and content &rarr;</span>
           </Link>
           <Link href="/paid" className="start-card">
-            <h3>&ldquo;We&rsquo;re ready to grow.&rdquo;</h3>
-            <p>Ads that only spend what we can measure, and socials based on what&rsquo;s actually working.</p>
-            <span className="tc-go">Ads and social &rarr;</span>
+            <span className="start-tag">Growing</span>
+            <h3>You&rsquo;re ready to grow faster</h3>
+            <p>Ads that only spend what we can measure, and social media based on what&rsquo;s actually working.</p>
+            <span className="tc-go">Ads and social media &rarr;</span>
           </Link>
         </div>
       </section>
@@ -108,7 +112,7 @@ export default function Home() {
       {/* 3. How working with us goes. */}
       <section className="section">
         <h2 className="section-title">How it works.</h2>
-        <p className="section-lede">A person at every step. The AI does the heavy lifting in between.</p>
+        <p className="section-lede">A specialist at every step. AI does the heavy lifting in between.</p>
         <div className="steps3 four" style={{ marginTop: "1.6rem" }}>
           <div>
             <h3>A free call</h3>
@@ -116,10 +120,10 @@ export default function Home() {
           </div>
           <div>
             <h3>We set it up with you</h3>
-            <p>Your person connects your website, Google and ad accounts with you, on a call. No forms, no jargon.</p>
+            <p>Your specialist connects your website, Google and ad accounts with you, on a call. No forms, no jargon.</p>
           </div>
           <div>
-            <h3>AI does the work, a person checks it</h3>
+            <h3>AI does the work, a specialist checks it</h3>
             <p>Research, fixes, drafts and campaigns, made by our AI team and checked before they reach you.</p>
           </div>
           <div>
@@ -132,14 +136,14 @@ export default function Home() {
       {/* 4. The menu. */}
       <section className="section section-alt" id="services">
         <h2 className="section-title">Pick one thing, or all of it.</h2>
-        <p className="section-lede">Every service comes with a real person on your account.</p>
+        <p className="section-lede">Every service is AI-powered, and overseen by a specialist who knows your business.</p>
         <div className="fresh-desks three" style={{ marginTop: "1.4rem" }}>
           {SERVICES.map((service) => (
             <Link key={service.key} href={service.path} className="fresh-desk" data-desk={service.colour}>
               <span className="fd-name">{service.label}</span>
               <span className="fd-line">{service.line}</span>
               <span className="fd-foot">
-                <span className="fd-status">Person included</span>
+                <span className="fd-status">AI-powered, specialist-led</span>
                 <span className="fd-go">Look &rarr;</span>
               </span>
             </Link>
@@ -149,11 +153,11 @@ export default function Home() {
 
       {/* 5. Who does what. */}
       <section className="section">
-        <h2 className="section-title">A person up front. AI behind them.</h2>
+        <h2 className="section-title">A specialist up front. AI behind them.</h2>
         <div className="duo" style={{ marginTop: "1.4rem" }}>
           <div className="duo-card person">
-            <span className="duo-tag">Your marketing lead</span>
-            <h3>A real person, who knows your business</h3>
+            <span className="duo-tag">Your specialist</span>
+            <h3>A marketing specialist who knows your business</h3>
             <ul>
               <li>Gets to know you on the first call</li>
               <li>Sets up every account with you</li>
@@ -184,7 +188,7 @@ export default function Home() {
         <h2 className="section-title">Why we cost less than an agency.</h2>
         <p className="section-lede">
           At a traditional agency, most of your fee pays for hours of legwork. Ours is done by AI, so you pay for
-          the person and the results.
+          the specialist and the results.
         </p>
         <div className="vgrid" style={{ marginTop: "1.4rem" }}>
           <div className="vg-head">A traditional agency</div>
@@ -192,7 +196,7 @@ export default function Home() {
           <div className="vg-them">&pound;2,500 to &pound;15,000 a month</div>
           <div className="vg-us">A fraction of that, quoted on the call</div>
           <div className="vg-them">Juniors doing the legwork, billed by the hour</div>
-          <div className="vg-us">AI does the legwork. A person checks it.</div>
+          <div className="vg-us">AI does the legwork. A specialist checks it.</div>
           <div className="vg-them">A monthly PDF of problems</div>
           <div className="vg-us">The fixes, made and live, with your yes</div>
           <div className="vg-them">Spends first, explains later</div>
@@ -209,8 +213,8 @@ export default function Home() {
         <div className="tool-cards" style={{ marginTop: "1.4rem" }}>
           <Link href="/app/new" className="tool-card">
             <span className="tc-emoji" style={{ background: "var(--desk-search)" }} aria-hidden="true">&#128269;</span>
-            <h3>Check my website</h3>
-            <p>Everything that&rsquo;s holding it back, with the fixes already written.</p>
+            <h3>Check any website&rsquo;s SEO</h3>
+            <p>Yours or a competitor&rsquo;s: what&rsquo;s holding it back, with the fixes already written.</p>
             <span className="tc-go">Start &rarr;</span>
           </Link>
           <Link href="/tools/social-teardown" className="tool-card">
@@ -240,7 +244,7 @@ export default function Home() {
         <div className="never-grid" style={{ marginTop: "1.4rem" }}>
           <div>
             <span className="x" aria-hidden="true">&times;</span>
-            <div><strong>Leave you talking to a bot</strong><span>There&rsquo;s always a person on your account.</span></div>
+            <div><strong>Leave you talking to a bot</strong><span>There&rsquo;s always a specialist on your account.</span></div>
           </div>
           <div>
             <span className="x" aria-hidden="true">&times;</span>
@@ -274,11 +278,11 @@ export default function Home() {
       <section className="section">
         <div className="cta-band final-cta">
           <h2>Tell us about your business.</h2>
-          <p>Thirty minutes with a person. A plan you keep, whether or not you hire us.</p>
+          <p>Thirty minutes with a specialist. A plan you keep, whether or not you hire us.</p>
           <div className="hero-actions" style={{ justifyContent: "center" }}>
             <Link href={BOOK.href} className="big-button primary">{BOOK.label}</Link>
           </div>
-          <p className="small" style={{ marginTop: "1.2rem" }}>Or see what we&rsquo;d fix on your website first:</p>
+          <p className="small" style={{ marginTop: "1.2rem" }}>Or check the SEO of any website first:</p>
           <div style={{ display: "flex", justifyContent: "center" }}>
             <UrlStart note={false} />
           </div>

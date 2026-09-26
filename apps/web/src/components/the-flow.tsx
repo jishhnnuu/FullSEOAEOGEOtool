@@ -32,14 +32,14 @@ const STEPS: Step[] = [
   },
   {
     n: "2",
-    title: "Check your own site",
+    title: "Check any website's SEO",
     cost: "Costs: a URL",
     body: "Your own dashboard, with every fix written for you, free.",
-    links: [{ href: "/app/new", label: "Check my site", primary: true }],
+    links: [{ href: "/app/new", label: "Check a website", primary: true }],
   },
   {
     n: "3",
-    title: "Talk to a person",
+    title: "Talk to a specialist",
     cost: "Costs: thirty minutes",
     body: "A free call about your business. We set it all up and run it with you, if you want us to.",
     links: [{ href: "/book", label: "Book a free call", primary: true }],

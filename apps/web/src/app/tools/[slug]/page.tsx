@@ -117,7 +117,7 @@ export default async function ToolRoute({ params }: { params: Promise<{ slug: st
         </div>
       </section>
 
-      <CtaBand title="Or check everything at once." body="The full check reads your whole site and writes every fix. Free, no signup." primary={{ href: "/app/new", label: "Check my site free" }} secondary={{ href: "/book", label: "Or talk to a person" }} />
+      <CtaBand title="Or check everything at once." body="The full check reads your whole site and writes every fix. Free, no signup." primary={{ href: "/app/new", label: "Check any website's SEO" }} secondary={{ href: "/book", label: "Or talk to a specialist" }} />
       {/* The mascot crew. Delete this line and components/sprig to remove them. */}
       <Sprig crew="search" />
     </MarketingChrome>

@@ -1,6 +1,7 @@
 import Link from "next/link";
 
 import { BRAND } from "@/lib/brand";
+import { LogoMark } from "@/components/logo";
 import { BOOK } from "@/lib/services";
 
 /**
@@ -32,7 +33,7 @@ export function SiteHeader() {
     <header className="site-header">
       <div className="site-header-inner">
         <Link href="/" className="wordmark">
-          <span className="dot" aria-hidden="true" />
+          <LogoMark size={30} />
           {BRAND}
         </Link>
         <nav className="site-nav">
@@ -56,7 +57,7 @@ export function SiteFooter() {
       <div className="site-footer-inner">
         <div>
           <div className="wordmark" style={{ marginBottom: "0.6rem" }}>
-            <span className="dot" aria-hidden="true" />
+            <LogoMark size={26} />
             {BRAND}
           </div>
           <p className="small muted" style={{ maxWidth: "28ch" }}>
@@ -74,7 +75,7 @@ export function SiteFooter() {
         </div>
         <div>
           <h4>Free tools</h4>
-          <Link href="/app/new">Check my site</Link>
+          <Link href="/app/new">Check any website&rsquo;s SEO</Link>
           <Link href="/tools/social-teardown">Scout a competitor</Link>
           <Link href="/tools/ad-budget-check">Check my ad budget</Link>
           <Link href="/tools/voice-check">Test my writing</Link>
@@ -119,9 +120,9 @@ export function SiteFooter() {
  */
 export function CtaBand({
   title = "Tell us about your business.",
-  body = "Thirty minutes with a person. You leave with a plan, whether or not you hire us.",
+  body = "Thirty minutes with a specialist. You leave with a plan, whether or not you hire us.",
   primary = BOOK,
-  secondary = { href: "/app/new", label: "Or check my site free" },
+  secondary = { href: "/app/new", label: "Or check any website's SEO" },
 }: {
   title?: string;
   body?: string;

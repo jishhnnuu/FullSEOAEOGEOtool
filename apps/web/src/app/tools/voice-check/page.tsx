@@ -88,7 +88,7 @@ export default function VoiceCheckPage() {
 
       <CtaBand
         title="Measuring is the easy half."
-        body="Our AI team turns this into briefs, drafts and edits in your voice, checked by your person."
+        body="Our AI team turns this into briefs, drafts and edits in your voice, checked by your specialist."
         secondary={{ href: "/content", label: "How our content works" }}
       />
       {/* The mascot crew. Delete this line and components/sprig to remove them. */}

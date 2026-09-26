@@ -68,12 +68,12 @@ export default function TermsPage() {
         <h2 className="section-title small-title">Who does the work</h2>
         <ul className="prose-list">
           <li>
-            <strong>A person looks after your account.</strong> Someone on our team runs your calls, sets up your
+            <strong>A specialist looks after your account.</strong> Someone on our team runs your calls, sets up your
             accounts with you, directs the work and checks it before it reaches you.
           </li>
           <li>
             <strong>Much of the work is produced by AI.</strong> Research, audits, fixes, drafts, campaign builds
-            and reports are made by AI systems under that person&rsquo;s direction. We say so plainly because it
+            and reports are made by AI systems under that specialist&rsquo;s direction. We say so plainly because it
             is how we charge less, and because you should know.
           </li>
           <li>
@@ -148,7 +148,7 @@ export default function TermsPage() {
       <section className="section section-alt">
         <h2 className="section-title small-title">Ending it</h2>
         <p>
-          Cancel whenever you like, by telling your person or from your account. Your campaigns keep running in your own
+          Cancel whenever you like, by telling your specialist or from your account. Your campaigns keep running in your own
           accounts. Withdraw our access from the platform&rsquo;s own settings and it ends immediately whether or
           not you tell us. Delete your workspace and the server copy goes with it.
         </p>
@@ -160,7 +160,7 @@ export default function TermsPage() {
 
       <CtaBand
         title="The parts that matter"
-        body="A person on your account. Your accounts and your work stay yours. Every launch and every budget rise needs your yes. We never charge a percentage of your spend."
+        body="A specialist on your account. Your accounts and your work stay yours. Every launch and every budget rise needs your yes. We never charge a percentage of your spend."
         secondary={{ href: "/privacy", label: "What we hold" }}
       />
     </MarketingChrome>

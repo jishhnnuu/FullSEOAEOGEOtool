@@ -46,7 +46,7 @@ export default function InsidePage() {
           Watch the AI team <span className="hl">work.</span>
         </h1>
         <p className="hero-lede">
-          This is what your person runs for you, live in your browser. Pick a service and poke it.
+          This is what your specialist runs for you, live in your browser. Pick a service and poke it.
         </p>
       </section>
 
@@ -96,7 +96,7 @@ export default function InsidePage() {
 
       <CtaBand
         title="Want this for your business?"
-        body="A person sets it up with you and runs it. Or point the same engine at your own site, free."
+        body="A specialist sets it up with you and runs it. Or point the same engine at any website, free."
       />
     </MarketingChrome>
   );

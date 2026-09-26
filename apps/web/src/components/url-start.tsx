@@ -42,8 +42,8 @@ export function UrlStart({
           type="text"
           inputMode="url"
           autoComplete="url"
-          aria-label="Your website address"
-          placeholder="yourwebsite.com"
+          aria-label="Website address"
+          placeholder="anywebsite.com"
           value={value}
           onChange={(event) => {
             setValue(event.target.value);
@@ -54,7 +54,7 @@ export function UrlStart({
       </form>
       {nudge && (
         <p className="small" style={{ marginTop: "0.6rem", color: "var(--bad)" }}>
-          Pop your website address in first. Something like yourwebsite.com.
+          Pop a website address in first. Something like anywebsite.com.
         </p>
       )}
       {note && (

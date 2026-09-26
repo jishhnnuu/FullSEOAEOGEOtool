@@ -110,7 +110,7 @@ export const DIRECTOR = {
   name: directorAgent?.name ?? "Account Director",
   title: "The AI you can ask, any time",
   remit:
-    "Plans across every service for your marketing lead, decides what is worth your attention, batches approvals, and answers your questions in the dashboard from your real numbers. It delivers a bad month first and plainly, never after the explanation of it.",
+    "Plans across every service for your specialist, decides what is worth your attention, batches approvals, and answers your questions in the dashboard from your real numbers. It delivers a bad month first and plainly, never after the explanation of it.",
   never: directorAgent?.never ?? "Reports activity as a result.",
 };
 

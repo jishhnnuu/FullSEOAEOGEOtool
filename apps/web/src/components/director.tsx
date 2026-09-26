@@ -191,7 +191,7 @@ export function DirectorBrief({
       )}
 
       <footer className="brief-foot tiny faint">
-        A person on your account, an AI team behind them. You approve, you do not execute. <Link href={`${base}/team`}>See the organisation</Link>.
+        A specialist on your account, an AI team behind them. You approve, you do not execute. <Link href={`${base}/team`}>See the organisation</Link>.
       </footer>
     </section>
   );

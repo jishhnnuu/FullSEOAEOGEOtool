@@ -9,6 +9,7 @@ import { startRun } from "@/lib/runner";
 import { useWorkspace } from "@/lib/useWorkspace";
 import type { RunProgress } from "@/engine/run";
 import { Card, Notice, PageHeader } from "@/components/ui";
+import { AuditScope } from "@/components/audit-scope";
 
 const BUSINESS_TYPES: { key: SiteRecord["businessType"]; label: string; hint: string }[] = [
   { key: "local", label: "Local business", hint: "Serves customers in named places. Maps and the profile matter more than anything." },
@@ -172,13 +173,15 @@ function NewSite() {
       </Link>
 
       <PageHeader
-        title={step === 1 ? "What's your website?" : "Sharpen the run"}
+        title={step === 1 ? "Check the SEO of any website" : "Sharpen the run"}
         description={
           step === 1
-            ? "We read every page and write the fixes. Nothing gets connected, charged or published."
+            ? "Yours or a competitor's. We read the pages and write the fixes. Nothing gets connected, charged or published."
             : "All of this is optional. Each answer makes the keyword model, the gap analysis and the local checks more specific."
         }
       />
+
+      {step === 1 ? <AuditScope /> : null}
 
       {step === 1 ? (
         <Card>
@@ -188,10 +191,10 @@ function NewSite() {
               id="url"
               value={form.url}
               onChange={(e) => set("url")(e.target.value)}
-              placeholder="yourcompany.com"
+              placeholder="anywebsite.com"
               autoFocus
             />
-            <div className="help">The homepage. Http or https, with or without www.</div>
+            <div className="help">Any website&rsquo;s homepage. Http or https, with or without www.</div>
           </div>
 
           <div className="field">
@@ -354,6 +357,8 @@ function RunningView({
         title={error ? "The run stopped" : `Auditing ${domain}`}
         description={error ?? progress?.message ?? "Reading robots.txt, the sitemaps and the homepage"}
       />
+
+      {!error ? <AuditScope compact /> : null}
 
       {!error && (
         <Card>

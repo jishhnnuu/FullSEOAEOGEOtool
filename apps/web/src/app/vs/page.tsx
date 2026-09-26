@@ -30,7 +30,7 @@ export default function VersusIndex() {
       <section className="section fresh-hero">
         <div className="eyebrow"><span className="dot" aria-hidden="true" />Us vs a traditional agency</div>
         <h1 className="hero-title">Us vs the old way. <span className="hl">Honestly.</span></h1>
-        <p className="hero-lede">Both give you a person. One comparison per service, including the rows they win.</p>
+        <p className="hero-lede">Both give you a human to talk to. One comparison per service, including the rows they win.</p>
       </section>
 
       <section className="section section-tight">
@@ -55,7 +55,7 @@ export default function VersusIndex() {
 
       <CtaBand
         title="Or skip the comparison. Talk to us."
-        body="A free call with a person. If a traditional agency suits you better, we'll tell you."
+        body="A free call with a specialist. If a traditional agency suits you better, we'll tell you."
       />
     </MarketingChrome>
   );

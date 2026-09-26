@@ -8,7 +8,7 @@ import { faqNode, graph } from "@/lib/schema";
 export const metadata = {
   title: "Pricing",
   description:
-    "Pay for the services you pick, each with a real person on your account, at a fraction of a traditional agency. Or use the same tools yourself, free to start.",
+    "Pay for the services you pick, each AI-powered and overseen by a specialist, at a fraction of a traditional agency. Or use the same tools yourself, free to start.",
   alternates: { canonical: "/pricing" },
 };
 
@@ -47,10 +47,10 @@ const FAQ = [
   },
   {
     q: "Why do you cost less than an agency?",
-    a: "Most of an agency's fee pays for hours of legwork: research, audits, first drafts, reports. Our AI team does that. You pay for the person who looks after you and for the results.",
+    a: "Most of an agency's fee pays for hours of legwork: research, audits, first drafts, reports. Our AI team does that. You pay for the specialist who looks after you and for the results.",
   },
   {
-    q: "What does the person on my account actually do?",
+    q: "What does my specialist actually do?",
     a: "They run your first call, set up your accounts with you, direct the AI team, check the work before it reaches you, and walk you through the results. They're who you contact when you need a human.",
   },
   { q: "Is there a contract?", a: "No. Month to month. Add or drop a service whenever you like, and everything we made for you stays yours." },
@@ -60,7 +60,7 @@ const FAQ = [
   },
   {
     q: "Can I just use the tools myself?",
-    a: "Yes. The tool plans below are the same software our team uses. Start free, and book a person whenever you want one.",
+    a: "Yes. The tool plans below are the same software our team uses. Start free, and book a specialist whenever you want one.",
   },
 ];
 
@@ -75,7 +75,7 @@ export default function PricingPage() {
           Agency work. <span className="hl">Not</span> agency prices.
         </h1>
         <p className="hero-lede">
-          Pick one service or all of them. Each comes with a real person, and costs a fraction of an agency because
+          Pick one service or all of them. Each is overseen by a specialist, and costs a fraction of an agency because
           AI does the legwork.
         </p>
         <div className="hero-actions">
@@ -88,7 +88,7 @@ export default function PricingPage() {
         <div className="vgrid services-grid" style={{ marginTop: "1.2rem" }}>
           <div className="vg-head">Service</div>
           <div className="vg-head">A traditional agency</div>
-          <div className="vg-head us">Us, with a person included</div>
+          <div className="vg-head us">Us: AI-powered, specialist-led</div>
           {SERVICES.map((service) => (
             <ServiceRow key={service.key} service={service} />
           ))}
@@ -102,7 +102,7 @@ export default function PricingPage() {
       <section className="section section-alt">
         <h2 className="section-title">Rather do it yourself?</h2>
         <p className="section-lede">
-          The same tools our team uses, on your own. No person included, but you can book one any time.
+          The same tools our team uses, on your own. No specialist included, but you can book one any time.
         </p>
         <div className="price-grid fresh-prices" style={{ marginTop: "1.4rem" }}>
           {PLAN_ORDER.map((id) => {

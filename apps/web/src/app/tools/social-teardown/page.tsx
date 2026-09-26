@@ -98,7 +98,7 @@ export default function SocialTeardownPage() {
 
       <CtaBand
         title="A teardown is hour one. We do the rest."
-        body="Your person picks your platforms with you, and our AI team plans your calendar and drafts every post for your yes."
+        body="Your specialist picks your platforms with you, and our AI team plans your calendar and drafts every post for your yes."
         secondary={{ href: "/social", label: "How our social works" }}
       />
       {/* The mascot crew. Delete this line and components/sprig to remove them. */}

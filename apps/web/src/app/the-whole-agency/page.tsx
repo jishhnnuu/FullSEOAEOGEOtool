@@ -8,7 +8,7 @@ import { breadcrumbNode, graph } from "@/lib/schema";
 export const metadata = {
   title: "Full-service marketing",
   description:
-    "Your website, SEO, content, social and paid ads, handled together by one person on your account and an AI team behind them. One plan, a fraction of a full-service agency.",
+    "Your website, SEO, content, social and paid ads, handled together by one specialist on your account and an AI team behind them. One plan, a fraction of a full-service agency.",
   alternates: { canonical: "/the-whole-agency" },
 };
 
@@ -44,7 +44,7 @@ export default function WholeAgencyPage() {
           Your whole marketing, <span className="hl">handled.</span>
         </h1>
         <p className="hero-lede">
-          Website, SEO, content, social and ads, run together by one person who knows your business, with an AI team
+          Website, SEO, content, social and ads, run together by one specialist who knows your business, with an AI team
           doing the legwork behind them.
         </p>
         <div className="hero-actions">
@@ -67,8 +67,8 @@ export default function WholeAgencyPage() {
             </Link>
           ))}
           <div className="fresh-desk" data-desk="cmo">
-            <span className="fd-name">Your person</span>
-            <span className="fd-line">One marketing lead across all of it. One person to ask, one plan.</span>
+            <span className="fd-name">Your specialist</span>
+            <span className="fd-line">One specialist across all of it. One person to ask, one plan.</span>
             <span className="fd-foot">
               <span className="fd-status">Included</span>
             </span>
@@ -84,7 +84,7 @@ export default function WholeAgencyPage() {
         <h2 className="section-title">Why together beats separately.</h2>
         <div className="steps3" style={{ marginTop: "1.6rem" }}>
           <div>
-            <h3>One person knows it all</h3>
+            <h3>One specialist knows it all</h3>
             <p>No passing messages between an SEO agency, an ads freelancer and a social person.</p>
           </div>
           <div>

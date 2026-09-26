@@ -190,7 +190,7 @@ make docker        # the whole stack with Postgres`}</pre>
 
       <CtaBand
         title="Questions about your data?"
-        body="Ask a person on a free call, or try the free check. Nothing to sign, and nothing of yours left behind."
+        body="Ask a specialist on a free call, or try the free check. Nothing to sign, and nothing of yours left behind."
       />
     </MarketingChrome>
   );

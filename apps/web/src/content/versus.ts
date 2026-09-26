@@ -54,25 +54,25 @@ export const VERSUS: Versus[] = [
       {
         question: "Who you talk to",
         agency: "An account manager, often looking after a dozen clients.",
-        here: "Your marketing lead, a person who knows your business, with an AI team doing the legwork behind them.",
+        here: "Your specialist, who knows your business, with an AI team doing the legwork behind them.",
         winner: "draw",
       },
       {
         question: "Who does the technical fixes",
         agency: "A developer, scheduled into a sprint, usually weeks after the audit that found the problem.",
-        here: "Written by the AI team the same day, checked by your person, and put live through your website platform once you say yes.",
+        here: "Written by the AI team the same day, checked by your specialist, and put live through your website platform once you say yes.",
         winner: "here",
       },
       {
         question: "What the monthly report is",
         agency: "A deck, built by hand, with the metrics that moved chosen after the month ended.",
-        here: "The same measures every week in your dashboard, the unmeasured ones labelled as unmeasured, and your person walking you through it.",
+        here: "The same measures every week in your dashboard, the unmeasured ones labelled as unmeasured, and your specialist walking you through it.",
         winner: "here",
       },
       {
         question: "Deep industry experience",
         agency: "A senior strategist who may have worked in your sector for years.",
-        here: "Your person learns your business on the calls. The AI reads your site and your competitors, not a decade of your industry.",
+        here: "Your specialist learns your business on the calls. The AI reads your site and your competitors, not a decade of your industry.",
         winner: "agency",
       },
       {
@@ -113,13 +113,13 @@ export const VERSUS: Versus[] = [
       {
         question: "Who agrees what to write",
         agency: "A strategist, in a kick-off workshop, then a calendar for the year.",
-        here: "Your person, with you, on a call: one clear idea you agree on, and every piece built from it.",
+        here: "Your specialist, with you, on a call: one clear idea you agree on, and every piece built from it.",
         winner: "draw",
       },
       {
         question: "Who writes the first draft",
         agency: "A freelance writer, often a different one each month.",
-        here: "The AI team, from research on you and your competitors, then edited by your person before you see it.",
+        here: "The AI team, from research on you and your competitors, then edited by your specialist before you see it.",
         winner: "here",
       },
       {
@@ -131,7 +131,7 @@ export const VERSUS: Versus[] = [
       {
         question: "Interviews and original reporting",
         agency: "A journalist-style writer can interview your customers and get the quote that makes the piece.",
-        here: "Your person can run a customer interview with you, but a specialist writer does it better.",
+        here: "Your specialist can run a customer interview with you, but a dedicated writer does it better.",
         winner: "agency",
       },
       {
@@ -213,7 +213,7 @@ export const VERSUS: Versus[] = [
       {
         question: "Whose voice gets used",
         agency: "A social voice written by the social team, often not the one on your website.",
-        here: "The same voice as your website and content, agreed with your person once.",
+        here: "The same voice as your website and content, agreed with your specialist once.",
         winner: "here",
       },
       {

@@ -10,6 +10,7 @@ import { pendingApprovals, siteById } from "@/lib/store";
 import { useWorkspace } from "@/lib/useWorkspace";
 import { signInHref, signOut, useSession } from "@/lib/session";
 import { Badge } from "@/components/ui";
+import { LogoMark } from "@/components/logo";
 
 /*
  * The shell is organised by who does the work, not by feature.
@@ -74,7 +75,7 @@ export function AppShell({ siteId, children }: { siteId: string; children: React
     <>
       <div>
         <Link href="/app" className="brand">
-          {BRAND}
+          <span className="brand-row"><LogoMark size={24} />{BRAND}</span>
           {site && <small className="truncate">{site.domain}</small>}
         </Link>
       </div>
@@ -123,8 +124,8 @@ export function AppShell({ siteId, children }: { siteId: string; children: React
       </div>
 
       <div style={{ marginTop: "auto" }} className="stack-sm">
-        {/* The AI answers any time. A person is one click away, always. */}
-        <Link href="/book?from=dashboard" className="button small primary">Talk to a person</Link>
+        {/* The AI answers any time. A specialist is one click away, always. */}
+        <Link href="/book?from=dashboard" className="button small primary">Talk to a specialist</Link>
         <Link href="/app/new" className="button small">Add a site</Link>
         {session.user ? (
           <>
@@ -159,7 +160,7 @@ export function AppShell({ siteId, children }: { siteId: string; children: React
           <span /><span /><span />
         </button>
         <Link href="/app" className="app-bar-brand">
-          {BRAND}
+          <span className="brand-row"><LogoMark size={22} />{BRAND}</span>
           {site && <small className="truncate">{site.domain}</small>}
         </Link>
         {pending > 0 && (

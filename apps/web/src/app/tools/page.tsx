@@ -25,8 +25,8 @@ export const metadata = {
 const DESK_TOOLS = [
   {
     path: "/app/new",
-    name: "Audit my site",
-    blurb: "Everything that's broken, with the fixes already written.",
+    name: "Check any website's SEO",
+    blurb: "Yours or a competitor's: what's holding it back, with the fixes written.",
     emoji: "\u{1F50D}",
     color: "var(--desk-search)",
   },
@@ -115,8 +115,8 @@ export default function ToolsPage() {
       <CtaBand
         title={`Or run all ${CATALOG_SIZE} checks at once.`}
         body="The full check reads your whole site and writes every fix. Same price: nothing."
-        primary={{ href: "/app/new", label: "Check my site free" }}
-        secondary={{ href: "/book", label: "Or talk to a person" }}
+        primary={{ href: "/app/new", label: "Check any website's SEO" }}
+        secondary={{ href: "/book", label: "Or talk to a specialist" }}
       />
       {/* The mascot crew. Delete this line and components/sprig to remove them. */}
       <Sprig crew="rotate" />

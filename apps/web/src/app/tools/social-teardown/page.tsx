@@ -70,8 +70,8 @@ export default function SocialTeardownPage() {
                 common&rdquo;.
               </p>
               <p>
-                Of the {PLATFORMS.length} networks the desk knows about, {readable.length} permit a competitor
-                teardown at all. <Link href="/social">The social desk page</Link> names each one and what it refuses,
+                Of the {PLATFORMS.length} networks we know about, {readable.length} permit a competitor
+                teardown at all. <Link href="/social">The social media page</Link> names each one and what it refuses,
                 which is worth reading before anyone sells you a dashboard covering all ten.
               </p>
             </div>
@@ -98,9 +98,8 @@ export default function SocialTeardownPage() {
 
       <CtaBand
         title="A teardown is hour one. We do the rest."
-        body="The social desk plans your calendar and drafts every post, ready for your yes."
-        primary={{ href: "/social", label: "Meet the social desk" }}
-        secondary={{ href: "/inside", label: "Peek inside a live account" }}
+        body="Your person picks your platforms with you, and our AI team plans your calendar and drafts every post for your yes."
+        secondary={{ href: "/social", label: "How our social works" }}
       />
       {/* The mascot crew. Delete this line and components/sprig to remove them. */}
       <Sprig crew="social" />

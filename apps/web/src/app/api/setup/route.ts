@@ -61,6 +61,38 @@ export async function GET(request: Request): Promise<Response> {
         where: "Made in Google Cloud (steps below), then added as two Secrets on this Worker.",
       },
       {
+        key: "owners",
+        name: "OWNER_EMAILS",
+        done: Boolean(e.OWNER_EMAILS),
+        optional: true,
+        detail: e.OWNER_EMAILS
+          ? "Set. Those people can read book-a-call enquiries at /app/enquiries after signing in."
+          : "Not set, so book-a-call enquiries are stored but nobody can read them in the app yet.",
+        where: "A Variable on this Worker: the email addresses you sign in with, separated by commas.",
+      },
+      {
+        key: "contact",
+        name: "CONTACT_EMAIL",
+        done: Boolean(e.CONTACT_EMAIL && e.RESEND_API_KEY),
+        optional: true,
+        detail: e.CONTACT_EMAIL
+          ? e.RESEND_API_KEY
+            ? `Set. Each enquiry is emailed to ${e.CONTACT_EMAIL}, and replying answers the person directly.`
+            : "Set, but RESEND_API_KEY is not, so nothing can be emailed yet. Enquiries are still stored."
+          : "Not set, so enquiries are stored in the inbox but not emailed to you.",
+        where: "A Variable on this Worker: the inbox that should receive enquiries. Needs RESEND_API_KEY too.",
+      },
+      {
+        key: "booking",
+        name: "BOOKING_URL",
+        done: Boolean(e.BOOKING_URL),
+        optional: true,
+        detail: e.BOOKING_URL
+          ? "Set. After sending the form, people can pick a time straight away."
+          : "Not set, so the form says you'll email to find a time.",
+        where: "A Variable on this Worker: your Calendly or Cal.com page, starting https://.",
+      },
+      {
         key: "mail",
         name: "RESEND_API_KEY",
         done: Boolean(e.RESEND_API_KEY),

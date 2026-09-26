@@ -4,7 +4,8 @@ import { notFound } from "next/navigation";
 import { CtaBand, MarketingChrome } from "@/components/marketing";
 import { VERSUS, VERSUS_BY_SLUG } from "@/content/versus";
 import { BRAND } from "@/lib/brand";
-import { deskByKey, deskPrice, managerFor } from "@/lib/desks";
+import { deskByKey } from "@/lib/desks";
+import { BOOK, serviceByKey, servicePrice } from "@/lib/services";
 import { breadcrumbNode, faqNode, graph } from "@/lib/schema";
 
 export function generateStaticParams() {
@@ -24,8 +25,7 @@ export default async function VersusPage({ params }: { params: Promise<{ slug: s
   if (!v) notFound();
 
   const desk = deskByKey(v.desk)!;
-  const manager = managerFor(desk);
-  const open = manager.status === "live";
+  const service = serviceByKey(v.desk);
   const wins = v.rows.filter((r) => r.winner === "here").length;
   const losses = v.rows.filter((r) => r.winner === "agency").length;
 
@@ -41,14 +41,14 @@ export default async function VersusPage({ params }: { params: Promise<{ slug: s
             ]),
             faqNode([
               { q: `Should I use ${BRAND} or ${v.rival}?`, a: `${v.decision} ${v.chooseAgency[0]}` },
-              { q: "What does it cost?", a: `${deskPrice(desk)}. ${v.rival} charges ${desk.agencyPrice}, which is ${desk.agencyBasis.toLowerCase()}` },
+              { q: "What does it cost?", a: `${servicePrice(service)}, a fixed monthly fee with a person included. ${v.rival} typically charges ${service.agency}: ${service.agencyBasis.toLowerCase()}` },
             ]),
           ),
         }}
       />
 
       <section className="section">
-        <div className="eyebrow">{desk.label} desk &middot; against {v.rival}</div>
+        <div className="eyebrow">{service.label} &middot; against {v.rival}</div>
         <h1 className="hero-title">{v.title}</h1>
         <p className="hero-lede">{v.decision}</p>
         <p className="small faint" style={{ marginTop: "0.9rem" }}>
@@ -89,21 +89,19 @@ export default async function VersusPage({ params }: { params: Promise<{ slug: s
       </section>
 
       <section className="section">
-        <h2 className="section-title small-title">What the {desk.label.toLowerCase()} desk actually is</h2>
+        <h2 className="section-title small-title">What our {service.label.toLowerCase()} service actually is</h2>
         <p>{desk.lede}</p>
         <p style={{ marginTop: "1rem" }}>
-          <Link href={desk.path} className="button primary">
-            {open ? `Read the ${desk.label.toLowerCase()} desk` : `What this desk will do, and when`}
-          </Link>{" "}
+          <Link href={desk.path} className="button primary">Read about {service.label.toLowerCase()}</Link>{" "}
           <Link href="/vs" className="button">The other comparisons</Link>
         </p>
       </section>
 
       <CtaBand
-        title="Look at a real account before deciding either way"
-        body="Our own site, audited live, with the findings we have not fixed still in it. No signup, no email, no domain to enter."
-        primary={{ href: "/inside", label: "Look inside a live account" }}
-        secondary={{ href: "/pricing", label: "See the prices" }}
+        title="Ask us the hard questions."
+        body="A free call with a person. If a traditional agency suits you better, we'll say so."
+        primary={BOOK}
+        secondary={{ href: "/inside", label: "See the dashboard first" }}
       />
     </MarketingChrome>
   );

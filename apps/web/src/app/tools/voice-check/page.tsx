@@ -67,16 +67,16 @@ export default function VoiceCheckPage() {
             </div>
           </details>
           <details className="acc">
-            <summary>What the content desk does with this</summary>
+            <summary>What our content team does with this</summary>
             <div className="acc-body">
               <p>
-                On its own, a voice fingerprint is trivia. Inside an account it is the input to a house style: the desk
+                On its own, a voice fingerprint is trivia. For a client it is the input to a house style: the AI team
                 reads the business, writes one point of view, and then every brief, draft and edit gate holds to a measured
                 tone rather than an adjective in a style guide. The same numbers the tool shows you here are the ones the
                 third edit gate checks a draft against before anyone is asked to approve it.
               </p>
               <p>
-                <Link href="/content">The content desk page</Link> has the rest, including the four things it refuses to
+                <Link href="/content">The content page</Link> has the rest, including the four things it refuses to
                 do. <Link href="/inside">Looking inside a live account</Link> shows it running.
               </p>
             </div>
@@ -88,9 +88,8 @@ export default function VoiceCheckPage() {
 
       <CtaBand
         title="Measuring is the easy half."
-        body="The content desk turns this into briefs, drafts and edits, all in your voice."
-        primary={{ href: "/content", label: "Meet the content desk" }}
-        secondary={{ href: "/inside", label: "Peek inside a live account" }}
+        body="Our AI team turns this into briefs, drafts and edits in your voice, checked by your person."
+        secondary={{ href: "/content", label: "How our content works" }}
       />
       {/* The mascot crew. Delete this line and components/sprig to remove them. */}
       <Sprig crew="content" />

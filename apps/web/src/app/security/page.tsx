@@ -189,8 +189,8 @@ make docker        # the whole stack with Postgres`}</pre>
       </section>
 
       <CtaBand
-        title="Try it. Nothing to sign."
-        body="Don't like it? Close the tab. Nothing of yours is left behind."
+        title="Questions about your data?"
+        body="Ask a person on a free call, or try the free check. Nothing to sign, and nothing of yours left behind."
       />
     </MarketingChrome>
   );

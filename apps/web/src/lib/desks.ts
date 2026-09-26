@@ -1,6 +1,11 @@
 /**
  * The four desks, as the public site describes them.
  *
+ * A desk is the AI team behind one service. Every client also has a person on
+ * the account (see `services.ts`), so these pages describe what the AI team
+ * does and who the founder talks to, in that order of importance reversed:
+ * the person first, the desk behind them.
+ *
  * One definition, four front doors. Search demand is service shaped: nobody
  * types "digital marketing agency run by AI agents", they type "seo agency" or
  * "google ads agency". Each of those is a different keyword universe, a
@@ -58,9 +63,6 @@ export type Desk = {
   answer: string;
   /** What the desk does, as the client would describe it. */
   work: { title: string; body: string; applied: boolean }[];
-  /** What an agency charges for the same scope, and where that number comes from. */
-  agencyPrice: string;
-  agencyBasis: string;
   /**
    * The lowest plan that unlocks this desk's work. Null where the desk is not
    * built. Deliberately not a price of its own: `plans.ts` is the single plan
@@ -83,10 +85,10 @@ export const DESKS: Desk[] = [
     readyNote: "Nothing goes live until you say yes.",
     seat: "SEO",
     tryIt: { href: "/app/new", label: "Audit my site free" },
-    audience: "Anyone who has paid for an SEO audit and still has the same problems.",
-    lede: "We find what's broken and write the fix. You say yes, we put it live.",
-    worry: "I paid for an audit once. I got a PDF. The problems are still there.",
-    answer: "Same. That's why every problem here comes with the fix already written, ready to ship.",
+    audience: "Founders whose website isn't bringing in customers from Google or from AI answers.",
+    lede: "Your marketing lead and our AI team find what's holding your site back, fix it, and show you what changed. You just say yes.",
+    worry: "I don't really know what SEO is. I just know nobody finds us.",
+    answer: "You don't need to know. Your person explains it in plain English, and the AI team does the fixing.",
     work: [
       { title: "The full check-up", body: "Every page read, every problem found, in about four minutes.", applied: true },
       { title: "Fixes, written and shipped", body: "Titles, meta, redirects, sitemaps. Written, pushed live, double-checked.", applied: true },
@@ -95,8 +97,6 @@ export const DESKS: Desk[] = [
       { title: "Show up in AI answers", body: "Get cited by ChatGPT, Perplexity and Google's AI, not just ranked.", applied: true },
       { title: "Links and local", body: "Outreach drafted for you, reviews answered, listings kept tidy.", applied: false },
     ],
-    agencyPrice: "£1,800 to £4,000 a month",
-    agencyBasis: "A mid-market UK retainer for technical SEO, content briefs and reporting, at 20 to 40 hours.",
     requiresPlan: "starter",
     answers: "What the search desk does, what it refuses to do, and what it costs against an SEO agency retainer.",
   },
@@ -110,10 +110,10 @@ export const DESKS: Desk[] = [
     readyNote: "Every draft waits for your yes before it goes anywhere.",
     seat: "Content",
     tryIt: { href: "/tools/voice-check", label: "Test my writing free" },
-    audience: "Companies publishing regularly and seeing nothing move.",
-    lede: "We figure out what you should be saying, then write it so people read to the end.",
-    worry: "We publish every week. Traffic's fine. Nothing else happens.",
-    answer: "Because it sounds like everyone else. We find the thing only you can say, and build everything around it.",
+    audience: "Founders who need to explain what they do, and be found for it.",
+    lede: "We work out with you what you should be saying, then write it so people read to the end.",
+    worry: "I know we should be writing things. I never have the time, and I don't know what to say.",
+    answer: "Your person agrees one clear idea with you on a call. The AI team researches and drafts. You approve.",
     work: [
       { title: "Your big idea", body: "One clear point of view, agreed once, behind everything we write.", applied: true },
       { title: "Research first", body: "We read your business and your rivals before writing a word.", applied: true },
@@ -122,8 +122,6 @@ export const DESKS: Desk[] = [
       { title: "Your voice, measured", body: "How you actually sound, compared with the pages you compete with.", applied: true },
       { title: "One piece, many uses", body: "Every article turned into posts, emails and snippets.", applied: false },
     ],
-    agencyPrice: "£2,000 to £5,000 a month",
-    agencyBasis: "A content agency retainer for strategy, four to eight pieces and distribution.",
     requiresPlan: "growth",
     answers: "What the content desk does, how tone of voice is measured, and what it costs against a content agency.",
   },
@@ -137,10 +135,10 @@ export const DESKS: Desk[] = [
     readyNote: "Every campaign is built paused and waits for your yes. Launching opens as each ad platform approves us.",
     seat: "Ads",
     tryIt: { href: "/tools/ad-budget-check", label: "Check my ad budget free" },
-    audience: "Anyone paying for clicks and not sure the numbers are real.",
-    lede: "Google, Meta, TikTok and more. Planned, built and tracked. We won't spend a penny we can't measure.",
-    worry: "Our agency reports more sales than we actually made. Which ads are working?",
-    answer: "Every platform counts the same sale as its own. We show you your real number, per platform, no double counting.",
+    audience: "Founders ready to pay for customers, who want to know the numbers are real.",
+    lede: "Google, Meta, TikTok and more, planned with your marketing lead and built by our AI team. We won't spend a penny we can't measure.",
+    worry: "We tried ads once. We spent the money and couldn't tell what it bought.",
+    answer: "We check your tracking before we spend anything, and report your real sales, not what each platform claims.",
     work: [
       { title: "Tracking, checked first", body: "If we can't measure it, we won't spend on it. Full stop.", applied: true },
       { title: "Honest budget maths", body: "Too small to work? We'll say so, and show you how to fix it.", applied: true },
@@ -149,8 +147,6 @@ export const DESKS: Desk[] = [
       { title: "Built safe", body: "Every campaign built paused. Nothing spends until you press go.", applied: true },
       { title: "Real results", body: "Your own sales count, not the platforms adding each other up.", applied: true },
     ],
-    agencyPrice: "10 to 20 per cent of spend",
-    agencyBasis: "The standard UK management fee, which rises with your budget whether or not the work does, and which pays more when you spend more.",
     requiresPlan: "growth",
     answers: "What the paid media desk does, what it refuses, and why it checks your tracking before it will take a budget.",
   },
@@ -164,10 +160,10 @@ export const DESKS: Desk[] = [
     readyNote: "Every post waits for your yes. Auto-posting opens as each platform approves us.",
     seat: "Socials",
     tryIt: { href: "/tools/social-teardown", label: "Scout a competitor free" },
-    audience: "Businesses posting all the time and hearing crickets.",
-    lede: "We study what's working for your competitors, pick your best platforms and write every post for you.",
-    worry: "Our last agency showed us a competitor's reach. How did they even get that?",
-    answer: "They didn't. Nobody can see a rival's reach. We show you what we can prove: which of their posts beat their usual, and why.",
+    audience: "Founders who know they should be posting and never have the time.",
+    lede: "Your person picks the right platforms with you. Our AI team studies what works for your competitors and drafts every post.",
+    worry: "We post when we remember. Nothing happens.",
+    answer: "Posting more won't fix that. We look at which of your competitors' posts actually worked, and plan yours from that.",
     work: [
       { title: "Competitor teardowns", body: "Their best posts, and what those winners had in common.", applied: true },
       { title: "Share of voice", body: "Up to five brands side by side. Who's loud, and who's actually heard.", applied: true },
@@ -176,8 +172,6 @@ export const DESKS: Desk[] = [
       { title: "A calendar you can keep", body: "A posting rhythm based on your real capacity, not wishful thinking.", applied: true },
       { title: "Every post, drafted", body: "Captions, scripts and replies written in your voice, ready to approve.", applied: false },
     ],
-    agencyPrice: "£1,200 to £3,000 a month",
-    agencyBasis: "A UK social retainer for planning, production, scheduling and community management.",
     requiresPlan: "growth",
     answers: "What the social desk reads, what every platform refuses to publish, and what it costs against a social agency.",
   },
@@ -211,15 +205,3 @@ export function deskPrice(desk: Desk): string {
   return planPrice(PLANS[desk.requiresPlan]);
 }
 
-/**
- * Every desk on one plan, which is the upsell rather than the entry. People
- * arrive wanting one thing and expand once they trust you, so this is where a
- * service page sends someone who has already decided.
- */
-export const WHOLE_AGENCY = {
-  path: "/the-whole-agency",
-  label: "The whole agency",
-  plan: "growth" as PlanId,
-  reason:
-    "Search and content read the same crawl and the same competitor pages, so the research runs once rather than twice. An agency staffs that as two teams, bills it as two teams, and the two teams contradict each other in the same deck.",
-};

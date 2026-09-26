@@ -28,27 +28,25 @@ const STEPS: Step[] = [
     title: "Try a free tool",
     cost: "Costs: nothing",
     body: "Paste a URL or a rival's handle. Real results, in your browser, in seconds.",
-    links: [
-      { href: "/tools", label: "Pick a tool", primary: true },
-    ],
+    links: [{ href: "/tools", label: "Pick a tool", primary: true }],
   },
   {
     n: "2",
-    title: "Peek at a live account",
-    cost: "Costs: still nothing",
-    body: "Our own site, with the stuff we haven't fixed yet left in. That's the real dashboard.",
-    links: [{ href: "/inside", label: "Look inside", primary: true }],
+    title: "Check your own site",
+    cost: "Costs: a URL",
+    body: "Your own dashboard, with every fix written for you, free.",
+    links: [{ href: "/app/new", label: "Check my site", primary: true }],
   },
   {
     n: "3",
-    title: "Point it at your site",
-    cost: "Costs: a URL. A card only if you want us shipping fixes",
-    body: "Your own workspace. Every fix written free. A plan lets us push them live.",
-    links: [{ href: "/app/new", label: "Audit my site", primary: true }],
+    title: "Talk to a person",
+    cost: "Costs: thirty minutes",
+    body: "A free call about your business. We set it all up and run it with you, if you want us to.",
+    links: [{ href: "/book", label: "Book a free call", primary: true }],
   },
 ];
 
-export function TheFlow({ heading = "Three clicks to the real thing." }: { heading?: string }) {
+export function TheFlow({ heading = "Three ways in." }: { heading?: string }) {
   return (
     <div>
       <h2 className="section-title">{heading}</h2>

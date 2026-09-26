@@ -11,6 +11,20 @@ reporting that explains what changed.
 It is not an audit tool. Audit tools say what is wrong and leave the fixing to
 someone else. Anything added here should do the work, not describe it.
 
+**How it is sold (since September 2026).** The public face is a digital
+marketing agency run by people and powered by AI, for founders without a
+marketing team: websites built and optimised, SEO, content, social and paid
+ads. Every client has a person on the account (the marketing lead) who runs
+the calls, sets up the connections with them and checks the work; the AI CMO
+and the desk teams do the legwork behind that person, which is why it costs a
+fraction of an agency. The tools are part of the offer, not the offer: a
+client can use them, but is never made to. "Book a free call" is the main
+action on every public page, and the free site check is the second.
+`lib/services.ts` is the menu and the only place a service price lives; a
+price that has not been set says it is quoted on the call. Enquiries land in
+D1 (`enquiries`), are emailed when `CONTACT_EMAIL` and `RESEND_API_KEY` are
+set, and are readable at `/app/enquiries` by the addresses in `OWNER_EMAILS`.
+
 ```
 115 agents · 17 missions · 89 tools · 21 connectors · 90 checks · 43 tables · 204 tests
 ```
@@ -190,8 +204,8 @@ style disagreement.
   does were invisible to anyone deciding whether to use it. Both now have
   public URLs under `/tools`, both take the visitor's own input, and `/inside`
   runs one per desk rather than an SEO crawl and two pages of prose. `TheFlow`
-  in `components/the-flow.tsx` states the path on screen: free tools, then a
-  live account, then your own workspace. That component exists because somebody
+  in `components/the-flow.tsx` states the path on screen: free tools, then your
+  own site checked, then a call with a person. That component exists because somebody
   read the whole site and still asked where the dashboard was.
 - **The no-key social read is YouTube's Atom feed, not Reddit.** Reddit refuses
   data-centre address ranges, so the deployed Worker gets 403 and the demo
@@ -256,7 +270,9 @@ style disagreement.
   paid needs an account, a database and scheduled work, while every other desk
   still runs with the server switched off. The pages state this rather than
   implying the free tier covers it.
-- **One person to talk to, and they work without a key.** `engine/cmo.ts` reads
+- **The AI CMO works without a key, under a person.** The client's first
+  contact is always their human marketing lead; the AI CMO is who answers in
+  the dashboard between calls. `engine/cmo.ts` reads
   the intent, answers from what the workspace measured, and names the next
   action, all deterministically. A tenant's own model key makes the reply
   conversational; it is not what makes it possible, because most people will
@@ -355,7 +371,8 @@ style disagreement.
 - **The action goes first, and detail is opt-in.** The public site once held
   the URL box until section eight of nine, and the person it was built for
   read every page and could not find where the product was. Every public page
-  now opens with a headline under eight words, one line, and the thing to do.
+  now opens with a headline under eight words, one line, and the thing to do,
+  which is booking a call with a person, with the free check beside it.
   Long honest detail (refusals, methodology, caveats) is kept, never deleted,
   but it lives in `.acc` accordions so it is one click away rather than in the
   way. `docs/VOICE-AND-LOOK.md` has the voice, the palette and the rules; a

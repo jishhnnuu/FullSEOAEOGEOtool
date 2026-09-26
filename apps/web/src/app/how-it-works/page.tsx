@@ -3,11 +3,12 @@ import Link from "next/link";
 import { CtaBand, MarketingChrome } from "@/components/marketing";
 import { CATEGORY_LABEL, CONNECTORS } from "@/lib/connectors";
 import { AUTONOMY_LEVELS } from "@/lib/store";
+import { BOOK } from "@/lib/services";
 
 export const metadata = {
-  title: "How it works",
+  title: "How we work",
   description:
-    "What happens between entering a URL and a change going live: the crawl, the checks, the fixes, the approval queue, publishing and the report that compares this run to the last.",
+    "From a free call to work going live: who you talk to, what the AI team does, what needs your yes, and what each connection adds.",
   alternates: { canonical: "/how-it-works" },
 };
 
@@ -20,33 +21,42 @@ export default function HowItWorksPage() {
   return (
     <MarketingChrome>
       <section className="section fresh-hero">
-        <div className="eyebrow"><span className="dot" aria-hidden="true" />How it works</div>
-        <h1 className="hero-title">From URL to <span className="hl">fixed.</span></h1>
-        <p className="hero-lede">Paste a URL. We read it, write the fixes, you click yes, we ship them. That&rsquo;s it.</p>
+        <div className="eyebrow"><span className="dot" aria-hidden="true" />How we work</div>
+        <h1 className="hero-title">A person you trust. <span className="hl">AI</span> that works.</h1>
+        <p className="hero-lede">
+          You talk to a real person. They run an AI team that does the legwork. Nothing goes live until you say yes.
+        </p>
         <div className="hero-actions">
-          <Link href="/app/new" className="big-button primary">Try it on my site &rarr;</Link>
-          <Link href="/inside" className="big-button">Watch a live one</Link>
+          <Link href={BOOK.href} className="big-button primary">{BOOK.label} &rarr;</Link>
+          <Link href="/inside" className="big-button">See the dashboard</Link>
         </div>
       </section>
 
       <section className="section section-alt">
-        <h2 className="section-title">The short version.</h2>
-        <div className="steps3" style={{ marginTop: "1.6rem" }}>
+        <h2 className="section-title">Working with us.</h2>
+        <div className="steps3 four" style={{ marginTop: "1.6rem" }}>
           <div>
-            <h3>We read everything</h3>
-            <p>Your robots.txt, sitemaps and every page. Then every check we have.</p>
+            <h3>A free call</h3>
+            <p>Your business, your customers, your budget. You leave with a plan whether or not you hire us.</p>
           </div>
           <div>
-            <h3>We write the fixes</h3>
-            <p>Titles, descriptions, schema, links, briefs. The actual change, not advice.</p>
+            <h3>Set up together</h3>
+            <p>Your person connects your website, Google and ad accounts with you, on a call. You never handle a key.</p>
           </div>
           <div>
-            <h3>You say yes, we ship</h3>
-            <p>Straight to your CMS. Next run tells you what changed.</p>
+            <h3>The AI team works</h3>
+            <p>Research, fixes, drafts and campaigns, day and night. Your person checks what reaches you.</p>
+          </div>
+          <div>
+            <h3>You approve and watch</h3>
+            <p>Say yes to what you like. Your dashboard shows every piece of work, and what it did.</p>
           </div>
         </div>
+        <p className="section-lede" style={{ marginTop: "1.6rem" }}>
+          Prefer to do some of it yourself? Every tool your person uses is in your dashboard too.
+        </p>
         <details className="acc" style={{ marginTop: "1.8rem" }}>
-          <summary>The long version, all nine steps</summary>
+          <summary>What the AI does to your website, all nine steps</summary>
           <div className="acc-body">
               <div className="timeline" style={{ maxWidth: "66ch" }}>
                 <div className="timeline-item">
@@ -133,10 +143,10 @@ export default function HowItWorksPage() {
 
       <section className="section" id="connections">
         <div>
-          <h2 className="section-title">Plug things in. Or don&rsquo;t.</h2>
+          <h2 className="section-title">What gets connected.</h2>
           <p className="section-lede">
-            Connect nothing and you still get the full audit, the fixes and the content plan. Each connection just
-            adds a bit more.
+            Your person connects these with you. Each one lets the team do a bit more, and each can be switched off
+            from your own account at any time.
           </p>
           {Object.entries(byCategory).map(([category, connectors]) => (
             <details className="acc" key={category}>
@@ -166,7 +176,7 @@ export default function HowItWorksPage() {
       </section>
 
       <section className="section section-alt">
-        <h2 className="section-title">You choose how hands-on.</h2>
+        <h2 className="section-title">You choose how hands-on to be.</h2>
         <p className="section-lede">From &ldquo;ask me everything&rdquo; to autopilot. Some things always need you, whatever you pick.</p>
         <details className="acc">
           <summary>The autonomy levels</summary>

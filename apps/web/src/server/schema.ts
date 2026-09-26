@@ -310,6 +310,31 @@ SELECT id, org_id, site_id, provider, label, status, scopes, selection, sealed, 
       `CREATE INDEX IF NOT EXISTS connections_org ON connections(org_id)`,
     ],
   },
+  // Enquiries from the book-a-call form. Not scoped to an org: they arrive
+  // before anyone has an account, and only the people named in OWNER_EMAILS
+  // can read them. The network address is kept only as a hash, for rate
+  // limiting, never as the address itself.
+  {
+    id: "0005_enquiries",
+    statements: [
+      `CREATE TABLE IF NOT EXISTS enquiries (
+  id         TEXT PRIMARY KEY,
+  name       TEXT NOT NULL,
+  email      TEXT NOT NULL,
+  business   TEXT,
+  website    TEXT,
+  stage      TEXT,
+  services   TEXT,
+  message    TEXT,
+  source     TEXT,
+  ip_hash    TEXT,
+  status     TEXT NOT NULL DEFAULT 'new',
+  created_at TEXT NOT NULL
+)`,
+      `CREATE INDEX IF NOT EXISTS enquiries_created ON enquiries(created_at)`,
+      `CREATE INDEX IF NOT EXISTS enquiries_ip ON enquiries(ip_hash, created_at)`,
+    ],
+  },
 ];
 
 /** The bookkeeping table. Created before anything consults it. */

@@ -191,6 +191,27 @@ export default function SetupPage() {
         </p>
       </Card>
 
+      <Card title="Optional: book-a-call enquiries">
+        <p className="small">
+          The <Link href="/book">book a call</Link> form stores every enquiry already. These three decide who sees them and
+          how. Add each as a <strong>Variable</strong> (not a secret) in the same place as the secrets above.
+        </p>
+        <ul className="small">
+          <li>
+            <strong className="mono">OWNER_EMAILS</strong>: the addresses you sign in with, separated by commas. Those
+            people can read <Link href="/app/enquiries">the enquiries inbox</Link>.
+          </li>
+          <li>
+            <strong className="mono">CONTACT_EMAIL</strong>: where each enquiry is emailed. Replying answers the person
+            directly. Needs <span className="mono">RESEND_API_KEY</span> as well.
+          </li>
+          <li>
+            <strong className="mono">BOOKING_URL</strong>: your Calendly or Cal.com page. People can pick a time as soon
+            as they send the form, with their name and email filled in.
+          </li>
+        </ul>
+      </Card>
+
       <Card title="3. Try it">
         <p className="small">
           Once the status above is all ticks: open a site, go to <strong>Connections</strong>, and press{" "}

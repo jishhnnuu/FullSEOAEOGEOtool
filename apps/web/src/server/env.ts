@@ -19,6 +19,14 @@ export type Env = {
   PUBLIC_BASE_URL?: string;
   RESEND_API_KEY?: string;
   MAIL_FROM?: string;
+  /* The agency side. Where book-a-call enquiries are emailed (needs
+     RESEND_API_KEY), who may read the enquiries inbox (comma-separated
+     emails of signed-in people), and an optional scheduling link such as a
+     Calendly or Cal.com page. All optional: without them the form still
+     stores every enquiry, and the setup page says what is missing. */
+  CONTACT_EMAIL?: string;
+  OWNER_EMAILS?: string;
+  BOOKING_URL?: string;
   SEOOS_API_URL?: string;
   /* Billing. Absent on a deployment that does not sell anything, which is a
      supported state: every workspace stays on the free tier and the audit is

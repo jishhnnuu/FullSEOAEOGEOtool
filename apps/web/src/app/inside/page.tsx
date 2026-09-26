@@ -3,13 +3,12 @@ import Link from "next/link";
 import { InsideDesks } from "@/components/inside-desks";
 import { CtaBand, MarketingChrome } from "@/components/marketing";
 import { TheFlow } from "@/components/the-flow";
-import { BRAND } from "@/lib/brand";
 import { breadcrumbNode, graph } from "@/lib/schema";
 
 export const metadata = {
   title: "Look inside a live account",
   description:
-    "Four desks running live in your browser, no signup. Crawl our site, measure a page against its rivals, tear down a competitor's socials, and check an ad budget.",
+    "The AI team behind each service, running live in your browser with no signup. Crawl our site, measure a page against its rivals, tear down a competitor's socials, and check an ad budget.",
   alternates: { canonical: "/inside" },
 };
 
@@ -44,9 +43,11 @@ export default function InsidePage() {
       <section className="section fresh-hero" style={{ paddingBottom: "1.5rem" }}>
         <div className="eyebrow"><span className="dot" aria-hidden="true" />Live, right now, no signup</div>
         <h1 className="hero-title">
-          Watch us <span className="hl">work.</span>
+          Watch the AI team <span className="hl">work.</span>
         </h1>
-        <p className="hero-lede">Four desks, running in your browser. Pick one and poke it.</p>
+        <p className="hero-lede">
+          This is what your person runs for you, live in your browser. Pick a service and poke it.
+        </p>
       </section>
 
       <section className="section section-tight" style={{ paddingTop: 0 }}>
@@ -94,9 +95,8 @@ export default function InsidePage() {
       </section>
 
       <CtaBand
-        title={`Now point ${BRAND} at your site.`}
-        body="Same engine, your pages. About four minutes, no account, no card."
-        secondary={{ href: "/pricing", label: "See the prices" }}
+        title="Want this for your business?"
+        body="A person sets it up with you and runs it. Or point the same engine at your own site, free."
       />
     </MarketingChrome>
   );

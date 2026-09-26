@@ -100,9 +100,8 @@ export default function AdBudgetCheckPage() {
 
       <CtaBand
         title="The maths is the easy bit."
-        body="The paid desk checks your tracking, builds your ads paused and reports your real numbers."
-        primary={{ href: "/paid", label: "Meet the paid desk" }}
-        secondary={{ href: "/inside", label: "Peek inside a live account" }}
+        body="Your person checks your tracking, and our AI team builds your ads paused and reports your real numbers."
+        secondary={{ href: "/paid", label: "How our paid ads work" }}
       />
       {/* The mascot crew. Delete this line and components/sprig to remove them. */}
       <Sprig crew="paid" />

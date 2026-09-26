@@ -1,6 +1,10 @@
 /**
  * The plans, and what each one actually permits.
  *
+ * These are the self-serve tool plans. The agency's services, which come with
+ * a person on the account, are priced in `services.ts`; these stay the single
+ * definition of what the software itself permits.
+ *
  * Priced per site, per month, in one place, so the pricing page and the quota
  * enforcement cannot disagree. That matters more than it sounds: the most
  * common dishonesty in this category is a pricing grid ticking a capability
@@ -74,7 +78,7 @@ export const PLANS: Record<PlanId, Plan> = {
     amount: 0,
     currency: "GBP",
     per: "forever, no account",
-    blurb: "See what's broken before you decide anything.",
+    blurb: "See what's holding your site back.",
     limits: {
       pagesPerRun: 40,
       sites: 1,
@@ -103,7 +107,7 @@ export const PLANS: Record<PlanId, Plan> = {
     amount: 7900,
     currency: "GBP",
     per: "per site, per month",
-    blurb: "Your SEO, fixed for you. One site.",
+    blurb: "The SEO tools, on your own. One site.",
     limits: {
       pagesPerRun: 250,
       sites: 1,
@@ -133,7 +137,7 @@ export const PLANS: Record<PlanId, Plan> = {
     amount: 24900,
     currency: "GBP",
     per: "per site, per month",
-    blurb: "The whole team. Replaces your agency.",
+    blurb: "Every tool our team uses, on your own. One site.",
     limits: {
       pagesPerRun: 2000,
       sites: 1,
@@ -164,7 +168,7 @@ export const PLANS: Record<PlanId, Plan> = {
     amount: 0,
     currency: "GBP",
     per: "multi-site and white label",
-    blurb: "Lots of sites, or an agency with clients.",
+    blurb: "Lots of sites, or your own clients.",
     limits: {
       pagesPerRun: 10000,
       sites: 1000,

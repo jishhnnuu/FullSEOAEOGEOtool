@@ -108,9 +108,9 @@ const directorAgent = agent("account-director");
 export const DIRECTOR = {
   agent: "account-director",
   name: directorAgent?.name ?? "Account Director",
-  title: "The only agent you speak to",
+  title: "The AI you can ask, any time",
   remit:
-    "Holds the budget across every desk, decides what is worth your attention, batches approvals, and delivers a bad quarter first and plainly rather than after the explanation of it.",
+    "Plans across every service for your marketing lead, decides what is worth your attention, batches approvals, and answers your questions in the dashboard from your real numbers. It delivers a bad month first and plainly, never after the explanation of it.",
   never: directorAgent?.never ?? "Reports activity as a result.",
 };
 

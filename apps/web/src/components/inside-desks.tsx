@@ -98,9 +98,9 @@ export function InsideDesks() {
           <VoiceTool defaultMine={SITE_URL} />
           <TryBand
             title="That's one trick of many"
-            body="Inside an account the desk also briefs, drafts and edits against your own point of view."
+            body="For a client, the AI team also briefs, drafts and edits against your own point of view, and your person checks it."
             href="/content"
-            label="Meet the content desk"
+            label="How our content works"
           />
         </div>
       )}
@@ -115,7 +115,7 @@ export function InsideDesks() {
             title="Notice: no impressions anywhere"
             body="Only the account owner can see those. Anyone showing you a rival's reach made it up."
             href="/social"
-            label="Meet the social desk"
+            label="How our social works"
           />
         </div>
       )}
@@ -128,9 +128,9 @@ export function InsideDesks() {
           <AdBudgetTool />
           <TryBand
             title="The maths is the easy bit"
-            body="The desk takes it from here: tracking checked, ads built paused, results you can trust."
+            body="For a client, your person and the AI team take it from here: tracking checked, ads built paused, results you can trust."
             href="/paid"
-            label="Meet the paid desk"
+            label="How our paid ads work"
           />
         </div>
       )}

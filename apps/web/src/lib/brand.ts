@@ -52,17 +52,17 @@ export const SITE_HOST = (() => {
  */
 export const IS_LAUNCHED = SITE_URL !== FALLBACK_URL;
 
-export const TAGLINE = "A digital marketing agency run by AI agents";
+export const TAGLINE = "A digital marketing agency run by people, powered by AI";
 
 export const DESCRIPTION =
-  "An AI marketing team across search, content, social and paid, with one CMO you talk to. " +
-  "Crawl a site, take the fixes already written, get a point of view argued and a " +
-  "draft written against it, and plan ads that only spend what can be measured. " +
-  "Nothing goes live without your yes. No account, no card, no API key.";
+  "A digital marketing agency for founders without a marketing team. A real person looks after " +
+  "your account, and AI does the legwork: websites built and optimised, SEO, content, social and " +
+  "paid ads. That is why it costs a fraction of a traditional agency. Nothing goes live without " +
+  "your yes, and you can see every piece of work in your own dashboard.";
 
 /** One sentence, used where a description has to be short. */
 export const SHORT_DESCRIPTION =
-  "The work a digital marketing agency does, done by agents. You approve it rather than doing it.";
+  "A real marketing team at AI prices: a person on your account, AI doing the legwork.";
 
 /** Absolute URL for a path. Every canonical and sitemap entry goes through this. */
 export function url(path = "/"): string {

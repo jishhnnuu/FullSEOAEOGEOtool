@@ -3,29 +3,28 @@ import Link from "next/link";
 import { CtaBand, MarketingChrome } from "@/components/marketing";
 import { DESKS } from "@/lib/desks";
 import { CMO_OFFICE, DIRECTOR, MANAGERS, OPERATIONS } from "@/lib/org";
+import { BOOK } from "@/lib/services";
 import { breadcrumbNode, graph } from "@/lib/schema";
 
 export const metadata = {
-  title: "The firm",
+  title: "The team",
   description:
-    "Meet the AI marketing team: one CMO you talk to, four desks, and a specialist for every small job, each with the one thing it will never do.",
+    "A real person looks after your account. Behind them, an AI CMO and an AI team for each service do the legwork, each specialist with the one thing it will never do.",
   alternates: { canonical: "/the-firm" },
 };
 
 /*
- * The roster, in public.
+ * The team, people first.
  *
- * This was inside the logged-in product, where nobody who had not already
- * signed up could ever see it, and it is the single most unusual thing in this
- * category. Named specialists each publishing a constraint is what makes
- * "AI agents" read as rigour rather than as slop, because nobody generating
- * slop publishes constraints.
+ * The founder deciding whether to trust us wants to know who they would be
+ * dealing with, so the person comes first and the AI second. The AI roster is
+ * still here in full, because naming every specialist and the one thing each
+ * refuses is what makes "AI powered" read as rigour rather than as slop.
  *
- * Every role and every refusal on this page comes from `roster.generated.ts`,
- * which is built from the agent specs themselves. Headcounts are kept off the
- * page on purpose: a visitor reads "115 AI marketers" as 115 of something
- * big, when each one is a narrow job, and a big number sets an expectation
- * the first bug then breaks.
+ * Every AI role and refusal on this page comes from `roster.generated.ts`,
+ * which is built from the agent specs themselves. Headcounts stay off the
+ * page: "115 AI marketers" reads as 115 of something big, when each is one
+ * narrow job.
  */
 
 function People({ people }: { people: { key: string; name: string; department: string; role: string; never: string }[] }) {
@@ -55,7 +54,7 @@ export default function TheFirmPage() {
           __html: graph(
             breadcrumbNode([
               { name: "Home", path: "/" },
-              { name: "The firm", path: "/the-firm" },
+              { name: "The team", path: "/the-firm" },
             ]),
           ),
         }}
@@ -64,49 +63,58 @@ export default function TheFirmPage() {
       <section className="section fresh-hero">
         <div className="eyebrow"><span className="dot" aria-hidden="true" />The team</div>
         <h1 className="hero-title">
-          One team. <span className="hl">Tiny</span> jobs.
+          People up front. <span className="hl">AI</span> behind them.
         </h1>
         <p className="hero-lede">
-          Every small job, like writing a page title or checking your ad tracking, has its own AI specialist that
-          does only that. You only ever talk to one of them: your CMO.
+          You talk to a person who knows your business. They run an AI team that does the research, the fixes, the
+          drafts and the reports, which is how we charge a fraction of what an agency does.
         </p>
         <div className="hero-actions">
-          <Link href="/inside" className="big-button primary">Watch them work &rarr;</Link>
-          <Link href="/app/new" className="big-button">Put them on my site</Link>
+          <Link href={BOOK.href} className="big-button primary">Meet us on a call &rarr;</Link>
+          <Link href="/inside" className="big-button">See the dashboard</Link>
         </div>
       </section>
 
       <section className="section section-alt">
-        <h2 className="section-title">The one you talk to.</h2>
-        <div className="firm-people one" style={{ marginTop: "1.2rem" }}>
-          <div className="person lead">
-            <strong>{DIRECTOR.name}</strong>
-            <span className="dept">{DIRECTOR.title}</span>
+        <h2 className="section-title">The person you talk to.</h2>
+        <div className="duo" style={{ marginTop: "1.4rem" }}>
+          <div className="duo-card person">
+            <span className="duo-tag">Your marketing lead</span>
+            <h3>A real person on our team</h3>
+            <ul>
+              <li>Runs your free call and learns your business</li>
+              <li>Sets up your website, Google and ad accounts with you</li>
+              <li>Directs the AI team and checks what it makes</li>
+              <li>Sends you work to approve, and explains the results</li>
+              <li>Is who you contact when something needs a human</li>
+            </ul>
+          </div>
+          <div className="duo-card ai">
+            <span className="duo-tag">{DIRECTOR.name}</span>
+            <h3>{DIRECTOR.title}</h3>
             <p>{DIRECTOR.remit}</p>
-            <span className="never-line"><b>Never</b>{DIRECTOR.never}</span>
+            <p className="small" style={{ marginTop: "0.6rem" }}><b>Never:</b> {DIRECTOR.never}</p>
           </div>
         </div>
         <details className="acc" id="cmo" style={{ marginTop: "1.2rem" }}>
-          <summary>The CMO&rsquo;s office</summary>
+          <summary>The AI CMO&rsquo;s office</summary>
           <div className="acc-body" style={{ maxWidth: "none" }}>
-            <p>
-              They make sure you only ever talk to one agent: short interviews, clear briefs, and plain English on
-              everything that reaches you.
-            </p>
+            <p>Short interviews, clear briefs, and plain English on everything that reaches you.</p>
             <People people={CMO_OFFICE} />
           </div>
         </details>
         <details className="acc">
           <summary>Operations</summary>
           <div className="acc-body" style={{ maxWidth: "none" }}>
-            <p>Shared by every desk: publishing, risk and quality. A risk officer inside one desk would be marking its own homework.</p>
+            <p>Shared by every team: publishing, risk and quality. A risk officer inside one team would be marking its own homework.</p>
             <People people={OPERATIONS} />
           </div>
         </details>
       </section>
 
       <section className="section">
-        <h2 className="section-title">Four desks.</h2>
+        <h2 className="section-title">An AI team for each service.</h2>
+        <p className="section-lede">Each small job has its own AI specialist that does only that, and one thing it will never do.</p>
         <div className="fresh-desks" style={{ marginTop: "1.4rem" }}>
           {DESKS.map((desk) => (
             <Link key={desk.key} href={desk.path} className="fresh-desk" data-desk={desk.key}>
@@ -114,7 +122,7 @@ export default function TheFirmPage() {
               <span className="fd-line">{desk.tagline}</span>
               <span className="fd-foot">
                 <span className="fd-status">{desk.ready.label}</span>
-                <span className="fd-go">Visit &rarr;</span>
+                <span className="fd-go">Look &rarr;</span>
               </span>
             </Link>
           ))}
@@ -122,12 +130,12 @@ export default function TheFirmPage() {
         <div style={{ marginTop: "1.8rem" }}>
           {live.map((manager) => (
             <details className="acc" key={manager.key} id={manager.key}>
-              <summary>Everyone on {manager.name}</summary>
+              <summary>Everyone on the {manager.name.toLowerCase()} team</summary>
               <div className="acc-body" style={{ maxWidth: "none" }}>
-                <p><strong>Led by {manager.title}.</strong> {manager.remit}</p>
-                {manager.overlap && <p><strong>Where this desk overlaps another:</strong> {manager.overlap}</p>}
+                <p><strong>Led by the AI {manager.title.toLowerCase()}, under your marketing lead.</strong> {manager.remit}</p>
+                {manager.overlap && <p><strong>Where this team overlaps another:</strong> {manager.overlap}</p>}
                 <People people={manager.team} />
-                <p style={{ marginTop: "1rem" }}><strong>What this desk will never do</strong></p>
+                <p style={{ marginTop: "1rem" }}><strong>What this team will never do</strong></p>
                 <ul>{manager.refusals.map((line, i) => <li key={i}>{line}</li>)}</ul>
               </div>
             </details>
@@ -137,7 +145,7 @@ export default function TheFirmPage() {
             <div className="acc-body">
               <p>
                 The public site runs on a platform that can&rsquo;t run Python, so everything deterministic runs in
-                your browser and these agents run on a server installation. The workspace marks each one on screen
+                your browser and these agents run on a server installation. The dashboard marks each one on screen
                 rather than pretending: {serverOnly.map((t) => t.name).join(", ")}.
               </p>
             </div>
@@ -145,12 +153,7 @@ export default function TheFirmPage() {
         </div>
       </section>
 
-      <CtaBand
-        title="Watch them work before you hire them."
-        body="A real account on our own site, the unfixed bits left in. No signup."
-        primary={{ href: "/inside", label: "Look inside" }}
-        secondary={{ href: "/pricing", label: "See the prices" }}
-      />
+      <CtaBand title="Meet the person behind it." />
     </MarketingChrome>
   );
 }

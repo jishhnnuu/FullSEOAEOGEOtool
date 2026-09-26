@@ -2574,3 +2574,78 @@ button.primary:hover:not(:disabled), .button.primary:hover { background: var(--z
 .desk-hero-band .hero-status .dot { background: #0e6b4a; }
 /* Room above the headline for the mascot to land on its word. */
 .seat-room { padding-top: clamp(5.5rem, 10vw, 8rem); }
+
+/* ------------------------------------------- the agency: people plus AI */
+.fresh-desk[data-desk="cmo"] { background: var(--desk-cmo); }
+.desk-hero-band[data-desk="cmo"] { background: var(--desk-cmo); }
+.steps3.four { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+@media (max-width: 1000px) { .steps3.four { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 560px) { .steps3.four { grid-template-columns: 1fr; } }
+.start-card {
+  display: flex; flex-direction: column; gap: 0.5rem;
+  background: var(--surface); color: var(--text);
+  border: 2px solid var(--ink); border-radius: var(--radius-lg);
+  padding: 1.3rem 1.3rem 1.2rem;
+  transition: transform 0.1s ease, box-shadow 0.1s ease;
+}
+.start-card:hover { text-decoration: none; transform: translate(-2px, -2px); box-shadow: var(--hard-shadow); }
+.start-card h3 { font-size: 1.2rem; }
+.start-card p { color: var(--text-muted); margin: 0; flex: 1 1 auto; }
+.start-card .tc-go { font-weight: 750; color: var(--accent); font-size: 0.95rem; }
+.duo { display: grid; gap: 1rem; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+@media (max-width: 760px) { .duo { grid-template-columns: 1fr; } }
+.duo-card {
+  border: 2px solid #16130f; border-radius: var(--radius-lg); padding: 1.4rem 1.4rem 1.2rem;
+  box-shadow: var(--hard-shadow); color: #16130f;
+}
+.duo-card.person { background: var(--desk-cmo); }
+.duo-card.ai { background: var(--desk-content); }
+.duo-card h3 { font-size: 1.3rem; margin: 0.6rem 0 0.7rem; }
+.duo-card ul { margin: 0; padding-left: 1.1rem; display: grid; gap: 0.35rem; }
+.duo-tag {
+  display: inline-block; font-size: 0.74rem; font-weight: 800; letter-spacing: 0.02em;
+  background: rgba(255, 255, 255, 0.65); border: 1.5px solid #16130f; border-radius: 999px; padding: 0.2rem 0.6rem;
+}
+
+/* ------------------------------------------------------------ booking */
+.book-grid { display: grid; gap: 2rem; grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.8fr); align-items: start; }
+@media (max-width: 860px) { .book-grid { grid-template-columns: 1fr; } }
+.book-form {
+  background: var(--surface); border: 2px solid var(--ink); border-radius: var(--radius-lg);
+  padding: 1.5rem; box-shadow: var(--hard-shadow); display: grid; gap: 1rem;
+}
+.book-form label { display: block; font-weight: 700; font-size: 0.92rem; margin-bottom: 0.3rem; }
+.book-form input[type="text"], .book-form input[type="email"], .book-form input[type="url"], .book-form textarea, .book-form select {
+  width: 100%; font: inherit; padding: 0.7rem 0.8rem; border: 2px solid var(--ink); border-radius: 12px;
+  background: var(--bg); color: var(--text);
+}
+.book-form textarea { min-height: 110px; resize: vertical; }
+.book-form .two { display: grid; gap: 1rem; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+@media (max-width: 560px) { .book-form .two { grid-template-columns: 1fr; } }
+.book-form .choices { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+.book-form .choice {
+  display: inline-flex; align-items: center; gap: 0.4rem; font-weight: 600; font-size: 0.93rem;
+  border: 2px solid var(--ink); border-radius: 999px; padding: 0.35rem 0.8rem; cursor: pointer; margin: 0;
+}
+.book-form .choice:has(input:checked) { background: var(--zest); color: #16130f; }
+.book-form .choice input { accent-color: #16130f; }
+.book-form .trap { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+.book-side { display: grid; gap: 1rem; }
+.book-side .card-plain {
+  border: 2px solid var(--ink); border-radius: var(--radius-lg); padding: 1.2rem 1.3rem; background: var(--surface);
+}
+.book-side h3 { font-size: 1.1rem; margin-bottom: 0.4rem; }
+.book-side ol, .book-side ul { margin: 0; padding-left: 1.1rem; display: grid; gap: 0.35rem; color: var(--text-muted); }
+
+/* The services price table: three columns, and on a phone the service name
+   takes its own row above its two prices. */
+.vgrid.services-grid { grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr) minmax(0, 1fr); }
+.vgrid.services-grid > div:nth-last-child(-n + 3) { border-bottom: 0; }
+.vgrid.services-grid > .vg-name { display: flex; flex-direction: column; gap: 0.15rem; border-right: 1.5px solid var(--border); }
+.vgrid.services-grid > .vg-name a { color: var(--text); }
+.vgrid.services-grid > .vg-them::before, .vgrid.services-grid > .vg-us::before { content: none; }
+@media (max-width: 640px) {
+  .vgrid.services-grid { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+  .vgrid.services-grid > .vg-head:first-child { display: none; }
+  .vgrid.services-grid > .vg-name { grid-column: 1 / -1; border-right: 0; border-bottom: 0; padding-bottom: 0.2rem; }
+}

@@ -61,7 +61,7 @@ export async function sendLoginLink(e: Env, to: string, link: string): Promise<S
  */
 export async function send(
   e: Env,
-  message: { to: string; subject: string; text: string },
+  message: { to: string; subject: string; text: string; replyTo?: string },
 ): Promise<SendResult> {
   if (!e.RESEND_API_KEY) {
     return {
@@ -75,7 +75,13 @@ export async function send(
   const response = await fetch("https://api.resend.com/emails", {
     method: "POST",
     headers: { authorization: `Bearer ${e.RESEND_API_KEY}`, "content-type": "application/json" },
-    body: JSON.stringify({ from, to: [message.to], subject: message.subject, text: message.text }),
+    body: JSON.stringify({
+      from,
+      to: [message.to],
+      subject: message.subject,
+      text: message.text,
+      ...(message.replyTo ? { reply_to: message.replyTo } : {}),
+    }),
   });
   if (!response.ok) {
     const body = await response.text();

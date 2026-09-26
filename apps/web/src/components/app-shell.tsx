@@ -123,6 +123,8 @@ export function AppShell({ siteId, children }: { siteId: string; children: React
       </div>
 
       <div style={{ marginTop: "auto" }} className="stack-sm">
+        {/* The AI answers any time. A person is one click away, always. */}
+        <Link href="/book?from=dashboard" className="button small primary">Talk to a person</Link>
         <Link href="/app/new" className="button small">Add a site</Link>
         {session.user ? (
           <>

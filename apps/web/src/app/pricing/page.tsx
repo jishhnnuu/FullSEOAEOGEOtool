@@ -1,32 +1,31 @@
 import Link from "next/link";
-import { Fragment } from "react";
 
 import { CtaBand, MarketingChrome } from "@/components/marketing";
-import { DESKS, deskPrice, managerFor } from "@/lib/desks";
 import { EXCLUDED_FOR, PLANS, PLAN_ORDER, priceLabel } from "@/lib/plans";
+import { BOOK, SERVICES, servicePrice } from "@/lib/services";
 import { faqNode, graph } from "@/lib/schema";
 
 export const metadata = {
   title: "Pricing",
   description:
-    "The audit is free forever. Plans from a fraction of an agency retainer, per site, per month, cancel anytime.",
+    "Pay for the services you pick, each with a real person on your account, at a fraction of a traditional agency. Or use the same tools yourself, free to start.",
   alternates: { canonical: "/pricing" },
 };
 
 /**
- * The plans, derived from the single definition in `lib/plans.ts`.
+ * Two kinds of price, kept apart on purpose.
  *
- * This page used to hold its own array. That is the arrangement that produces
- * a pricing grid ticking a capability the product gates somewhere else, which
- * is the most common dishonesty in this category and the one thing our own
- * comparison pages criticise competitors for. Now there is exactly one
- * definition, the server enforces it, and this page reads it.
+ * The services (a person plus the AI team) are the business, and their prices
+ * come from `services.ts`, where a price that has not been set says it is
+ * quoted on the call rather than showing a made-up number. The tool plans come
+ * from `plans.ts`, the single definition the server enforces, so the grid can
+ * never tick something the product gates elsewhere.
  */
 const CTA: Record<string, { href: string; label: string }> = {
   free: { href: "/app/new", label: "Start free" },
-  starter: { href: "/app/new", label: "Audit first, then decide" },
-  growth: { href: "/app/new", label: "Audit first, then decide" },
-  scale: { href: "/app/new", label: "Try it on one site first" },
+  starter: { href: "/app/new", label: "Check my site first" },
+  growth: { href: "/app/new", label: "Check my site first" },
+  scale: { href: BOOK.href, label: "Talk to us" },
 };
 
 const CAPABILITY_LABEL: Record<string, string> = {
@@ -35,31 +34,34 @@ const CAPABILITY_LABEL: Record<string, string> = {
   answerVisibility: "AI answer tracking",
   linkProgramme: "link outreach",
   local: "local",
-  contentDesk: "content desk",
-  socialDesk: "social desk",
-  paidDesk: "paid desk",
+  contentDesk: "content tools",
+  socialDesk: "social tools",
+  paidDesk: "ads tools",
   whiteLabel: "your own branding",
 };
 
 const FAQ = [
-  { q: "Is there a contract?", a: "No. Monthly, stop whenever. Everything we made for you stays yours and exports as a file." },
-  { q: "What counts as a site?", a: "One domain. Subdomains you want crawled together count as one. Separate brands are separate sites." },
   {
-    q: "Why is the audit free?",
-    a: "Because it costs us almost nothing to run. No AI call, no data vendor behind it. Charging for it would be charging for nothing. You pay for the work that comes after.",
+    q: "Why aren't all the prices on the page?",
+    a: "Because the right price depends on your business: how many pages, how many ad platforms, how much content. We'd rather quote a fixed monthly fee after thirty minutes than publish a starting price you'd never actually pay. The quote is in writing, and it's always well under the agency figure beside each service.",
   },
   {
-    q: "What about AI writing costs?",
-    a: "If you want drafts written by a model, you add your own key and the provider bills you directly. We never see the bill, so there's nothing to mark up. Everything else works without a key.",
+    q: "Why do you cost less than an agency?",
+    a: "Most of an agency's fee pays for hours of legwork: research, audits, first drafts, reports. Our AI team does that. You pay for the person who looks after you and for the results.",
   },
-  { q: "Can I just stay on Free?", a: "Yes, and plenty of people should. Small site, a bit of time to paste changes in? Free does the thinking, you do the clicking." },
-  { q: "Can I run it myself?", a: "Yes. It can be self-hosted: the API, the worker, the database and this dashboard. Paying us is for convenience." },
-];
-
-const ELSEWHERE = [
-  ["An SEO agency retainer: £2,500 to £15,000 a month", "The whole team, not one account manager"],
-  ["An enterprise SEO suite: £350 to £8,000 a month, and you still do the work", "We do the work. You click yes."],
-  ["A freelancer, two days a month: £800 to £2,000 a month", "Checking in every week, not twice a month"],
+  {
+    q: "What does the person on my account actually do?",
+    a: "They run your first call, set up your accounts with you, direct the AI team, check the work before it reaches you, and walk you through the results. They're who you contact when you need a human.",
+  },
+  { q: "Is there a contract?", a: "No. Month to month. Add or drop a service whenever you like, and everything we made for you stays yours." },
+  {
+    q: "Is ad spend included?",
+    a: "No. What you spend on ads goes straight to Google, Meta and the rest, from your own account. Our fee is fixed and never a percentage of your spend.",
+  },
+  {
+    q: "Can I just use the tools myself?",
+    a: "Yes. The tool plans below are the same software our team uses. Start free, and book a person whenever you want one.",
+  },
 ];
 
 export default function PricingPage() {
@@ -70,26 +72,50 @@ export default function PricingPage() {
       <section className="section fresh-hero">
         <div className="eyebrow"><span className="dot" aria-hidden="true" />Pricing</div>
         <h1 className="hero-title">
-          Agency results. <span className="hl">Not</span> agency prices.
+          Agency work. <span className="hl">Not</span> agency prices.
         </h1>
-        <p className="hero-lede">The audit is free forever. Pay only when you want us to do the work.</p>
+        <p className="hero-lede">
+          Pick one service or all of them. Each comes with a real person, and costs a fraction of an agency because
+          AI does the legwork.
+        </p>
+        <div className="hero-actions">
+          <Link href={BOOK.href} className="big-button primary">Get a quote on a free call &rarr;</Link>
+        </div>
       </section>
 
       <section className="section section-tight" style={{ paddingTop: 0 }}>
-        <div className="price-grid fresh-prices">
+        <h2 className="section-title">Our services.</h2>
+        <div className="vgrid services-grid" style={{ marginTop: "1.2rem" }}>
+          <div className="vg-head">Service</div>
+          <div className="vg-head">A traditional agency</div>
+          <div className="vg-head us">Us, with a person included</div>
+          {SERVICES.map((service) => (
+            <ServiceRow key={service.key} service={service} />
+          ))}
+        </div>
+        <p className="small muted" style={{ marginTop: "0.9rem" }}>
+          Agency figures are typical UK ranges for the same scope, with the basis on each service page. Ad spend is
+          never included and never marked up.
+        </p>
+      </section>
+
+      <section className="section section-alt">
+        <h2 className="section-title">Rather do it yourself?</h2>
+        <p className="section-lede">
+          The same tools our team uses, on your own. No person included, but you can book one any time.
+        </p>
+        <div className="price-grid fresh-prices" style={{ marginTop: "1.4rem" }}>
           {PLAN_ORDER.map((id) => {
             const plan = PLANS[id];
-            const featured = id === "growth";
             const excludes = EXCLUDED_FOR[id];
             const cta = CTA[id];
             return (
-              <div className={`price${featured ? " featured" : ""}`} key={plan.id}>
-                {featured && <span className="price-flag">Most popular</span>}
+              <div className="price" key={plan.id}>
                 <div className="name">{plan.name}</div>
                 <div className="who">{plan.blurb}</div>
                 <div className="amount">{priceLabel(plan)}</div>
                 <div className="per">{plan.per}</div>
-                <Link href={cta.href} className={featured || id === "free" ? "big-button primary" : "big-button"}>
+                <Link href={cta.href} className={id === "free" ? "big-button primary" : "big-button"}>
                   {cta.label}
                 </Link>
                 <ul>
@@ -104,39 +130,7 @@ export default function PricingPage() {
         </div>
       </section>
 
-      <section className="section section-alt">
-        <h2 className="section-title">Which plan opens which desk.</h2>
-        <div className="fresh-desks" style={{ marginTop: "1.4rem" }}>
-          {DESKS.map((desk) => (
-            <Link key={desk.key} href={desk.path} className="fresh-desk" data-desk={desk.key}>
-              <span className="fd-name">{desk.label}</span>
-              <span className="fd-line">
-                {desk.requiresPlan ? `From ${deskPrice(desk)} a month on ${PLANS[desk.requiresPlan].name}` : deskPrice(desk)}
-              </span>
-              <span className="fd-foot">
-                <span className="fd-status">{desk.ready.label}</span>
-                <span className="fd-go">Look &rarr;</span>
-              </span>
-            </Link>
-          ))}
-        </div>
-      </section>
-
       <section className="section">
-        <h2 className="section-title">For comparison.</h2>
-        <div className="vgrid" style={{ marginTop: "1.4rem" }}>
-          <div className="vg-head">Elsewhere</div>
-          <div className="vg-head us">{PLANS.growth.name}: {priceLabel(PLANS.growth)} a month</div>
-          {ELSEWHERE.map(([them, us]) => (
-            <Fragment key={them}>
-              <div className="vg-them">{them}</div>
-              <div className="vg-us">{us}</div>
-            </Fragment>
-          ))}
-        </div>
-      </section>
-
-      <section className="section section-alt">
         <h2 className="section-title">Money questions.</h2>
         <div style={{ marginTop: "1.2rem" }}>
           {FAQ.map((item) => (
@@ -148,7 +142,20 @@ export default function PricingPage() {
         </div>
       </section>
 
-      <CtaBand title="Start with the free bit." body="Run the audit. See the fixes. Decide about the rest afterwards." />
+      <CtaBand title="Get your quote." body="Thirty minutes, a fixed monthly price in writing, and a plan you keep either way." />
     </MarketingChrome>
+  );
+}
+
+function ServiceRow({ service }: { service: (typeof SERVICES)[number] }) {
+  return (
+    <>
+      <div className="vg-name">
+        <Link href={service.path}><strong>{service.label}</strong></Link>
+        <span className="small muted">{service.line}</span>
+      </div>
+      <div className="vg-them">{service.agency}</div>
+      <div className="vg-us">{servicePrice(service)}</div>
+    </>
   );
 }

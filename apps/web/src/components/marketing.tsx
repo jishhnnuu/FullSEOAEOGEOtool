@@ -1,6 +1,7 @@
 import Link from "next/link";
 
 import { BRAND } from "@/lib/brand";
+import { BOOK } from "@/lib/services";
 
 /**
  * The public site's chrome.
@@ -21,9 +22,10 @@ export function MarketingChrome({ children }: { children: React.ReactNode }) {
 }
 
 /**
- * The header. The button on the right is the action, not a tour: it starts
- * an audit. Everything else is one word, because a nav bar is not a place to
- * explain anything.
+ * The header. The button on the right is the action: talking to a person.
+ * A founder who has never hired an agency wants to know who they would be
+ * dealing with before they paste their website into anything, so the call
+ * comes first and the free site check sits one click further in.
  */
 export function SiteHeader() {
   return (
@@ -34,14 +36,14 @@ export function SiteHeader() {
           {BRAND}
         </Link>
         <nav className="site-nav">
-          <Link href="/seo" className="hide-sm">Search</Link>
-          <Link href="/content" className="hide-sm">Content</Link>
+          <Link href="/websites" className="hide-sm">Websites</Link>
+          <Link href="/seo" className="hide-sm">SEO</Link>
+          <Link href="/paid" className="hide-sm">Ads</Link>
           <Link href="/social" className="hide-sm">Social</Link>
-          <Link href="/paid" className="hide-sm">Paid</Link>
-          <Link href="/tools" className="hide-sm">Free tools</Link>
+          <Link href="/content" className="hide-sm">Content</Link>
           <Link href="/pricing">Pricing</Link>
-          <Link href="/app/signin" className="hide-sm">Sign in</Link>
-          <Link href="/app/new" className="cta">Audit my site</Link>
+          <Link href="/app/signin" className="hide-sm">Client login</Link>
+          <Link href={BOOK.href} className="cta">{BOOK.label}</Link>
         </nav>
       </div>
     </header>
@@ -58,20 +60,21 @@ export function SiteFooter() {
             {BRAND}
           </div>
           <p className="small muted" style={{ maxWidth: "28ch" }}>
-            Your AI marketing team. One inbox. No meetings.
+            A marketing agency run by people, powered by AI. Built for founders without a marketing team.
           </p>
         </div>
         <div>
-          <h4>Desks</h4>
-          <Link href="/seo">Search</Link>
-          <Link href="/content">Content</Link>
-          <Link href="/social">Social</Link>
+          <h4>Services</h4>
+          <Link href="/websites">Websites</Link>
+          <Link href="/seo">SEO</Link>
           <Link href="/paid">Paid ads</Link>
-          <Link href="/the-whole-agency">All of them</Link>
+          <Link href="/social">Social media</Link>
+          <Link href="/content">Content</Link>
+          <Link href="/the-whole-agency">Everything</Link>
         </div>
         <div>
           <h4>Free tools</h4>
-          <Link href="/app/new">Audit my site</Link>
+          <Link href="/app/new">Check my site</Link>
           <Link href="/tools/social-teardown">Scout a competitor</Link>
           <Link href="/tools/ad-budget-check">Check my ad budget</Link>
           <Link href="/tools/voice-check">Test my writing</Link>
@@ -79,10 +82,12 @@ export function SiteFooter() {
         </div>
         <div>
           <h4>Company</h4>
+          <Link href={BOOK.href}>{BOOK.label}</Link>
+          <Link href="/how-it-works">How we work</Link>
           <Link href="/the-firm">The team</Link>
-          <Link href="/inside">Look inside</Link>
           <Link href="/pricing">Pricing</Link>
-          <Link href="/vs">Us vs an agency</Link>
+          <Link href="/vs">Us vs a traditional agency</Link>
+          <Link href="/inside">Look inside the dashboard</Link>
           <Link href="/proof">Our own audit</Link>
         </div>
         <div>
@@ -100,21 +105,23 @@ export function SiteFooter() {
         </div>
       </div>
       <div className="site-footer-bottom">
-        <span>&copy; {BRAND}. Made with an unreasonable number of checks.</span>
-        <span>SEO, AEO, GEO, content, social and paid.</span>
+        <span>&copy; {BRAND}. Real people, with an unreasonable number of checks.</span>
+        <span>Websites, SEO, AI search, content, social and paid ads.</span>
       </div>
     </footer>
   );
 }
 
 /**
- * The closing band on every page: one line, one action.
+ * The closing band on every page: one line, one action. By default that
+ * action is a call with a person, and the free site check is the quieter
+ * second option for someone not ready to talk yet.
  */
 export function CtaBand({
-  title = "Ready when you are.",
-  body = "Paste your URL and see what we'd fix. Free, no signup, about four minutes.",
-  primary = { href: "/app/new", label: "Audit my site free" },
-  secondary,
+  title = "Tell us about your business.",
+  body = "Thirty minutes with a person. You leave with a plan, whether or not you hire us.",
+  primary = BOOK,
+  secondary = { href: "/app/new", label: "Or check my site free" },
 }: {
   title?: string;
   body?: string;

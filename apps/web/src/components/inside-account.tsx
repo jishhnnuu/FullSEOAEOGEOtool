@@ -341,7 +341,7 @@ export function InsideAccount() {
           </div>
 
           <div className="brief-foot tiny faint">
-            One team, four desks. You approve, you do not execute. <Link href="/the-firm">See the organisation</Link>.
+            A person on your account, an AI team behind them. You approve, you do not execute. <Link href="/the-firm">See the organisation</Link>.
           </div>
         </div>
 

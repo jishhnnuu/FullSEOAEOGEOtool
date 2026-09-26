@@ -223,7 +223,7 @@ export function AdBudgetTool() {
             Everything above ran in your browser and nothing was sent anywhere. The thirty-conversion floor is
             not our rule: it is roughly what every platform&rsquo;s automated bidding needs before its model
             fits, and it is the reason a budget spread thin fails on every platform at once.{" "}
-            <Link href="/paid">The paid desk</Link> explains what happens after this.
+            <Link href="/paid">Our paid ads page</Link> explains what happens after this.
           </p>
         </>
       )}

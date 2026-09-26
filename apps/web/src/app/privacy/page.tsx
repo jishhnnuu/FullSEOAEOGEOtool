@@ -57,6 +57,25 @@ export default function PrivacyPage() {
       </section>
 
       <section className="section section-tight">
+        <h2 className="section-title small-title">If you book a call</h2>
+        <ul className="prose-list">
+          <li>
+            <strong>What you type into the form:</strong> your name, email, business, website, what you need help
+            with and anything you add. Used to reply to you and to prepare for the call. Nothing else.
+          </li>
+          <li>
+            <strong>Where it goes:</strong> into our own database, and to our team&rsquo;s inbox. We keep a
+            one-way hash of the network address it came from, only to stop the form being flooded, and never the
+            address itself.
+          </li>
+          <li>
+            <strong>Not a mailing list.</strong> Booking a call does not sign you up to anything. Ask on the call
+            or by reply and the enquiry is deleted.
+          </li>
+        </ul>
+      </section>
+
+      <section className="section section-tight">
         <h2 className="section-title small-title">If you make an account</h2>
         <ul className="prose-list">
           <li>
@@ -104,7 +123,7 @@ export default function PrivacyPage() {
         <p>
           We never ask you to paste an API key or a password for an advertising platform. You log in on the
           platform&rsquo;s own site and approve a consent screen listing exactly what we may do.{" "}
-          <Link href="/paid">The paid desk page</Link> lists the scopes per platform and why each is needed.
+          <Link href="/paid">The paid ads page</Link> lists the scopes per platform and why each is needed.
         </p>
       </section>
 

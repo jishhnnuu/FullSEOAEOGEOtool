@@ -2,8 +2,9 @@ import Link from "next/link";
 
 import { CtaBand, MarketingChrome } from "@/components/marketing";
 import { Seat } from "@/components/seat";
-import { DESKS, deskPrice, managerFor, WHOLE_AGENCY, type Desk } from "@/lib/desks";
+import { DESKS, deskPrice, managerFor, type Desk } from "@/lib/desks";
 import { PLANS } from "@/lib/plans";
+import { BOOK, serviceByKey, servicePrice } from "@/lib/services";
 import { breadcrumbNode, faqNode, graph } from "@/lib/schema";
 
 /**
@@ -26,11 +27,16 @@ import { breadcrumbNode, faqNode, graph } from "@/lib/schema";
 export function DeskPage({ desk, extra }: { desk: Desk; extra?: React.ReactNode }) {
   const manager = managerFor(desk);
   const plan = desk.requiresPlan ? PLANS[desk.requiresPlan] : null;
+  const service = serviceByKey(desk.key);
   const others = DESKS.filter((d) => d.key !== desk.key);
 
   const faq = [
     {
-      q: `What does the ${desk.label.toLowerCase()} desk do?`,
+      q: "Who will I actually talk to?",
+      a: "A real person from our team, your marketing lead. They get to know your business on a free call, set everything up with you, check the work before it reaches you and walk you through the results. Behind them, an AI team does the legwork.",
+    },
+    {
+      q: `What does the ${service.label.toLowerCase()} service include?`,
       a: desk.work.map((w) => w.title).join(". ") + ".",
     },
     {
@@ -43,9 +49,7 @@ export function DeskPage({ desk, extra }: { desk: Desk; extra?: React.ReactNode 
     },
     {
       q: "What does it cost?",
-      a: plan
-        ? `${deskPrice(desk)} per site per month on the ${plan.name} plan. No retainer, no minimum term, no call to book. An agency charges ${desk.agencyPrice} for the same scope.`
-        : deskPrice(desk),
+      a: `${servicePrice(service)}. A fixed monthly fee, month to month, with a person included. A traditional agency typically charges ${service.agency} for the same scope. If you'd rather do it yourself, the tools alone are ${deskPrice(desk)} a month${plan ? ` on the ${plan.name} plan` : ""}.`,
     },
   ];
 
@@ -71,12 +75,12 @@ export function DeskPage({ desk, extra }: { desk: Desk; extra?: React.ReactNode 
         </h1>
         <p className="hero-lede">{desk.lede}</p>
         <div className="hero-actions">
-          <Link href={desk.tryIt.href} className="big-button primary">{desk.tryIt.label} &rarr;</Link>
-          <Link href="#price" className="big-button">See the price</Link>
+          <Link href={`${BOOK.href}?service=${desk.key}`} className="big-button primary">{BOOK.label} &rarr;</Link>
+          <Link href={desk.tryIt.href} className="big-button">{desk.tryIt.label}</Link>
         </div>
         <p className="hero-status">
           <span className="dot" aria-hidden="true" />
-          <span><b>{desk.ready.label}.</b> {desk.readyNote}</span>
+          <span><b>A person on your account.</b> {desk.readyNote}</span>
         </p>
       </section>
 
@@ -101,9 +105,29 @@ export function DeskPage({ desk, extra }: { desk: Desk; extra?: React.ReactNode 
           ))}
         </div>
         <p className="small muted" style={{ marginTop: "1rem" }}>
-          &ldquo;Done for you&rdquo; means we ship it and check it went live. &ldquo;Drafted for you&rdquo; means
-          it&rsquo;s written and waiting for your yes.
+          &ldquo;Done for you&rdquo; means we make the change and check it went live. &ldquo;Drafted for you&rdquo;
+          means it&rsquo;s written, checked by your person, and waiting for your yes.
         </p>
+      </section>
+
+      {/* 3b. Who does it. */}
+      <section className="section">
+        <h2 className="section-title">Who does the work.</h2>
+        <div className="duo" style={{ marginTop: "1.4rem" }}>
+          <div className="duo-card person">
+            <span className="duo-tag">Your marketing lead</span>
+            <h3>The person you talk to</h3>
+            <p>
+              Learns your business on the first call, sets up your accounts with you, checks everything the AI team
+              makes, and explains the results in plain English.
+            </p>
+          </div>
+          <div className="duo-card ai">
+            <span className="duo-tag">The {service.label.toLowerCase()} AI team</span>
+            <h3>{desk.ready.label}</h3>
+            <p>{manager.remit}</p>
+          </div>
+        </div>
       </section>
 
       {/* 4. The honest detail, opt-in. */}
@@ -121,8 +145,9 @@ export function DeskPage({ desk, extra }: { desk: Desk; extra?: React.ReactNode 
             </div>
           </details>
           <details className="acc">
-            <summary>Who does the work</summary>
+            <summary>Every AI specialist on this team</summary>
             <div className="acc-body">
+              <p>Each one does a single job, under your marketing lead, and each has one thing it will never do.</p>
               <div className="firm-people" style={{ marginTop: "0.4rem" }}>
                 {manager.team.map((member) => (
                   <div className="person" key={member.key}>
@@ -149,25 +174,30 @@ export function DeskPage({ desk, extra }: { desk: Desk; extra?: React.ReactNode 
         <h2 className="section-title">What it costs.</h2>
         <div className="price-strip" style={{ marginTop: "1.2rem" }}>
           <div>
-            <div className="ps-us">
-              {deskPrice(desk)}
-              {plan && <span className="small muted" style={{ fontFamily: "inherit", fontWeight: 500 }}> / month</span>}
-            </div>
-            <div className="small muted">
-              {plan ? `Per site, on the ${plan.name} plan. Cancel anytime.` : "Not on a plan yet."}
-            </div>
+            <div className="ps-us" style={service.from === null ? { fontSize: "1.35rem" } : undefined}>{servicePrice(service)}</div>
+            <div className="small muted">Fixed monthly fee, person included. Month to month.</div>
           </div>
           <div className="ps-them">
-            A typical agency: <s>{desk.agencyPrice}</s>
+            A typical agency: <s>{service.agency}</s>
           </div>
-          <Link href={desk.tryIt.href} className="big-button primary">{desk.tryIt.label}</Link>
+          <Link href={`${BOOK.href}?service=${desk.key}`} className="big-button primary">{BOOK.label}</Link>
         </div>
         <details className="acc" style={{ marginTop: "1rem" }}>
           <summary>Where the agency number comes from</summary>
           <div className="acc-body">
-            <p>{desk.agencyBasis}</p>
+            <p>{service.agencyBasis}</p>
+          </div>
+        </details>
+        <details className="acc">
+          <summary>Rather do it yourself?</summary>
+          <div className="acc-body">
             <p>
-              <Link href="/pricing">Every plan</Link> &middot; <Link href={WHOLE_AGENCY.path}>Every desk on one plan</Link>
+              The same tools our team uses are yours to use on your own
+              {plan ? `, from ${deskPrice(desk)} a month on the ${plan.name} plan` : ""}. You can start free, and
+              book a person any time.
+            </p>
+            <p>
+              <Link href={desk.tryIt.href}>{desk.tryIt.label}</Link> &middot; <Link href="/pricing">Every price</Link>
             </p>
           </div>
         </details>
@@ -175,7 +205,7 @@ export function DeskPage({ desk, extra }: { desk: Desk; extra?: React.ReactNode 
 
       {/* 6. The other desks. */}
       <section className="section">
-        <h2 className="section-title">Need a hand elsewhere?</h2>
+        <h2 className="section-title">Need a hand with the rest?</h2>
         <div className="fresh-desks three" style={{ marginTop: "1.4rem" }}>
           {others.map((other) => (
             <Link key={other.key} href={other.path} className="fresh-desk" data-desk={other.key}>
@@ -183,19 +213,14 @@ export function DeskPage({ desk, extra }: { desk: Desk; extra?: React.ReactNode 
               <span className="fd-line">{other.tagline}</span>
               <span className="fd-foot">
                 <span className="fd-status">{other.ready.label}</span>
-                <span className="fd-go">Meet them &rarr;</span>
+                <span className="fd-go">Look &rarr;</span>
               </span>
             </Link>
           ))}
         </div>
       </section>
 
-      <CtaBand
-        title="Want to see it on your site?"
-        body="Paste your URL. Four minutes later you'll know what we'd fix first. Free, no signup."
-        primary={{ href: "/app/new", label: "Audit my site free" }}
-        secondary={{ href: "/inside", label: "Peek inside a live account" }}
-      />
+      <CtaBand />
     </MarketingChrome>
   );
 }

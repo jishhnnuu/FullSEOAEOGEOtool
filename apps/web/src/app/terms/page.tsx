@@ -65,6 +65,25 @@ export default function TermsPage() {
       </section>
 
       <section className="section section-tight">
+        <h2 className="section-title small-title">Who does the work</h2>
+        <ul className="prose-list">
+          <li>
+            <strong>A person looks after your account.</strong> Someone on our team runs your calls, sets up your
+            accounts with you, directs the work and checks it before it reaches you.
+          </li>
+          <li>
+            <strong>Much of the work is produced by AI.</strong> Research, audits, fixes, drafts, campaign builds
+            and reports are made by AI systems under that person&rsquo;s direction. We say so plainly because it
+            is how we charge less, and because you should know.
+          </li>
+          <li>
+            <strong>You approve what goes live.</strong> Changes to your website, posts, campaigns and budget
+            increases all wait for your yes.
+          </li>
+        </ul>
+      </section>
+
+      <section className="section section-tight">
         <h2 className="section-title small-title">What you are responsible for</h2>
         <ul className="prose-list">
           <li>
@@ -107,7 +126,7 @@ export default function TermsPage() {
           </li>
           <li>
             We will not charge a percentage of your advertising spend, ever. It is the conflict at the centre of
-            this industry. <Link href="/pricing">The prices are published</Link> and do not move with your budget.
+            this industry. <Link href="/pricing">Our fee is fixed</Link> and does not move with your budget.
           </li>
         </ul>
       </section>
@@ -121,7 +140,7 @@ export default function TermsPage() {
         </p>
         <p>
           Platform access is also not entirely ours to give. Each advertising network decides who may write to it
-          through software, and <Link href="/paid">the paid desk page</Link> states exactly where each one stands
+          through software, and <Link href="/paid">the paid ads page</Link> states exactly where each one stands
           rather than implying availability.
         </p>
       </section>
@@ -129,7 +148,7 @@ export default function TermsPage() {
       <section className="section section-alt">
         <h2 className="section-title small-title">Ending it</h2>
         <p>
-          Cancel whenever you like, from your account, without a call. Your campaigns keep running in your own
+          Cancel whenever you like, by telling your person or from your account. Your campaigns keep running in your own
           accounts. Withdraw our access from the platform&rsquo;s own settings and it ends immediately whether or
           not you tell us. Delete your workspace and the server copy goes with it.
         </p>
@@ -141,8 +160,7 @@ export default function TermsPage() {
 
       <CtaBand
         title="The parts that matter"
-        body="Your accounts and your work stay yours. Every launch and every budget rise needs a person. We do not charge a percentage of your spend, and we will not take a budget we know cannot work."
-        primary={{ href: "/pricing", label: "See the prices" }}
+        body="A person on your account. Your accounts and your work stay yours. Every launch and every budget rise needs your yes. We never charge a percentage of your spend."
         secondary={{ href: "/privacy", label: "What we hold" }}
       />
     </MarketingChrome>

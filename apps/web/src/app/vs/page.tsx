@@ -6,9 +6,9 @@ import { deskByKey, managerFor } from "@/lib/desks";
 import { breadcrumbNode, graph } from "@/lib/schema";
 
 export const metadata = {
-  title: "Against an agency",
+  title: "Against a traditional agency",
   description:
-    "Four comparisons, one per desk, against the kind of agency that desk replaces. Every table lists the rows the agency wins as well as the ones we do.",
+    "An AI-powered agency against a traditional one, one comparison per service. Every table lists the rows the traditional agency wins as well as the ones we do.",
   alternates: { canonical: "/vs" },
 };
 
@@ -21,16 +21,16 @@ export default function VersusIndex() {
           __html: graph(
             breadcrumbNode([
               { name: "Home", path: "/" },
-              { name: "Against an agency", path: "/vs" },
+              { name: "Against a traditional agency", path: "/vs" },
             ]),
           ),
         }}
       />
 
       <section className="section fresh-hero">
-        <div className="eyebrow"><span className="dot" aria-hidden="true" />Us vs an agency</div>
-        <h1 className="hero-title">Us vs an agency. <span className="hl">Honestly.</span></h1>
-        <p className="hero-lede">One comparison per desk, including the rows they win.</p>
+        <div className="eyebrow"><span className="dot" aria-hidden="true" />Us vs a traditional agency</div>
+        <h1 className="hero-title">Us vs the old way. <span className="hl">Honestly.</span></h1>
+        <p className="hero-lede">Both give you a person. One comparison per service, including the rows they win.</p>
       </section>
 
       <section className="section section-tight">
@@ -45,9 +45,7 @@ export default function VersusIndex() {
                 <strong>{v.title}</strong>
                 <span>{v.description}</span>
                 <span className="tag go" style={{ alignSelf: "flex-start", marginTop: "0.4rem" }}>
-                  {manager.status === "live"
-                    ? `${wins} rows to us, ${losses} to them`
-                    : `Desk opens ${manager.opens}. ${losses} rows to them.`}
+                  {manager.status === "live" ? `${wins} rows to us, ${losses} to them` : `${losses} rows to them`}
                 </span>
               </Link>
             );
@@ -56,10 +54,8 @@ export default function VersusIndex() {
       </section>
 
       <CtaBand
-        title="Or skip the comparison. Watch the work."
-        body="A real account on our own site, running live, unfixed bits and all."
-        primary={{ href: "/inside", label: "Look inside" }}
-        secondary={{ href: "/app/new", label: "Audit my site free" }}
+        title="Or skip the comparison. Talk to us."
+        body="A free call with a person. If a traditional agency suits you better, we'll tell you."
       />
     </MarketingChrome>
   );

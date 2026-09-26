@@ -141,6 +141,8 @@ export default async function ComparisonPage({ params }: { params: Promise<{ slu
       <CtaBand
         title="The audit is the comparison that matters"
         body="Run it on your own site. No account, no card, and you keep everything it produces."
+        primary={{ href: "/app/new", label: "Check my site free" }}
+        secondary={{ href: "/book", label: "Or talk to a person" }}
       />
     </MarketingChrome>
   );

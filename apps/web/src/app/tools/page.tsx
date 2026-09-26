@@ -72,7 +72,7 @@ export default function ToolsPage() {
         <h1 className="hero-title">
           Free <span data-sprig-seat="">tools</span> that <span className="hl">actually</span> do something.
         </h1>
-        <p className="hero-lede">Real engine, your real inputs, answers in seconds. Pick one.</p>
+        <p className="hero-lede">The tools our team works with, free for you. Real results in seconds.</p>
         <p className="hero-status"><span className="dot" aria-hidden="true" /><span>Free &middot; no signup &middot; nothing stored</span></p>
       </section>
 
@@ -114,7 +114,9 @@ export default function ToolsPage() {
 
       <CtaBand
         title={`Or run all ${CATALOG_SIZE} checks at once.`}
-        body="The full audit reads your whole site and writes every fix. Same price: nothing."
+        body="The full check reads your whole site and writes every fix. Same price: nothing."
+        primary={{ href: "/app/new", label: "Check my site free" }}
+        secondary={{ href: "/book", label: "Or talk to a person" }}
       />
       {/* The mascot crew. Delete this line and components/sprig to remove them. */}
       <Sprig crew="rotate" />

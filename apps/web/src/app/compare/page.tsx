@@ -62,6 +62,8 @@ export default function ComparePage() {
       <CtaBand
         title={`Run ${BRAND} against your own site first`}
         body="No account, no card, no connections. The audit is the comparison that matters."
+        primary={{ href: "/app/new", label: "Check my site free" }}
+        secondary={{ href: "/book", label: "Or talk to a person" }}
       />
     </MarketingChrome>
   );

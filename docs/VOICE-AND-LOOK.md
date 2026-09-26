@@ -10,6 +10,12 @@ page breaks a rule here, the page is wrong, not the rule.
 **The friend who is scarily good at marketing.** Quick, warm, a bit cheeky,
 and never wrong about the numbers.
 
+Who we are, in one line: **a marketing agency run by people, powered by AI.**
+The reader is a founder with no marketing team, who may not have a website
+yet and will not hand their business to software they have never heard of.
+Lead with the person; the AI is the reason it is affordable, not the thing
+being sold.
+
 Two halves, and both have to be there:
 
 | Energy | Credibility |
@@ -28,10 +34,13 @@ Two halves, and both have to be there:
 2. **Headlines under eight words.** Section intros under twenty-five.
 3. **Every section ends in something to do.** A section with no action is
    decoration.
-4. **The action goes first.** The URL box is in the hero, not at the bottom.
+4. **The action goes first.** "Book a free call" is in the hero, with the free
+   site check beside it, not at the bottom.
 5. **One joke per screen, maximum.** Funny earns the attention. Precise earns
    the sale.
-6. **Say "you", not "the client".** Say "we", not "the platform".
+6. **Say "you", not "the client".** Say "we", not "the platform". Say "your
+   person" or "your marketing lead" for the human, and "the AI team" for the
+   agents. Never "desk" on a public page: a founder buys a service.
 7. **Detail is opt-in.** The honest caveats stay, because honesty is the
    product, but they sit in an accordion or a small tag, not in the way.
 
